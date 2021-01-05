@@ -256,7 +256,7 @@ class IsometricMap {
 	updateCanvasSize() {
 		var width = $(window).width();
 		var height = $(window).height();
-		if(width > 800) {
+		if(width >= 1000) {
 			this.ratio = 1;
 		} else {
 			this.ratio = 0.5;

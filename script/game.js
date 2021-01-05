@@ -134,12 +134,12 @@ class Game {
 			this.isometricMap.drawPuddle(this.posX, this.posY, "green");
 		}
 		this.calculatePuddles();
-		this.isometricMap.drawCharacter(this.getCharacter(), this.posX, this.posY, 120, 80, true);
+		this.isometricMap.drawCharacter(this.getCharacter(), this.posX, this.posY, IsometricMap.CHAR_WIDTH, IsometricMap.CHAR_HEIGHT, true);
 		if(this.isometricMap.enemy) {
 			this.enemy = Game.Direction.RIGHT;
 			this.enemyX = this.isometricMap.enemyX;
 			this.enemyY = this.isometricMap.enemyY;
-			this.isometricMap.drawCharacter(this.isometricMap.characters.get(Game.Slime.GRAY + this.enemy), this.enemyX, this.enemyY, 120, 80, false);
+			this.isometricMap.drawCharacter(this.isometricMap.characters.get(Game.Slime.GRAY + this.enemy), this.enemyX, this.enemyY, IsometricMap.CHAR_WIDTH, IsometricMap.CHAR_HEIGHT, false);
 		}
 		this.food = this.isometricMap.food;
 		this.updateFood();
@@ -271,9 +271,9 @@ class Game {
 				} else {
 					deform = deformation - deformation * index / frame;
 				}
-				self.isometricMap.drawCharacter(self.getCharacter(), self.posX + vx * index / frame, self.posY + vy * index / frame, 120 + deform, 80, true);
+				self.isometricMap.drawCharacter(self.getCharacter(), self.posX + vx * index / frame, self.posY + vy * index / frame, IsometricMap.CHAR_WIDTH + deform, IsometricMap.CHAR_HEIGHT, true);
 				if(self.isometricMap.enemy) {
-					self.isometricMap.drawCharacter(self.isometricMap.characters.get(Game.Slime.GRAY + self.enemy), self.enemyX + (moveEnemy.x - self.enemyX) * index / frame, self.enemyY + (moveEnemy.y - self.enemyY) * index / frame, 120 + (moveEnemy.deform ? deform : 0), 80, false);
+					self.isometricMap.drawCharacter(self.isometricMap.characters.get(Game.Slime.GRAY + self.enemy), self.enemyX + (moveEnemy.x - self.enemyX) * index / frame, self.enemyY + (moveEnemy.y - self.enemyY) * index / frame, IsometricMap.CHAR_WIDTH + (moveEnemy.deform ? deform : 0), IsometricMap.CHAR_HEIGHT, false);
 				}
 				// Case crossed
 				if(puddled && current != next) {
@@ -322,8 +322,8 @@ class Game {
 						if(self.isometricMap.enemy && self.enemyX == self.posX  && self.enemyY == self.posY) {
 							self.enemyX = self.isometricMap.enemyX;
 							self.enemyY = self.isometricMap.enemyY;
-							self.isometricMap.drawCharacter(self.getCharacter(), self.posX, self.posY, 120, 80, true);
-							self.isometricMap.drawCharacter(self.isometricMap.characters.get(Game.Slime.GRAY + self.enemy), self.enemyX, self.enemyY, 120, 80, false);
+							self.isometricMap.drawCharacter(self.getCharacter(), self.posX, self.posY, IsometricMap.CHAR_WIDTH, IsometricMap.CHAR_HEIGHT, true);
+							self.isometricMap.drawCharacter(self.isometricMap.characters.get(Game.Slime.GRAY + self.enemy), self.enemyX, self.enemyY, IsometricMap.CHAR_WIDTH, IsometricMap.CHAR_HEIGHT, false);
 						}
 					} else if(self.slime == Game.Slime.YELLOW) {
 						self.power--;
@@ -450,9 +450,9 @@ class Game {
 				for(var y = 0; y < this.isometricMap.tilesY; y++) {
 					var idx = map[x][y];
 					if(index == idx && (x != this.posX || y != this.posY)) {
-						this.isometricMap.drawCharacter(this.getCharacter(), x, y, 120, 80, true);
+						this.isometricMap.drawCharacter(this.getCharacter(), x, y, IsometricMap.CHAR_WIDTH, IsometricMap.CHAR_HEIGHT, true);
 						if(this.isometricMap.enemy) {
-							this.isometricMap.drawCharacter(this.isometricMap.characters.get(Game.Slime.GRAY + this.enemy), this.enemyX, this.enemyY, 120, 80, false);
+							this.isometricMap.drawCharacter(this.isometricMap.characters.get(Game.Slime.GRAY + this.enemy), this.enemyX, this.enemyY, IsometricMap.CHAR_WIDTH, IsometricMap.CHAR_HEIGHT, false);
 						}
 						this.posX = x;
 						this.posY = y;
@@ -565,14 +565,14 @@ class Game {
 	updateSlime(oldSlime) {
 		if(this.slime != Game.Slime.GREEN && this.power == 0) {
 			this.slime = Game.Slime.GREEN;
-			this.isometricMap.drawCharacter(this.getCharacter(), this.posX, this.posY, 120, 80, true);
+			this.isometricMap.drawCharacter(this.getCharacter(), this.posX, this.posY, IsometricMap.CHAR_WIDTH, IsometricMap.CHAR_HEIGHT, true);
 			if(this.isometricMap.enemy) {
-				this.isometricMap.drawCharacter(this.isometricMap.characters.get(Game.Slime.GRAY + this.enemy), this.enemyX, this.enemyY, 120, 80, false);
+				this.isometricMap.drawCharacter(this.isometricMap.characters.get(Game.Slime.GRAY + this.enemy), this.enemyX, this.enemyY, IsometricMap.CHAR_WIDTH, IsometricMap.CHAR_HEIGHT, false);
 			}
 		} else if(oldSlime != this.slime) {
-			this.isometricMap.drawCharacter(this.getCharacter(), this.posX, this.posY, 120, 80, true);
+			this.isometricMap.drawCharacter(this.getCharacter(), this.posX, this.posY, IsometricMap.CHAR_WIDTH, IsometricMap.CHAR_HEIGHT, true);
 			if(this.isometricMap.enemy) {
-				this.isometricMap.drawCharacter(this.isometricMap.characters.get(Game.Slime.GRAY + this.enemy), this.enemyX, this.enemyY, 120, 80, false);
+				this.isometricMap.drawCharacter(this.isometricMap.characters.get(Game.Slime.GRAY + this.enemy), this.enemyX, this.enemyY, IsometricMap.CHAR_WIDTH, IsometricMap.CHAR_HEIGHT, false);
 			}
 		}
 		if(this.slime == Game.Slime.GREEN) {

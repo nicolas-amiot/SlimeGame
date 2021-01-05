@@ -1,0 +1,16 @@
+{
+	"spawn": {"x": 3, "y": 5},
+	"dialogs": [
+		"On passe aux choses sérieuses. Utilise tout ce que tu as appris jusqu'à maintenant"
+	],
+	"life": 3,
+	"food" : 1,
+	"tiles": ["beach", "grass:12", "ice", "lightning", "teleport", "red:3", "yellow:6"],
+	"map": [
+		[1, 5, 2, 1, 1],
+		[1, 4, 0, 3, 1],
+		[4, 0, 3, 3, 1],
+		[7, 0, 1, 4, 1],
+		[5, 6, 0, 1, 0]
+	]
+}

@@ -1,0 +1,16 @@
+{
+	"spawn": {"x": 4, "y": 4},
+	"dialogs": [
+		"Allez on enchaîne ! La case <img src='images/tiles/yellow.png'/> offre aussi une compétences mais cette fois c'est un passif.",
+		"Tant que je suis en slime citron, je ne pose plus de flaque et ne consomme pas de nourriture."
+	],
+	"life": 1,
+	"food": 12,
+	"tiles": ["beach", "yellow:2"],
+	"map": [
+		[1, 1, 1, 2],
+		[1, 1, 0, 1],
+		[0, 0, 0, 1],
+		[1, 1, 1, 1]
+	]
+}

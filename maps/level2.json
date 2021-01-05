@@ -1,0 +1,14 @@
+{
+	"spawn": {"x": 3, "y": 3},
+	"dialogs": [
+		"Au fur et à mesure qu'on avance dans les niveaux, de nouvelles mécaniques de jeu feront leurs apparitions.",
+		"Ici c'est les points de vie. A chaque fois que je me déplace sur une flaque j'en perd 1. Dans ce niveau pas le droit à l'erreur !"
+	],
+	"life": 1,
+	"tiles": ["beach"],
+	"map": [
+		[1, 1, 1],
+		[1, 1, 0],
+		[0, 1, 1]
+	]
+}

@@ -1,0 +1,14 @@
+{
+	"spawn": {"x": 3, "y": 3},
+	"dialogs": [
+		"Oh un téléporteur <img src='images/tiles/teleport.png'/> ! Tu devrais essayer de le prendre."
+	],
+	"life": 1,
+	"tiles": ["beach", "teleport"],
+	"map": [
+		[2, 0, 1, 1],
+		[1, 0, 1, 1],
+		[0, 2, 1, 1],
+		[1, 1, 1, 1]
+	]
+}

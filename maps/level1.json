@@ -1,0 +1,14 @@
+{
+	"spawn": {"x": 2, "y": 2},
+	"dialogs": [
+		"Plop, tu veux bien m'aider ? Rien de bien compliqué tu dois juste me déplacer à l'aide des touches indiquées dans les options en haut à droite ou avec le PAD en bas à droite.",
+		"Tu vois les cases <img src='images/tiles/beach.png'/> ? A chaque fois que je me déplace dessus je crée une flaque. Et si une flaque est déjà présente je la retire.",
+		"Ton but est de remplir toutes ces cases avec des flaques. A toi de jouer !"
+	],
+	"tiles": ["beach"],
+	"map": [
+		[0, 1, 0],
+		[1, 1, 1],
+		[0, 1, 0]
+	]
+}

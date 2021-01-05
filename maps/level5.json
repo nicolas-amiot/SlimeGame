@@ -1,0 +1,18 @@
+{
+	"spawn": {"x": 4, "y": 3},
+	"dialogs": [
+		"Tu vois cette case avec l'éclair <img src='images/tiles/lightning.png'/>? Surtout ne fini jamais dessus. Nous les slimes nous sommes composés de 90% d'eau et comme tu sais l'eau est très conducteur...",
+		"Certaines cases nous font changer de couleur en modifiant notre organisme pour produire un sirop spécial. Tu devrais essayer en passant sur cette case <img src='images/tiles/red.png'/>.",
+		"Celà ne modifie pas seulement notre couleur mais permet aussi d'utiliser une compétence. Ici je deviens un slime fraise et me permet d'effectuer une ruée sans activer les effets des cases traversées tout en mettant des flaques."
+	],
+	"life": 1,
+	"food": 5,
+	"tiles": ["beach", "grass:10", "lightning", "red:1"],
+	"map": [
+		[1, 3, 1, 1, 4],
+		[2, 0, 1, 1, 1],
+		[1, 0, 1, 2, 1],
+		[4, 0, 1, 1, 1],
+		[1, 3, 1, 1, 1]
+	]
+}

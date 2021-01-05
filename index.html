@@ -1,0 +1,122 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>Tilemaps examples</title>
+		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+		<link rel="stylesheet" href="style.css">
+	</head>
+	<body>
+		<div class="canvas">
+			<canvas id="map"></canvas>
+			<canvas id="tile"></canvas>
+			<canvas id="char"></canvas>
+		</div>
+		<div class="panel panel-title">
+			<div class="title">SYRUP SLIME</div>
+			<div class="information">
+				<div class="d-none">Level : <span id="level">0</span></div>
+				<div class="d-none">Flaques restantes : <span id="puddle">0</span></div>
+				<div class="d-none">Vie : <span id="life" class="life">0</span></div>
+				<div class="d-none">Nourriture : <span id="food">0</span></div>
+			</div>
+		</div>
+		<div id="option" class="panel panel-option">
+			<button class="btn btn-default" data-toggle="modal" data-target="#modalLevel">
+				 <img src="images/slime.png" width="64" />
+			</button>
+			<button id="restart" class="btn btn-default">
+				 <img src="images/reset.png" width="64" />
+			</button>
+			<button class="btn btn-default" data-toggle="modal" data-target="#modalSettings">
+				 <img src="images/keyboard.png" width="64" />
+			</button>
+		</div>
+		<div class="panel panel-state">
+			<div id="bubble" class="bubble d-none"><span></span> <button id="next" class="btn btn-light rounded-circle command">&raquo;</button></div>
+			<div id="slime"><img src="images/characters/slime-green-right.png" width="64" /> <span></span></div>
+		</div>
+		<div class="panel panel-command">
+			<div class="container">
+				<div class="row">
+					<div class="col-4">
+						<button id="left" class="btn btn-default command">
+							<img src="images/arrow-top-left.png" />
+						</button>
+					</div>
+					<div class="offset-4 col-4">
+						<button id="up" class="btn btn-default command">
+							<img src="images/arrow-top-right.png" />
+						</button>
+					</div>
+				</div>
+				<div class="row">
+					<div class="offset-4 col-4">
+						<button id="action" class="btn btn-default rounded-circle command">
+							<img src="images/round.png" />
+						</button>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-4">
+						<button  id="down"class="btn btn-default command">
+							<img src="images/arrow-bot-left.png" />
+						</button>
+					</div>
+					<div class="offset-4 col-4">
+						<button id="right" class="btn btn-default command">
+							<img src="images/arrow-bot-right.png" />
+						</button>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="modal fade maps" id="modalLevel" tabindex="-1" role="dialog">
+			<div class="modal-dialog modal-dialog-scrollable dialog modal-lg" role="document">
+				<div class="modal-content">
+					<div class="modal-header">
+						<div>
+							NIVEAUX
+						</div>
+						<button class="close" data-dismiss="modal">
+							<span>&times;</span>
+						</button>
+					</div>
+					<div id="maps" class="modal-body"></div>
+				</div>
+			</div>
+		</div>
+		<div class="modal fade settings" id="modalSettings" tabindex="-1" role="dialog">
+			<div class="modal-dialog modal-dialog-scrollable dialog modal-lg" role="document">
+				<div class="modal-content">
+					<div class="modal-header">
+						<div>
+							SETTINGS
+						</div>
+						<button class="close" data-dismiss="modal">
+							<span>&times;</span>
+						</button>
+					</div>
+					<div class="modal-body">
+						<div class="row mb-2"><div class="col-12 font-weight-bold text-center">Touches pour jouer</div></div>
+						<div class="row"><div class="col-8">Se déplacer en haut à doite</div><div class="col-2"><kbd>Z</kbd></div><div class="col-2"><kbd>&uarr;</kbd></div></div>
+						<div class="row"><div class="col-8">Se déplacer en haut à gauche</div><div class="col-2"><kbd>Q</kbd></div><div class="col-2"><kbd>&larr;</kbd></div></div>
+						<div class="row"><div class="col-8">Se déplacer en bas à gauche</div><div class="col-2"><kbd>S</kbd></div><div class="col-2"><kbd>&darr;</kbd></div></div>
+						<div class="row"><div class="col-8">Se déplacer en bas à droite</div><div class="col-2"><kbd>D</kbd></div><div class="col-2"><kbd>&rarr;</kbd></div></div>
+						<div class="row"><div class="col-8">Utiliser une compétence</div><div class="col-2"><kbd>E</kbd></div><div class="col-2"><kbd>ENTER</kbd></div></div>
+						<div class="row"><div class="col-8">Passer un dialogue</div><div class="col-4"><kbd>SPACE</kbd></div></div>
+						<div class="row mt-2 mb-2"><div class="col-12 font-weight-bold text-center">Configuration</div></div>
+						<div class="row"><div class="col-8">Durée des animations (en s)</div><input type="range" id="animate" min="0" max="1" value="0.5" step="0.1"  oninput="this.nextElementSibling.value = this.value"><output>0.5</output></div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+		<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+		<script src="script/game.js"></script>
+		<script src="script/isometric.js"></script>
+		<script src="script/astar.js"></script>
+		<script src="script/main.js"></script>
+	</body>
+</html>

@@ -20,12 +20,6 @@ canvas {
 	z-index: -1;
 }
 
-@media only screen and (max-width: 1200px){
-	.panel{ 
-		display: none
-	}
-}
-
 .panel {
 	position: absolute;
 	margin: 1rem;

@@ -1,1 +1,3 @@
-# SlimeGame
+# Syrup Slime
+
+Isometric tactical game

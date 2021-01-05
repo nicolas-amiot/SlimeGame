@@ -274,7 +274,7 @@ class IsometricMap {
 
 		// Center map
 		this.originX = width / 2 - (this.tilesX - 1) * this.tileHeight / 2;
-		this.originY = height /2;
+		this.originY = height /2 - 0.08 * this.tileHeight;
 	}
 
 	/**

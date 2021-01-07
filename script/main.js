@@ -5,7 +5,7 @@ $(document).ready(function(){
 	var game = new Game(isometricMap, "level", "puddle", "life", "food", "slime", "animate", "bubble");
 	
 	// Load maps modal
-	var totalMaps = 11;
+	var totalMaps = 10;
 	var modal = $("#maps");
 	var row = null;
 	for(var i = 1; i <= totalMaps; i++) {

@@ -242,7 +242,7 @@ class IsometricMap {
 			this.ratio = 1;
 		} else if(width >= maxWidth * 0.75 && height >= maxHeight * 0.75) {
 			this.ratio = 0.75;
-		} else if(width >= maxWidth * 0.5 && height >= maxHeight * 0.5 {
+		} else if(width >= maxWidth * 0.5 && height >= maxHeight * 0.5) {
 			this.ratio = 0.5;
 		} else {
 			this.ratio = 0.25;

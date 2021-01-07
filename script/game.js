@@ -4,53 +4,6 @@
 class Game {
 	
 	/**
-	* @enum Properties constants
-	*/
-	static Property = {
-		WALK: "walk",
-		PUDDLE: "puddle",
-		ICE: "ice",
-		FOOD: "food",
-		BLUE_SLIME: "blue",
-		RED_SLIME: "red",
-		YELLOW_SLIME: "yellow",
-		TELEPORT: "teleport",
-		DEATH: "death",
-		POWER: "power"
-	};
-	
-	/**
-	* @enum Directions constants
-	*/
-	static Direction = {
-		UP: "U",
-		LEFT: "L",
-		DOWN: "D",
-		RIGHT: "R"
-	};
-	
-	/**
-	* @enum Slime constants
-	*/
-	static Slime = {
-		GREEN: "green",
-		BLUE: "blue",
-		RED: "red",
-		YELLOW: "yellow",
-		GRAY: "gray"
-	};
-	
-	/**
-	* @enum Puddles constants
-	*/
-	static Puddle = {
-		NULL: 0,
-		NONE: 1,
-		GREEN: 2,
-		BLUE: 3
-	};
-	
-	/**
 	* Constructor for game class
 	*
 	* @param {isometricMap} isometricMap - Isometric map render
@@ -600,3 +553,52 @@ class Game {
 	}
 
 }
+
+// IMPORTANT : Waiting support for the static word in the classes by all browsers
+
+/**
+* @enum Properties constants
+*/
+Game.Property = {
+	WALK: "walk",
+	PUDDLE: "puddle",
+	ICE: "ice",
+	FOOD: "food",
+	BLUE_SLIME: "blue",
+	RED_SLIME: "red",
+	YELLOW_SLIME: "yellow",
+	TELEPORT: "teleport",
+	DEATH: "death",
+	POWER: "power"
+};
+
+/**
+* @enum Directions constants
+*/
+Game.Direction = {
+	UP: "U",
+	LEFT: "L",
+	DOWN: "D",
+	RIGHT: "R"
+};
+
+/**
+* @enum Slime constants
+*/
+Game.Slime = {
+	GREEN: "green",
+	BLUE: "blue",
+	RED: "red",
+	YELLOW: "yellow",
+	GRAY: "gray"
+};
+
+/**
+* @enum Puddles constants
+*/
+Game.Puddle = {
+	NULL: 0,
+	NONE: 1,
+	GREEN: 2,
+	BLUE: 3
+};

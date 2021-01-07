@@ -4,26 +4,6 @@
 class IsometricMap {
 	
 	/**
-	* @enum Tile width constants
-	*/
-	static TILE_WIDTH = 100;
-	
-	/**
-	* @enum Tile height constants
-	*/
-	static TILE_HEIGHT = 200;
-	
-	/**
-	* @enum Character width constants
-	*/
-	static CHAR_WIDTH = 120;
-	
-	/**
-	* @enum Character height constants
-	*/
-	static CHAR_HEIGHT = 80;
-	
-	/**
 	* Constructor for isometric map
 	*
 	* @param {string} layer1 - layer used to create map render
@@ -40,8 +20,8 @@ class IsometricMap {
 		this.charCtx = document.getElementById(layer3).getContext("2d"); // Character canvas
 		
 		// Tiles and ratio
-		this.tileWidth = IsometricMap.TILE_WIDTH; // Tiles width
-		this.tileHeight = IsometricMap.TILE_HEIGHT; // Tiles height
+		this.tileWidth = IsometricMap.TILE_WIDTH; // Tiles height
+		this.tileHeight = IsometricMap.TILE_HEIGHT; // Tiles width
 		this.ratio = 1; // Ratio image size
 		this.tilesX = 0; // Number of tiles in x axis
 		this.tilesY = 0; // Number of tiles in y axis
@@ -256,13 +236,17 @@ class IsometricMap {
 	updateCanvasSize() {
 		var width = $(window).width();
 		var height = $(window).height();
-		if(width >= 1000) {
+		var maxWidth = IsometricMap.TILE_WIDTH * this.tilesX;
+		var maxHeight = IsometricMap.TILE_HEIGHT * this.tilesY + IsometricMap.TILE_DEPTH;
+		if(width >= maxWidth && height >= maxHeight) {
 			this.ratio = 1;
+		} else if(width >= maxWidth * 0.75 && height >= maxHeight * 0.75) {
+			this.ratio = 0.75;
 		} else {
 			this.ratio = 0.5;
 		}
-		this.tileWidth = IsometricMap.TILE_WIDTH * this.ratio; // Tiles width
-		this.tileHeight = IsometricMap.TILE_HEIGHT * this.ratio; // Tiles height
+		this.tileWidth = IsometricMap.TILE_WIDTH * this.ratio; // Tiles height
+		this.tileHeight = IsometricMap.TILE_HEIGHT * this.ratio; // Tiles width
 
 		// Canvas take all screen 
 		this.mapCtx.canvas.width = width;
@@ -273,8 +257,8 @@ class IsometricMap {
 		this.charCtx.canvas.height = height;
 
 		// Center map
-		this.originX = width / 2 - (this.tilesX - 1) * this.tileHeight / 2;
-		this.originY = height /2 - 0.08 * this.tileHeight;
+		this.originX = width / 2 - (this.tilesX - 1) * this.tileWidth / 2;
+		this.originY = height / 2 - IsometricMap.TILE_DEPTH * this.ratio / 2;
 	}
 
 	/**
@@ -287,8 +271,8 @@ class IsometricMap {
 		// Draw tiles with display priority 
 		for(var x = this.tilesX - 1; x >= 0; x--) {
 			for(var y = 0; y < this.tilesY; y++) {
-				var offX = (x - 1) * this.tileHeight / 2 + y * this.tileHeight / 2 + this.originX;
-				var offY = (y - 1) * this.tileWidth / 2 - x * this.tileWidth / 2 + this.originY;
+				var offX = (x - 1) * this.tileWidth / 2 + y * this.tileWidth / 2 + this.originX;
+				var offY = (y - 1) * this.tileHeight / 2 - x * this.tileHeight / 2 + this.originY;
 
 				var indexTile = this.map[x][y];
 				// Index 0 is reserved for no tiles
@@ -296,7 +280,7 @@ class IsometricMap {
 				{
 					var image = this.tileImages[indexTile - 1];
 					if(image != undefined) {
-						var ratioImage = this.tileHeight / image.width;
+						var ratioImage = this.tileWidth / image.width;
 						this.mapCtx.drawImage(image, offX, offY, image.width * ratioImage, image.height * ratioImage);
 					}
 				}
@@ -318,10 +302,10 @@ class IsometricMap {
 		w = w * this.ratio;
 		h = h * this.ratio;
 		var self = this;
-		var offX = (x - 1) * this.tileHeight / 2 + y * this.tileHeight / 2 + this.originX;
-		var offY = (y - 1) * this.tileWidth / 2 - x * this.tileWidth / 2 + this.originY;
-		offX = offX + this.tileHeight * 0.25 - (w - this.tileWidth) / 2;
-		offY = offY - this.tileWidth * 0.25 - (h - this.tileWidth);
+		var offX = (x - 1) * this.tileWidth / 2 + y * this.tileWidth / 2 + this.originX;
+		var offY = (y - 1) * this.tileHeight / 2 - x * this.tileHeight / 2 + this.originY;
+		offX = offX + this.tileWidth * 0.25 - (w - this.tileHeight) / 2;
+		offY = offY - this.tileHeight * 0.25 - (h - this.tileHeight);
 		if(clear) {
 			this.charCtx.clearRect(0, 0, this.charCtx.canvas.width, this.charCtx.canvas.height);
 		}
@@ -349,12 +333,12 @@ class IsometricMap {
 			this.tileCtx.globalAlpha = 1;
 			border = 1;
 		}
-		var offX = x * this.tileHeight / 2 + y * this.tileHeight / 2 + this.originX;
-		var offY = y * this.tileWidth / 2 - x * this.tileWidth / 2 + this.originY;
-		var top = offY + this.tileWidth / 2 + border / 2;
-		var bot = offY - this.tileWidth / 2 - border / 2;
-		var right = offX + this.tileHeight / 2 + border;
-		var left = offX - this.tileHeight / 2 - border;
+		var offX = x * this.tileWidth / 2 + y * this.tileWidth / 2 + this.originX;
+		var offY = y * this.tileHeight / 2 - x * this.tileHeight / 2 + this.originY;
+		var top = offY + this.tileHeight / 2 + border / 2;
+		var bot = offY - this.tileHeight / 2 - border / 2;
+		var right = offX + this.tileWidth / 2 + border;
+		var left = offX - this.tileWidth / 2 - border;
 
 		
 		this.tileCtx.beginPath();
@@ -394,3 +378,30 @@ class IsometricMap {
 	}
 
 }
+
+// IMPORTANT : Waiting support for the static word in the classes by all browsers
+
+/**
+* @enum Tile width constants
+*/
+IsometricMap.TILE_WIDTH = 200;
+
+/**
+* @enum Tile height constants
+*/
+IsometricMap.TILE_HEIGHT = 100;
+
+/**
+* @enum Tile depth constants
+*/
+IsometricMap.TILE_DEPTH = 30;
+
+/**
+* @enum Character width constants
+*/
+IsometricMap.CHAR_WIDTH = 120;
+
+/**
+* @enum Character height constants
+*/
+IsometricMap.CHAR_HEIGHT = 80;

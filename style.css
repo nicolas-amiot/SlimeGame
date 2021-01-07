@@ -26,7 +26,7 @@ canvas {
 }
 
 .panel-title .title {
-	padding-top:2px;
+	padding-top: 6px;
 	font-family: Slime, fantasy;
 	font-size: 32px;
 	color: pink;

@@ -1,0 +1,17 @@
+{
+	"spawn": {"x": 4, "y": 4},
+	"dialogs": [
+		"Le revoilà ! Tu devrais essayer de le faire tomber dans le vide pour te laisser du répit."
+	],
+	"tiles": ["beach", "grass", "button:1", "button:2", "button:3", "closedoor:1", "closedoor:2", "closedoor:3", "opendoor:1", "opendoor:2", "opendoor:3"],
+	"enemy" : {"x": 7, "y": 4},
+	"map": [
+		[2, 5, 2, 2, 2, 2, 2],
+		[2, 11, 0, 2, 0, 3, 2],
+		[2, 2, 0, 2, 0, 0, 9],
+		[2, 2, 2, 2, 2, 2, 2],
+		[2, 0, 10, 2, 0, 0, 6],
+		[2, 2, 2, 0, 0, 8, 7],
+		[0, 4, 2, 0, 0, 1, 0]
+	]
+}

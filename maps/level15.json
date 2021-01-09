@@ -1,0 +1,16 @@
+{
+	"spawn": {"x": 4, "y": 3},
+	"dialogs": [
+		"Une nouvelle mécanique fait son apparition, il s'agit des paserelles commandées.",
+		"Lorsque que je marche sur un bouton, celui-ci va faire apparaître et disparaître des flaques blanches au dessus du vide qui me permettent de marcher au dessus du vide.",
+		"Chacun de ces boutons contrôle des paserelles spécifiques."
+	],
+	"tiles": ["beach", "grass", "button:1", "button:2", "button:2:3", "button:4", "closedoor:1", "closedoor:2", "closedoor:3", "closedoor:4", "opendoor:1", "opendoor:2"],
+	"map": [
+		[5, 2, 8, 2, 0],
+		[0, 9, 0, 11, 0],
+		[4, 2, 7, 2, 3],
+		[0, 11, 0, 10, 0],
+		[6, 2, 0, 12, 1]
+	]
+}

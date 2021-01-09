@@ -2,10 +2,27 @@ $(document).ready(function(){
 	
 	// Create the map and game objects
 	var isometricMap = new IsometricMap("map", "tile", "char");
-	var game = new Game(isometricMap, "level", "puddle", "life", "food", "slime", "animate", "bubble");
+	var game = new Game(isometricMap, "level", "puddle", "life", "food", "slime", "bubble");
+	$('#animate').on("input", function() {
+		game.animate = $(this).val() * 1000;
+		$(this).next("output").val($(this).val() + " s");
+	});
+	
+	var audio = new Audio('music/Komiku_-_09_-_De_lherbe_sous_les_pieds.mp3');
+	audio.loop = true;
+	$('#audio').on("input", function() {
+		var volume = $(this).val();
+		if(volume != 0) {
+			audio.play();
+		} else {
+			audio.pause();
+		}
+		audio.volume = $(this).val();
+		$(this).next("output").val($(this).val() * 100 + " %");
+	});
 	
 	// Load maps modal
-	var totalMaps = 10;
+	var totalMaps = 20;
 	var modal = $("#maps");
 	var row = null;
 	for(var i = 1; i <= totalMaps; i++) {

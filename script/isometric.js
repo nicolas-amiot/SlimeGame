@@ -63,6 +63,9 @@ class IsometricMap {
 		tiles.set("yellow", {path: folder + "yellow.png", properties: [Game.Property.WALK, Game.Property.YELLOW_SLIME]});
 		tiles.set("teleport", {path: folder + "teleport.png", properties: [Game.Property.WALK, Game.Property.TELEPORT]});
 		tiles.set("lightning", {path: folder + "lightning.png", properties: [Game.Property.WALK, Game.Property.DEATH]});
+		tiles.set("button", {path: folder + "button.png", properties: [Game.Property.WALK, Game.Property.BUTTON]});
+		tiles.set("closedoor", {path: null, properties: [Game.Property.DOOR]});
+		tiles.set("opendoor", {path: null, properties: [Game.Property.DOOR, Game.Property.OPEN]});
 		return tiles;
 	}
 
@@ -160,19 +163,21 @@ class IsometricMap {
 			self.properties[0] = []; // Index 0 is reserved for no tiles
 			for(var i = 0; i < json.tiles.length; i++) {
 				var path;
-				var power = 0;
+				var powers = null;
 				if(json.tiles[i].includes(":")) {
 					var array = json.tiles[i].split(":");
 					path = array[0];
-					power = array[1];
+					powers = array.slice(1);
 				} else {
 					path = json.tiles[i];
 				}
 				var tile = self.tiles.get(path);
 				if(tile != undefined) {
 					var prop = JSON.parse(JSON.stringify(tile.properties));
-					self.tileImages[i] = tile.path;
-					totalImages++;
+					if(tile.path != undefined && tile.path != null) {
+						self.tileImages[i] = tile.path;
+						totalImages++;
+					}
 					self.properties[i + 1] = prop;
 					if(prop.includes(Game.Property.BLUE_SLIME)) {
 						self.addCharacters(Game.Slime.BLUE);
@@ -181,8 +186,10 @@ class IsometricMap {
 					} else if(prop.includes(Game.Property.YELLOW_SLIME)) {
 						self.addCharacters(Game.Slime.YELLOW);
 					}
-					if(power > 0) {
-						self.properties[i + 1].push(Game.Property.POWER + power);
+					if(powers != null) {
+						for(var j = 0; j < powers.length; j++) {
+							self.properties[i + 1].push(Game.Property.POWER + powers[j]);
+						}
 					}
 				} else {
 					self.properties[i + 1] = [];
@@ -369,6 +376,7 @@ class IsometricMap {
 	*
 	* @param {int} x - Position X of tile
 	* @param {int} y - Position Y of tile
+	* @return {array} properties - The properties tile
 	*/
 	getProperties(x, y) {
 		if(x >= 0 && x < this.tilesX && y >= 0 && y < this.tilesY) {

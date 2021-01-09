@@ -8,7 +8,7 @@ class Game {
 	*
 	* @param {isometricMap} isometricMap - Isometric map render
 	*/
-	constructor(isometricMap, idLevel, idPuddle, idLife, idFood, idSlime, idAnimate, idBubble) {
+	constructor(isometricMap, idLevel, idPuddle, idLife, idFood, idSlime, idBubble) {
 		// Isometric Map
 		this.isometricMap = isometricMap;
 		
@@ -18,8 +18,8 @@ class Game {
 		this.elLife = document.getElementById(idLife);
 		this.elFood = document.getElementById(idFood);
 		this.elSlime = document.getElementById(idSlime);
-		this.elAnimate = document.getElementById(idAnimate); // Animation time input
 		this.elBubble = document.getElementById(idBubble);
+		this.animate = 500;
 		
 		// Game attributes
 		this.success = new Array(); // level success
@@ -86,6 +86,15 @@ class Game {
 			this.puddles[this.posX][this.posY] = Game.Puddle.GREEN;
 			this.isometricMap.drawPuddle(this.posX, this.posY, "green");
 		}
+		for(var x = 0; x < this.isometricMap.tilesX; x++) {
+			for(var y = 0; y < this.isometricMap.tilesY; y++) {
+				var properties = this.isometricMap.getProperties(x, y);
+				if(properties.includes(Game.Property.DOOR) && properties.includes(Game.Property.OPEN)) {
+					this.puddles[x][y] = Game.Puddle.WHITE;
+					this.isometricMap.drawPuddle(x, y, "white");
+				}
+			}
+		}
 		this.calculatePuddles();
 		this.isometricMap.drawCharacter(this.getCharacter(), this.posX, this.posY, IsometricMap.CHAR_WIDTH, IsometricMap.CHAR_HEIGHT, true);
 		if(this.isometricMap.enemy) {
@@ -103,6 +112,7 @@ class Game {
 	
 	/**
 	* Get character image by the slime color and direction
+	* @return {image} character - The character image
 	*/
 	getCharacter() {
 		return this.isometricMap.characters.get(this.slime + this.direction);
@@ -118,6 +128,8 @@ class Game {
 					this.isometricMap.drawPuddle(x, y, "green");
 				} else if(this.puddles[x][y] == Game.Puddle.BLUE) {
 					this.isometricMap.drawPuddle(x, y, "blue");
+				} else if(this.puddles[x][y] == Game.Puddle.WHITE) {
+					this.isometricMap.drawPuddle(x, y, "white");
 				}
 			}
 		}
@@ -174,12 +186,20 @@ class Game {
 	* @param {int} number - Number of case to cross
 	* @param {int} nextX - Abscissa mouvement (-1, 0 or 1)
 	* @param {int} nextY - Ordinate mouvement (-1, 0 or 1)
+	* @return {int} mouvement - The number of abscissa or ordinate case 
 	*/
 	getMouvement(number, nextX, nextY) {
 		var mouvement = 0;
 		do {
-			var prop = this.isometricMap.getProperties(this.posX + nextX * (mouvement + 1), this.posY + nextY * (mouvement + 1));
-			if(prop.includes(Game.Property.WALK)) {
+			var x = this.posX + nextX * (mouvement + 1);
+			var y = this.posY + nextY * (mouvement + 1);
+			var prop = this.isometricMap.getProperties(x, y);
+			var puddle = null;
+			if(x >= 0 && x < this.isometricMap.tilesX && y >= 0 && y < this.isometricMap.tilesY) {
+				puddle = this.puddles[x][y];
+			}
+			
+			if(prop.includes(Game.Property.WALK) || puddle == Game.Puddle.WHITE) {
 				mouvement++;
 			} else {
 				break;
@@ -199,8 +219,7 @@ class Game {
 	move(vx, vy, puddled) {
 		this.pending = true;
 		var self = this;
-		var duration = $(this.elAnimate).val() * 1000;
-		var frame = duration != 0 ? Math.ceil(duration / 1000 * 60) : 1;
+		var frame = this.animate != 0 ? Math.ceil(this.animate / 1000 * 60) : 1;
 		var deformation = 40;
 		var number = vx != 0 ? vx : vy;
 		var sign = Math.sign(number);
@@ -273,10 +292,7 @@ class Game {
 						self.skill = false;
 						self.updateSlime(Game.Slime.RED);
 						if(self.isometricMap.enemy && self.enemyX == self.posX  && self.enemyY == self.posY) {
-							self.enemyX = self.isometricMap.enemyX;
-							self.enemyY = self.isometricMap.enemyY;
-							self.isometricMap.drawCharacter(self.getCharacter(), self.posX, self.posY, IsometricMap.CHAR_WIDTH, IsometricMap.CHAR_HEIGHT, true);
-							self.isometricMap.drawCharacter(self.isometricMap.characters.get(Game.Slime.GRAY + self.enemy), self.enemyX, self.enemyY, IsometricMap.CHAR_WIDTH, IsometricMap.CHAR_HEIGHT, false);
+							self.killEnemy();
 						}
 					} else if(self.slime == Game.Slime.YELLOW) {
 						self.power--;
@@ -292,19 +308,21 @@ class Game {
 					}
 					self.pending = false;
 				}
-			}, duration * i / frame, i);
+			}, this.animate * i / frame, i);
 		}
 	}
 	
 	/**
 	* Get graph for enemy path finding
+	* @return {Graph} graph - The path finding graph
 	*/
 	getGraph() {
 		var map = JSON.parse(JSON.stringify(this.isometricMap.map));
 		for(var x = 0; x < this.isometricMap.tilesX; x++) {
 			for(var y = 0; y < this.isometricMap.tilesY; y++) {
 				var idx = map[x][y];
-				if(this.puddles[x][y] == Game.Puddle.BLUE) {
+				var puddle = this.puddles[x][y];
+				if(puddle == Game.Puddle.BLUE || (this.isometricMap.getProperties(x, y).includes(Game.Property.DOOR) && puddle != Game.Puddle.WHITE)) {
 					map[x][y] = 0;
 				} else if(idx > 1) {
 					map[x][y] = 1;
@@ -319,6 +337,7 @@ class Game {
 	*
 	* @param {int} vx - Number of abscissa case to cross
 	* @param {int} vy - Number of ordinate case to cross
+	* @return {object} move - The move object of enemy
 	*/
 	getNextEnemyTile(vx, vy) {
 		var move = null;
@@ -337,13 +356,13 @@ class Game {
 					move.deform = true;
 				}
 			}
-			if(move.x - self.enemyX > 0) {
+			if(move.x - this.enemyX > 0) {
 				this.enemy = Game.Direction.UP;
-			} else if(move.x - self.enemyX < 0) {
+			} else if(move.x - this.enemyX < 0) {
 				this.enemy = Game.Direction.DOWN;
-			} else if(move.y - self.enemyY > 0) {
+			} else if(move.y - this.enemyY > 0) {
 				this.enemy = Game.Direction.RIGHT;
-			} else if(move.y - self.enemyY < 0) {
+			} else if(move.y - this.enemyY < 0) {
 				this.enemy = Game.Direction.LEFT;
 			}
 		}
@@ -352,9 +371,11 @@ class Game {
 	
 	/**
 	* Active the effect of the case
+	* @return {boolean} dead - If your character is dead
 	*/
 	activateCase() {
 		var dead = false;
+		var enemyDeath = false;
 		var props = this.isometricMap.getProperties(this.posX, this.posY);
 		if(props.includes(Game.Property.FOOD) && this.isometricMap.food > 0) {
 			var power = this.getPower(props);
@@ -414,10 +435,42 @@ class Game {
 					}
 				}
 			}
+		} else if(props.includes(Game.Property.BUTTON)) {
+			var powers = this.getPowers(props);
+			for(var x = 0; x < this.isometricMap.tilesX; x++) {
+				for(var y = 0; y < this.isometricMap.tilesY; y++) {
+					var properties = this.isometricMap.getProperties(x, y);
+					if(properties.includes(Game.Property.DOOR) && powers.includes(this.getPower(properties))) {
+						if(this.puddles[x][y] == Game.Puddle.WHITE) {
+							this.puddles[x][y] = Game.Puddle.NULL;
+							this.isometricMap.drawPuddle(x, y, undefined);
+							if(this.isometricMap.enemy && this.enemyX == x  && this.enemyY == y) {
+								enemyDeath = true;
+							}
+						} else {
+							this.puddles[x][y] = Game.Puddle.WHITE;
+							this.isometricMap.drawPuddle(x, y, "white");
+						}
+					}
+				}
+			}
 		} else if(props.includes(Game.Property.DEATH)) {
 			dead = true;
 		}
+		if(enemyDeath) {
+			this.killEnemy();
+		}
 		return dead;
+	}
+	
+	/**
+	* Respawn the ennemy and draw it
+	*/
+	killEnemy() {
+		this.enemyX = this.isometricMap.enemyX;
+		this.enemyY = this.isometricMap.enemyY;
+		this.isometricMap.drawCharacter(this.getCharacter(), this.posX, this.posY, IsometricMap.CHAR_WIDTH, IsometricMap.CHAR_HEIGHT, true);
+		this.isometricMap.drawCharacter(this.isometricMap.characters.get(Game.Slime.GRAY + this.enemy), this.enemyX, this.enemyY, IsometricMap.CHAR_WIDTH, IsometricMap.CHAR_HEIGHT, false);
 	}
 	
 	/**
@@ -447,6 +500,24 @@ class Game {
 	
 	/**
 	* Get the power of tiles
+	* @return {array} powers - The powers of properties
+	*/
+	getPowers(properties) {
+		var array = properties.filter((property) => property.startsWith("power"));
+		for(var i = 0; i < array.length; i++) {
+			var power = parseInt(array[i].replace("power",""));
+			if(isNaN(power)) {
+				array[i] = 0;
+			} else {
+				array[i] = power;
+			}
+		}
+		return array;
+	}
+	
+	/**
+	* Get the powers of tiles
+	* @return {int} power - The power of property
 	*/
 	getPower(properties) {
 		var property = properties.filter((property) => property.startsWith("power"));
@@ -569,6 +640,9 @@ Game.Property = {
 	YELLOW_SLIME: "yellow",
 	TELEPORT: "teleport",
 	DEATH: "death",
+	BUTTON: "button",
+	DOOR: "door",
+	OPEN: "open",
 	POWER: "power"
 };
 
@@ -600,5 +674,6 @@ Game.Puddle = {
 	NULL: 0,
 	NONE: 1,
 	GREEN: 2,
-	BLUE: 3
+	BLUE: 3,
+	WHITE: 4
 };

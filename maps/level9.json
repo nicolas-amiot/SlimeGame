@@ -1,7 +1,7 @@
 {
 	"spawn": {"x": 3, "y": 5},
 	"dialogs": [
-		"On passe aux choses sérieuses. Utilise tout ce que tu as appris jusqu'à maintenant"
+		"On passe aux choses sérieuses. Utilise tout ce que tu as appris jusqu'à maintenant."
 	],
 	"life": 3,
 	"food" : 1,

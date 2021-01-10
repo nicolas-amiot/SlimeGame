@@ -479,7 +479,8 @@ class Game {
 	useSkill() {
 		if(!this.pending) {
 			if(this.slime == Game.Slime.BLUE) {
-				if(this.puddles[this.posX][this.posY] != Game.Puddle.NULL) {
+				var puddle = this.puddles[this.posX][this.posY];
+				if(puddle == Game.Puddle.NONE || puddle == Game.Puddle.GREEN) {
 					if(this.puddles[this.posX][this.posY] == Game.Puddle.NONE) {
 						this.isometricMap.drawPuddle(this.posX, this.posY, "blue");
 						this.cases--;

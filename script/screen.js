@@ -3,6 +3,16 @@
 */
 class Screen {
 	
+	/**
+	* Constructor for screen class
+	*
+	* @param {string} idLevel - Level identifier
+	* @param {string} idPuddle - Puddle identifier
+	* @param {string} idLife - Life identifier
+	* @param {string} idFood - Food identifier
+	* @param {string} idSlime - Slime identifier
+	* @param {string} idBubble - Bubble identifier
+	*/
 	constructor(idLevel, idPuddle, idLife, idFood, idSlime, idBubble) {
 		this.level = document.getElementById(idLevel);
 		this.puddle = document.getElementById(idPuddle);
@@ -12,6 +22,11 @@ class Screen {
 		this.bubble = document.getElementById(idBubble);
 	}
 	
+	/**
+	* Display or not the level element
+	*
+	* @param {boolean} displayed - Slime identifier
+	*/
 	displayLevel(displayed) {
 		if(displayed) {
 			$(this.level).parent().removeClass("d-none");
@@ -20,10 +35,18 @@ class Screen {
 		}
 	}
 	
+	/**
+	* Update the number of level
+	*/
 	updateLevel(level) {
 		$(this.level).text(level);
 	}
 	
+	/**
+	* Display or not the puddle element
+	*
+	* @param {boolean} displayed - Slime identifier
+	*/
 	displayPuddle(displayed) {
 		if(displayed) {
 			$(this.puddle).parent().removeClass("d-none");
@@ -39,6 +62,11 @@ class Screen {
 		$(this.puddle).text(cases);
 	}
 	
+	/**
+	* Display or not the life element
+	*
+	* @param {boolean} displayed - Slime identifier
+	*/
 	displayLife(displayed) {
 		if(displayed) {
 			$(this.life).parent().removeClass("d-none");
@@ -47,10 +75,18 @@ class Screen {
 		}
 	}
 	
+	/**
+	* Update the number of life
+	*/
 	updateLife(life) {
 		$(this.life).text(life);
 	}
 	
+	/**
+	* Display or not the food element
+	*
+	* @param {boolean} displayed - Slime identifier
+	*/
 	displayFood(displayed) {
 		if(displayed) {
 			$(this.food).parent().removeClass("d-none");
@@ -59,10 +95,18 @@ class Screen {
 		}
 	}
 	
+	/**
+	* Update the number of food
+	*/
 	updateFood(food) {
 		$(this.food).text(food);
 	}
 	
+	/**
+	* Display or not the slime element
+	*
+	* @param {boolean} displayed - Slime identifier
+	*/
 	displaySlime(displayed) {
 		if(displayed) {
 			$(this.slime).removeClass("d-none");
@@ -71,6 +115,9 @@ class Screen {
 		}
 	}
 	
+	/**
+	* Update the number of slime
+	*/
 	updateSlime(slime, power) {
 		if(slime == Slime.Color.GREEN) {
 			$(this.slime).children("img").attr("src","images/characters/slime-green-right.png");
@@ -87,6 +134,11 @@ class Screen {
 		}
 	}
 	
+	/**
+	* Display or not the bubble element
+	*
+	* @param {boolean} displayed - Slime identifier
+	*/
 	displayBubble(displayed) {
 		if(displayed) {
 			$(this.bubble).removeClass("d-none");
@@ -95,6 +147,9 @@ class Screen {
 		}
 	}
 	
+	/**
+	* Update the number of bubble
+	*/
 	updateBubble(dialog) {
 		$(this.bubble).children("span").html(dialog);
 	}

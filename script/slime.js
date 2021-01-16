@@ -18,6 +18,13 @@ class Slime {
 		};
 	}
 	
+	/**
+	* Constructor for slime class
+	*
+	* @param {string} color - Slime color
+	* @param {int} posX - X axis position
+	* @param {int} posY - Y axis position
+	*/
 	constructor(color, posX, posY) {
 		this.color = color; // Current slime color
 		this.direction = Game.Direction.RIGHT; // Current slime direction
@@ -29,6 +36,11 @@ class Slime {
 		this.skill = false; // Action button was pressed
 	}
 	
+	/**
+	* Slime event before moving
+	*
+	* @return {object} move - Return the number of case and if puddled
+	*/
 	startMove() {
 		let move = {
 			number: 1,
@@ -42,6 +54,11 @@ class Slime {
 		return move;
 	}
 	
+	/**
+	* Slime event after moving
+	*
+	* @param {Game} game - Game object
+	*/
 	endMove(game) {
 		if(game.render.food != 0 && this.color != Slime.Color.YELLOW) {
 			this.food--;
@@ -60,6 +77,11 @@ class Slime {
 		}
 	}
 	
+	/**
+	* Slime event when use skill
+	*
+	* @param {Game} game - Game object
+	*/
 	useSkill(game) {
 		if(this.color == Slime.Color.BLUE) {
 			let puddle = game.puddles[this.posX][this.posY];
@@ -81,6 +103,11 @@ class Slime {
 		}
 	}
 	
+	/**
+	* Slime event for enemy
+	*
+	* @param {boolean} evade - If enemy see you
+	*/
 	evade() {
 		return this.color == Slime.Color.YELLOW;
 	}

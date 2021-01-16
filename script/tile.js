@@ -1,5 +1,5 @@
 /**
-* @class Slime
+* @class Tile
 */
 class Tile {
 	
@@ -49,6 +49,11 @@ class Tile {
 		};
 	}
 	
+	/**
+	* Active the effect of the case
+	*
+	* @param {Game} game - Game object
+	*/
 	static init(game) {
 		for(let x = 0; x < game.render.tilesX; x++) {
 			for(let y = 0; y < game.render.tilesY; y++) {
@@ -63,6 +68,8 @@ class Tile {
 	
 	/**
 	* Active the effect of the case
+	*
+	* @param {Game} game - Game object
 	* @return {boolean} dead - If your character is dead
 	*/
 	static activateCase(game) {

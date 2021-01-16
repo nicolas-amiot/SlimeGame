@@ -3,6 +3,43 @@
 */
 class IsometricMap {
 	
+	// IMPORTANT : Waiting support for the static fields classes by all browsers
+
+	/**
+	* @enum Tile width constants
+	*/
+	static get TILE_WIDTH() {
+		return 200;
+	}
+
+	/**
+	* @enum Tile height constants
+	*/
+	static get TILE_HEIGHT() {
+		return 100;
+	}
+
+	/**
+	* @enum Tile depth constants
+	*/
+	static get TILE_DEPTH() {
+		return 30;
+	}
+
+	/**
+	* @enum Character width constants
+	*/
+	static get CHAR_WIDTH() {
+		return 120;
+	}
+
+	/**
+	* @enum Character height constants
+	*/
+	static get CHAR_HEIGHT() {
+		return 80;
+	}
+	
 	/**
 	* Constructor for isometric map
 	*
@@ -12,7 +49,7 @@ class IsometricMap {
 	*/
 	constructor(layer1, layer2, layer3) {
 		// Constante
-		this.tiles = this.init(); // Tiles image by name
+		this.tiles = Tile.getTiles(); // Tiles image by name
 		
 		// Context
 		this.mapCtx = document.getElementById(layer1).getContext("2d"); // Map canvas
@@ -45,29 +82,6 @@ class IsometricMap {
 		this.enemyY = 0; // Enemy spawn in y axis
 		this.dialogs = null; // Dialogs to display at the start of the game
 	}
-	
-	/**
-	* Init the tiles with a path and properties
-	*
-	* @return {map} tiles - The tiles that can be used
-	*/
-	init() {
-		var tiles = new Map();
-		var folder = "images/tiles/";
-		tiles.set("beach", {path: folder + "beach.png", properties: [Game.Property.WALK, Game.Property.PUDDLE]});
-		tiles.set("ice", {path: folder + "ice.png", properties: [Game.Property.WALK, Game.Property.ICE]});
-		tiles.set("grass", {path: folder + "grass.png", properties: [Game.Property.WALK, Game.Property.FOOD]});
-		tiles.set("road", {path: folder + "road.png", properties: [Game.Property.WALK]});
-		tiles.set("blue", {path: folder + "blue.png", properties: [Game.Property.WALK, Game.Property.BLUE_SLIME]});
-		tiles.set("red", {path: folder + "red.png", properties: [Game.Property.WALK, Game.Property.RED_SLIME]});
-		tiles.set("yellow", {path: folder + "yellow.png", properties: [Game.Property.WALK, Game.Property.YELLOW_SLIME]});
-		tiles.set("teleport", {path: folder + "teleport.png", properties: [Game.Property.WALK, Game.Property.TELEPORT]});
-		tiles.set("lightning", {path: folder + "lightning.png", properties: [Game.Property.WALK, Game.Property.DEATH]});
-		tiles.set("button", {path: folder + "button.png", properties: [Game.Property.WALK, Game.Property.BUTTON]});
-		tiles.set("closedoor", {path: null, properties: [Game.Property.DOOR]});
-		tiles.set("opendoor", {path: null, properties: [Game.Property.DOOR, Game.Property.OPEN]});
-		return tiles;
-	}
 
 	/**
 	* Load the game and images
@@ -76,136 +90,27 @@ class IsometricMap {
 	* @param {function} callback - Function to execute after loading
 	*/
 	load(level, callback) {
-		var self = this;
-		this.characters = new Map();
-		this.tileImages = new Array();
-		this.map = new Array();
-		this.properties = new Array();
-		this.puddles = new Array();
-		this.dialogs = new Array();
+		let self = this;
 		
 		$.getJSON("maps/level" + level + ".json", function(json) {
-			var loadedImages = 0;
-			var totalImages = 0;
+			let loadedImages = 0;
+			let totalImages = 0;
 			
 			self.tilesX = json.map.length;
 			self.tilesY = json.map[0].length;
-			self.spawnX = json.spawn.y - 1; // Case start at index 1 in the json and x axis is the top left border
-			if(self.spawnX < 0) {
-				self.spawnX = 0;
-			} else if(self.spawnX >= self.tilesX) {
-				self.spawnX = self.tilesX - 1;
-			}
-			self.spawnY = json.spawn.x - 1; // Case start at index 1 in the json and x axis is the bot left border
-			if(self.spawnY < 0) {
-				self.spawnY = 0;
-			} else if(self.spawnY >= self.tilesY) {
-				self.spawnY = self.tilesY - 1;
-			}
-			if(json.food != undefined && json.food != null && json.food > 0) {
-				self.food = json.food;
-			} else {
-				self.food = 0;
-			}
-			if(json.life != undefined && json.life != null && json.life > 0) {
-				self.life = json.life;
-			} else {
-				self.life = 0;
-			}
-			if(json.dialogs != undefined && json.dialogs != null) {
-				self.dialogs = json.dialogs;
-			}
-			if(json.enemy != undefined && json.enemy != null) {
-				self.enemy = true;
-				self.addCharacters(Game.Slime.GRAY);
-				self.enemyX = json.enemy.y - 1; // Case start at index 1 in the json and x axis is the top left border
-				if(self.enemyX < 0) {
-					self.enemyX = 0;
-				} else if(self.enemyX >= self.tilesX) {
-					self.enemyX = self.tilesX - 1;
-				}
-				self.enemyY = json.enemy.x - 1; // Case start at index 1 in the json and x axis is the bot left border
-				if(self.enemyY < 0) {
-					self.enemyY = 0;
-				} else if(self.enemyY >= self.tilesY) {
-					self.enemyY = self.tilesY - 1;
-				}
-			} else {
-				self.enemy = false;
-			}
-			
-			// Set puddles map
-			for(var x = 0; x < self.tilesX; x++) {
-				self.map[x] = json.map[self.tilesX - 1 - x]; // Reverse the array for corresponding to the json map
-				self.puddles[x] = new Array();
-				for(var y = 0; y < self.tilesY; y++) {
-					var index = self.map[x][y] - 1;
-					if(index >= 0) { // Index 0 is reserved for no tiles
-						var tile = self.tiles.get(json.tiles[index]);
-						if(tile != undefined) {
-							var prop = tile.properties;
-							if(prop.includes(Game.Property.PUDDLE)) {
-								self.puddles[x][y] = Game.Puddle.NONE;
-							} else {
-								self.puddles[x][y] = Game.Puddle.NULL;
-							}
-						} else {
-							self.puddles[x][y] = Game.Puddle.NULL;
-						}
-					} else {
-						self.puddles[x][y] = Game.Puddle.NULL;
-					}
-				}
-			}
-			
-			// Set tiles properties and images
-			self.addCharacters(Game.Slime.GREEN); // Default characters
-			self.properties[0] = []; // Index 0 is reserved for no tiles
-			for(var i = 0; i < json.tiles.length; i++) {
-				var path;
-				var powers = null;
-				if(json.tiles[i].includes(":")) {
-					var array = json.tiles[i].split(":");
-					path = array[0];
-					powers = array.slice(1);
-				} else {
-					path = json.tiles[i];
-				}
-				var tile = self.tiles.get(path);
-				if(tile != undefined) {
-					var prop = JSON.parse(JSON.stringify(tile.properties));
-					if(tile.path != undefined && tile.path != null) {
-						self.tileImages[i] = tile.path;
-						totalImages++;
-					}
-					self.properties[i + 1] = prop;
-					if(prop.includes(Game.Property.BLUE_SLIME)) {
-						self.addCharacters(Game.Slime.BLUE);
-					} else if(prop.includes(Game.Property.RED_SLIME)) {
-						self.addCharacters(Game.Slime.RED);
-					} else if(prop.includes(Game.Property.YELLOW_SLIME)) {
-						self.addCharacters(Game.Slime.YELLOW);
-					}
-					if(powers != null) {
-						for(var j = 0; j < powers.length; j++) {
-							self.properties[i + 1].push(Game.Property.POWER + powers[j]);
-						}
-					}
-				} else {
-					self.properties[i + 1] = [];
-					self.tileImages[i] = undefined;
-				}
-			}
+			self.loadProperties(json);
+			totalImages = self.loadTiles(json);
+			self.loadMap(json);
 			
 			// Load character images first then tiles
-			var image;
+			let image;
 			for (const [key, value] of self.characters.entries()) {
 				image = new Image();
 				image.onload = function() {
 					if(++loadedImages >= self.characters.size) {
 						loadedImages = 0;
-						for(var i = 0; i < self.tileImages.length; i++) {
-							var src = self.tileImages[i];
+						for(let i = 0; i < self.tileImages.length; i++) {
+							let src = self.tileImages[i];
 							if(src != undefined) {
 								image = new Image();
 								image.onload = function() {
@@ -238,13 +143,231 @@ class IsometricMap {
 	}
 	
 	/**
+	* Draw the character
+	*
+	* @param {image} img - Image to draw
+	* @param {int} x - Position X
+	* @param {int} y - Position Y
+	* @param {int} w - Image width
+	* @param {int} h - Image height
+	* @param {boolean} clear - Clear canvas
+	*/
+	drawCharacter(img, x, y, w, h, clear) {
+		w = w * this.ratio;
+		h = h * this.ratio;
+		let self = this;
+		let offX = (x - 1) * this.tileWidth / 2 + y * this.tileWidth / 2 + this.originX;
+		let offY = (y - 1) * this.tileHeight / 2 - x * this.tileHeight / 2 + this.originY;
+		offX = offX + this.tileWidth * 0.25 - (w - this.tileHeight) / 2;
+		offY = offY - this.tileHeight * 0.25 - (h - this.tileHeight);
+		if(clear) {
+			this.charCtx.clearRect(0, 0, this.charCtx.canvas.width, this.charCtx.canvas.height);
+		}
+		this.charCtx.drawImage(img, offX, offY, w, h);
+	}
+	
+	/**
+	* Draw or clear the puddle
+	*
+	* @param {int} x - Position X of tile
+	* @param {int} y - Position Y of tile
+	* @param {string} color - Color puddle or undefined for clear
+	*/
+	drawPuddle(x, y, color) {
+		let border; // Remomve border line
+		if(color != undefined) {
+			this.tileCtx.globalCompositeOperation='source-over';
+			this.tileCtx.globalAlpha = 0.5;
+			this.tileCtx.strokeStyle = color;
+			this.tileCtx.fillStyle = color;
+			this.tileCtx.lineWidth = 1;
+			border = 0;
+		} else { // If the color is undefined then the area is clear
+			this.tileCtx.globalCompositeOperation='destination-out';
+			this.tileCtx.globalAlpha = 1;
+			border = 1;
+		}
+		let offX = x * this.tileWidth / 2 + y * this.tileWidth / 2 + this.originX;
+		let offY = y * this.tileHeight / 2 - x * this.tileHeight / 2 + this.originY;
+		let top = offY + this.tileHeight / 2 + border / 2;
+		let bot = offY - this.tileHeight / 2 - border / 2;
+		let right = offX + this.tileWidth / 2 + border;
+		let left = offX - this.tileWidth / 2 - border;
+
+		
+		this.tileCtx.beginPath();
+		this.tileCtx.moveTo(offX, top);
+		this.tileCtx.lineTo(right, offY);
+		this.tileCtx.lineTo(offX, bot);
+		this.tileCtx.lineTo(left, offY);
+		this.tileCtx.closePath();
+		this.tileCtx.stroke();
+		this.tileCtx.fill();
+	}
+	
+	/**
+	* Get tile properties 
+	*
+	* @param {int} x - Position X of tile
+	* @param {int} y - Position Y of tile
+	* @return {array} properties - The properties tile
+	*/
+	getProperties(x, y) {
+		if(x >= 0 && x < this.tilesX && y >= 0 && y < this.tilesY) {
+			let index = this.map[x][y];
+			return this.properties[index];
+		} else {
+			return [];
+		}
+	}
+	
+	/* -------------------------------------------------- [Private] -------------------------------------------------- */
+	
+	/**
+	* Load the game properties
+	*
+	* @param {object} json properties
+	*/
+	loadProperties(json) {
+		this.characters = new Map();
+		this.dialogs = new Array();
+		
+		// Spawn
+		this.spawnX = json.spawn.y - 1; // Case start at index 1 in the json and x axis is the top left border
+		if(this.spawnX < 0) {
+			this.spawnX = 0;
+		} else if(this.spawnX >= this.tilesX) {
+			this.spawnX = this.tilesX - 1;
+		}
+		this.spawnY = json.spawn.x - 1; // Case start at index 1 in the json and x axis is the bot left border
+		if(this.spawnY < 0) {
+			this.spawnY = 0;
+		} else if(this.spawnY >= this.tilesY) {
+			this.spawnY = this.tilesY - 1;
+		}
+		
+		// Food
+		if(json.food != undefined && json.food != null && json.food > 0) {
+			this.food = json.food;
+		} else {
+			this.food = 0;
+		}
+		
+		// Life
+		if(json.life != undefined && json.life != null && json.life > 0) {
+			this.life = json.life;
+		} else {
+			this.life = 0;
+		}
+		
+		// Dialogs
+		if(json.dialogs != undefined && json.dialogs != null) {
+			this.dialogs = json.dialogs;
+		}
+		
+		// Enemy
+		if(json.enemy != undefined && json.enemy != null) {
+			this.enemy = true;
+			this.addCharacters(Slime.Color.GRAY);
+			this.enemyX = json.enemy.y - 1; // Case start at index 1 in the json and x axis is the top left border
+			if(this.enemyX < 0) {
+				this.enemyX = 0;
+			} else if(this.enemyX >= this.tilesX) {
+				this.enemyX = this.tilesX - 1;
+			}
+			this.enemyY = json.enemy.x - 1; // Case start at index 1 in the json and x axis is the bot left border
+			if(this.enemyY < 0) {
+				this.enemyY = 0;
+			} else if(this.enemyY >= this.tilesY) {
+				this.enemyY = this.tilesY - 1;
+			}
+		} else {
+			this.enemy = false;
+		}
+	}
+	
+	/**
+	* Load tiles properties and images
+	*
+	* @param {object} json properties
+	* @return {int} number of images to load
+	*/
+	loadTiles(json) {
+		this.tileImages = new Array();
+		this.properties = new Array();
+		let totalImages = 0;
+		
+		this.addCharacters(Slime.Color.GREEN); // Default characters
+		this.properties[0] = []; // Index 0 is reserved for no tiles
+		for(let i = 0; i < json.tiles.length; i++) {
+			let path;
+			let powers = null;
+			if(json.tiles[i].includes(":")) {
+				let array = json.tiles[i].split(":");
+				path = array[0];
+				powers = array.slice(1);
+			} else {
+				path = json.tiles[i];
+			}
+			let tile = this.tiles.get(path);
+			if(tile != undefined) {
+				let prop = JSON.parse(JSON.stringify(tile.properties));
+				if(tile.path != undefined && tile.path != null) {
+					this.tileImages[i] = tile.path;
+					totalImages++;
+				}
+				this.properties[i + 1] = prop;
+				if(prop.includes(Tile.Property.BLUE_SLIME)) {
+					this.addCharacters(Slime.Color.BLUE);
+				} else if(prop.includes(Tile.Property.RED_SLIME)) {
+					this.addCharacters(Slime.Color.RED);
+				} else if(prop.includes(Tile.Property.YELLOW_SLIME)) {
+					this.addCharacters(Slime.Color.YELLOW);
+				}
+				if(powers != null) {
+					for(let j = 0; j < powers.length; j++) {
+						this.properties[i + 1].push(Tile.Property.POWER + powers[j]);
+					}
+				}
+			} else {
+				this.properties[i + 1] = [];
+				this.tileImages[i] = undefined;
+			}
+		}
+		return totalImages;
+	}
+	
+	/**
+	* Load the puddles map
+	*
+	* @param {object} json properties
+	*/
+	loadMap(json) {
+		this.map = new Array();
+		this.puddles = new Array();
+		
+		for(let x = 0; x < this.tilesX; x++) {
+			this.map[x] = json.map[this.tilesX - 1 - x]; // Reverse the array for corresponding to the json map
+			this.puddles[x] = new Array();
+			for(let y = 0; y < this.tilesY; y++) {
+				var props = this.getProperties(x, y);
+				if(props.includes(Tile.Property.PUDDLE)) {
+					this.puddles[x][y] = Game.Puddle.NONE;
+				} else {
+					this.puddles[x][y] = Game.Puddle.NULL;
+				}
+			}
+		}
+	}
+	
+	/**
 	* Update canvas size and center map
 	*/
 	updateCanvasSize() {
-		var width = $(window).width();
-		var height = $(window).height();
-		var maxWidth = IsometricMap.TILE_WIDTH * this.tilesX;
-		var maxHeight = IsometricMap.TILE_HEIGHT * this.tilesY + IsometricMap.TILE_DEPTH;
+		let width = $(window).width();
+		let height = $(window).height();
+		let maxWidth = IsometricMap.TILE_WIDTH * this.tilesX;
+		let maxHeight = IsometricMap.TILE_HEIGHT * this.tilesY + IsometricMap.TILE_DEPTH;
 		if(width >= maxWidth && height >= maxHeight) {
 			this.ratio = 1;
 		} else if(width >= maxWidth * 0.75 && height >= maxHeight * 0.75) {
@@ -278,86 +401,23 @@ class IsometricMap {
 		this.mapCtx.clearRect(0, 0, this.mapCtx.canvas.width, this.mapCtx.canvas.height);
 
 		// Draw tiles with display priority 
-		for(var x = this.tilesX - 1; x >= 0; x--) {
-			for(var y = 0; y < this.tilesY; y++) {
-				var offX = (x - 1) * this.tileWidth / 2 + y * this.tileWidth / 2 + this.originX;
-				var offY = (y - 1) * this.tileHeight / 2 - x * this.tileHeight / 2 + this.originY;
+		for(let x = this.tilesX - 1; x >= 0; x--) {
+			for(let y = 0; y < this.tilesY; y++) {
+				let offX = (x - 1) * this.tileWidth / 2 + y * this.tileWidth / 2 + this.originX;
+				let offY = (y - 1) * this.tileHeight / 2 - x * this.tileHeight / 2 + this.originY;
 
-				var indexTile = this.map[x][y];
+				let indexTile = this.map[x][y];
 				// Index 0 is reserved for no tiles
 				if(indexTile > 0)
 				{
-					var image = this.tileImages[indexTile - 1];
+					let image = this.tileImages[indexTile - 1];
 					if(image != undefined) {
-						var ratioImage = this.tileWidth / image.width;
+						let ratioImage = this.tileWidth / image.width;
 						this.mapCtx.drawImage(image, offX, offY, image.width * ratioImage, image.height * ratioImage);
 					}
 				}
 			}
 		}
-	}
-	
-	/**
-	* Draw the character
-	*
-	* @param {image} img - Image to draw
-	* @param {int} x - Position X
-	* @param {int} y - Position Y
-	* @param {int} w - Image width
-	* @param {int} h - Image height
-	* @param {boolean} clear - Clear canvas
-	*/
-	drawCharacter(img, x, y, w, h, clear) {
-		w = w * this.ratio;
-		h = h * this.ratio;
-		var self = this;
-		var offX = (x - 1) * this.tileWidth / 2 + y * this.tileWidth / 2 + this.originX;
-		var offY = (y - 1) * this.tileHeight / 2 - x * this.tileHeight / 2 + this.originY;
-		offX = offX + this.tileWidth * 0.25 - (w - this.tileHeight) / 2;
-		offY = offY - this.tileHeight * 0.25 - (h - this.tileHeight);
-		if(clear) {
-			this.charCtx.clearRect(0, 0, this.charCtx.canvas.width, this.charCtx.canvas.height);
-		}
-		this.charCtx.drawImage(img, offX, offY, w, h);
-	}
-	
-	/**
-	* Draw or clear the puddle
-	*
-	* @param {int} x - Position X of tile
-	* @param {int} y - Position Y of tile
-	* @param {string} color - Color puddle or undefined for clear
-	*/
-	drawPuddle(x, y, color) {
-		var border; // Remomve border line
-		if(color != undefined) {
-			this.tileCtx.globalCompositeOperation='source-over';
-			this.tileCtx.globalAlpha = 0.5;
-			this.tileCtx.strokeStyle = color;
-			this.tileCtx.fillStyle = color;
-			this.tileCtx.lineWidth = 1;
-			border = 0;
-		} else { // If the color is undefined then the area is clear
-			this.tileCtx.globalCompositeOperation='destination-out';
-			this.tileCtx.globalAlpha = 1;
-			border = 1;
-		}
-		var offX = x * this.tileWidth / 2 + y * this.tileWidth / 2 + this.originX;
-		var offY = y * this.tileHeight / 2 - x * this.tileHeight / 2 + this.originY;
-		var top = offY + this.tileHeight / 2 + border / 2;
-		var bot = offY - this.tileHeight / 2 - border / 2;
-		var right = offX + this.tileWidth / 2 + border;
-		var left = offX - this.tileWidth / 2 - border;
-
-		
-		this.tileCtx.beginPath();
-		this.tileCtx.moveTo(offX, top);
-		this.tileCtx.lineTo(right, offY);
-		this.tileCtx.lineTo(offX, bot);
-		this.tileCtx.lineTo(left, offY);
-		this.tileCtx.closePath();
-		this.tileCtx.stroke();
-		this.tileCtx.fill();
 	}
 	
 	/**
@@ -370,48 +430,5 @@ class IsometricMap {
 		this.characters.set(color + Game.Direction.DOWN, "images/characters/slime-" + color + "-down.png");
 		this.characters.set(color + Game.Direction.RIGHT, "images/characters/slime-" + color + "-right.png");
 	}
-	
-	/**
-	* Get tile properties 
-	*
-	* @param {int} x - Position X of tile
-	* @param {int} y - Position Y of tile
-	* @return {array} properties - The properties tile
-	*/
-	getProperties(x, y) {
-		if(x >= 0 && x < this.tilesX && y >= 0 && y < this.tilesY) {
-			var index = this.map[x][y];
-			return this.properties[index];
-		} else {
-			return [];
-		}
-	}
 
 }
-
-// IMPORTANT : Waiting support for the static word in the classes by all browsers
-
-/**
-* @enum Tile width constants
-*/
-IsometricMap.TILE_WIDTH = 200;
-
-/**
-* @enum Tile height constants
-*/
-IsometricMap.TILE_HEIGHT = 100;
-
-/**
-* @enum Tile depth constants
-*/
-IsometricMap.TILE_DEPTH = 30;
-
-/**
-* @enum Character width constants
-*/
-IsometricMap.CHAR_WIDTH = 120;
-
-/**
-* @enum Character height constants
-*/
-IsometricMap.CHAR_HEIGHT = 80;

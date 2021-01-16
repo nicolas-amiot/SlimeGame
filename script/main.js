@@ -1,17 +1,19 @@
 $(document).ready(function(){
 	
 	// Create the map and game objects
-	var isometricMap = new IsometricMap("map", "tile", "char");
-	var game = new Game(isometricMap, "level", "puddle", "life", "food", "slime", "bubble");
+	let isometricMap = new IsometricMap("map", "tile", "char");
+	let screen = new Screen("level", "puddle", "life", "food", "slime", "bubble");
+	let game = new Game(isometricMap, screen);
 	$('#animate').on("input", function() {
 		game.animate = $(this).val() * 1000;
 		$(this).next("output").val($(this).val() + " s");
 	});
 	
-	var audio = new Audio('music/Komiku_-_09_-_De_lherbe_sous_les_pieds.mp3');
+	// Music game
+	let audio = new Audio('music/Komiku_-_09_-_De_lherbe_sous_les_pieds.mp3');
 	audio.loop = true;
 	$('#audio').on("input", function() {
-		var volume = $(this).val();
+		let volume = $(this).val();
 		if(volume != 0) {
 			audio.play();
 		} else {
@@ -22,10 +24,10 @@ $(document).ready(function(){
 	});
 	
 	// Load maps modal
-	var totalMaps = 20;
-	var modal = $("#maps");
-	var row = null;
-	for(var i = 1; i <= totalMaps; i++) {
+	let totalMaps = 20;
+	let modal = $("#maps");
+	let row = null;
+	for(let i = 1; i <= totalMaps; i++) {
 		if(i%10 == 1) {
 			row = $('<div class="row"></div>');
 			modal.append(row);
@@ -63,12 +65,7 @@ $(document).ready(function(){
 	// Redraw map when resize
 	$(window).resize(function() {
 		if(game.ready) {
-			game.isometricMap.run();
-			game.redrawPuddles();
-			game.isometricMap.drawCharacter(game.getCharacter(), game.posX, game.posY, 120, 80, true);
-			if(game.isometricMap.enemy) {
-				game.isometricMap.drawCharacter(game.isometricMap.characters.get(Game.Slime.GRAY + game.enemy), game.enemyX, game.enemyY, 120, 80, false);
-			}
+			game.redraw();
 		}
 	});
 	
@@ -79,7 +76,7 @@ $(document).ready(function(){
 	$(document).keyup(function(e) {
 		e.preventDefault();
 		if(game.ready) {
-			var which = e.which;
+			let which = e.which;
 			if(which == 87 || which == 90 || which == 38) { // W or Z or up
 				$("#up").focus();
 				game.moveDirection(Game.Direction.UP);
@@ -96,7 +93,7 @@ $(document).ready(function(){
 				$("#action").focus();
 				game.useSkill();
 			} else if(which == 32) { // space
-				game.updateBubble();
+				game.nextDialog();
 			}
 		}
 	});
@@ -104,7 +101,7 @@ $(document).ready(function(){
 	// Button for play
 	$('.command').click(function() {
 		if(game.ready) {
-			var id = $(this).attr("id");
+			let id = $(this).attr("id");
 			if(id == "up") {
 				game.moveDirection(Game.Direction.UP);
 			} else if(id == "left") {
@@ -116,7 +113,7 @@ $(document).ready(function(){
 			} else if(id == "action") {
 				game.useSkill();
 			} else if(id == "next") {
-				game.updateBubble();
+				game.nextDialog();
 			}
 		}
 	});

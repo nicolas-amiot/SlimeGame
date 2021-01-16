@@ -2,43 +2,54 @@
 * @class Game
 */
 class Game {
+
+	/**
+	* @enum Directions constants
+	*/
+	static get Direction() {
+		return {
+			UP: "U",
+			LEFT: "L",
+			DOWN: "D",
+			RIGHT: "R"
+		};
+	}
+
+	/**
+	* @enum Puddles constants
+	*/
+	static get Puddle() {
+		return {
+			NULL: 0,
+			NONE: 1,
+			GREEN: 2,
+			BLUE: 3,
+			WHITE: 4
+		};
+	}
 	
 	/**
 	* Constructor for game class
 	*
-	* @param {isometricMap} isometricMap - Isometric map render
+	* @param {IsometricMap} render - Isometric map render
+	* @param {Screen} screen - Screen element
 	*/
-	constructor(isometricMap, idLevel, idPuddle, idLife, idFood, idSlime, idBubble) {
-		// Isometric Map
-		this.isometricMap = isometricMap;
+	constructor(render, screen) {
+		this.render = render;
+		this.screen = screen;
 		
-		// Display element
-		this.elLevel = document.getElementById(idLevel);
-		this.elPuddle = document.getElementById(idPuddle);
-		this.elLife = document.getElementById(idLife);
-		this.elFood = document.getElementById(idFood);
-		this.elSlime = document.getElementById(idSlime);
-		this.elBubble = document.getElementById(idBubble);
+		// Configuration
 		this.animate = 500;
 		
 		// Game attributes
 		this.success = new Array(); // level success
 		this.ready = false; // Game is ready to be played
 		this.pending = false; // Animation pending
-		this.slime = null; // Current slime color
-		this.direction = null; // Current slime direction
+		this.slime = null; // Current slime
 		this.puddles = null; // Current map puddles
 		this.cases = 0; // Number of puddles before win
 		this.level = 1; // Map level
-		this.posX = 0; // Current slime position in x axis
-		this.posY = 0; // Current slime position in y axis
-		this.food = 0; // Current food
-		this.life = 0; // Current life
-		this.power = 0; // Power of your skill
-		this.skill = false; // Action button was pressed
-		this.enemy = Game.Direction.RIGHT; // Enemy direction
-		this.enemyX = 0; // Enemy position in x axis
-		this.enemyY = 0; // Enemy position in y axis
+		this.enemy = null; // Enemy slime
 		this.dialog = 0; // Current dialog display
 	}
 	
@@ -46,26 +57,18 @@ class Game {
 	* Start the game
 	*/
 	start() {
-		var self = this;
+		let self = this;
 		this.ready = false;
-		this.isometricMap.load(self.level, function() {
+		this.render.load(self.level, function() {
 			self.restart();
 			self.ready = true;
-			$(self.elLevel).text(self.level);
-			$(self.elLevel).parent().removeClass("d-none");
-			$(self.elPuddle).parent().removeClass("d-none");
-			if(self.isometricMap.food > 0) {
-				$(self.elFood).parent().removeClass("d-none");
-			} else {
-				$(self.elFood).parent().addClass("d-none");
-			}
-			if(self.isometricMap.life > 0) {
-				$(self.elLife).parent().removeClass("d-none");
-			} else {
-				$(self.elLife).parent().addClass("d-none");
-			}
+			self.screen.updateLevel(self.level);
+			self.screen.displayLevel(true);
+			self.screen.displayPuddle(true);
+			self.screen.displayFood(self.render.food > 0);
+			self.screen.displayLife(self.render.life > 0);
 			self.dialog = 1;
-			self.updateBubble();
+			self.nextDialog();
 		});
 	}
 	
@@ -73,65 +76,34 @@ class Game {
 	* Restart the game
 	*/
 	restart() {
-		this.isometricMap.tileCtx.clearRect(0, 0, this.isometricMap.tileCtx.canvas.width, this.isometricMap.tileCtx.canvas.height);
-		this.slime = Game.Slime.GREEN;
-		this.direction = Game.Direction.RIGHT;
-		this.power = 0;
-		this.skill = false;
-		this.updateSlime(Game.Slime.GREEN);
-		this.posX = this.isometricMap.spawnX;
-		this.posY = this.isometricMap.spawnY;
-		this.puddles = JSON.parse(JSON.stringify(this.isometricMap.puddles));
-		if(this.puddles[this.posX][this.posY] == Game.Puddle.NONE) {
-			this.puddles[this.posX][this.posY] = Game.Puddle.GREEN;
-			this.isometricMap.drawPuddle(this.posX, this.posY, "green");
+		this.render.tileCtx.clearRect(0, 0, this.render.tileCtx.canvas.width, this.render.tileCtx.canvas.height);
+		this.slime = new Slime(Slime.Color.GREEN, this.render.spawnX, this.render.spawnY);
+		this.changeSlime(Slime.Color.GREEN);
+		this.puddles = JSON.parse(JSON.stringify(this.render.puddles));
+		if(this.puddles[this.slime.posX][this.slime.posY] == Game.Puddle.NONE) {
+			this.puddles[this.slime.posX][this.slime.posY] = Game.Puddle.GREEN;
+			this.render.drawPuddle(this.slime.posX, this.slime.posY, "green");
 		}
-		for(var x = 0; x < this.isometricMap.tilesX; x++) {
-			for(var y = 0; y < this.isometricMap.tilesY; y++) {
-				var properties = this.isometricMap.getProperties(x, y);
-				if(properties.includes(Game.Property.DOOR) && properties.includes(Game.Property.OPEN)) {
-					this.puddles[x][y] = Game.Puddle.WHITE;
-					this.isometricMap.drawPuddle(x, y, "white");
-				}
-			}
-		}
+		Tile.init(this);
 		this.calculatePuddles();
-		this.isometricMap.drawCharacter(this.getCharacter(), this.posX, this.posY, IsometricMap.CHAR_WIDTH, IsometricMap.CHAR_HEIGHT, true);
-		if(this.isometricMap.enemy) {
-			this.enemy = Game.Direction.RIGHT;
-			this.enemyX = this.isometricMap.enemyX;
-			this.enemyY = this.isometricMap.enemyY;
-			this.isometricMap.drawCharacter(this.isometricMap.characters.get(Game.Slime.GRAY + this.enemy), this.enemyX, this.enemyY, IsometricMap.CHAR_WIDTH, IsometricMap.CHAR_HEIGHT, false);
+		this.render.drawCharacter(this.getCharacter(this.slime), this.slime.posX, this.slime.posY, IsometricMap.CHAR_WIDTH, IsometricMap.CHAR_HEIGHT, true);
+		if(this.render.enemy) {
+			this.enemy = new Slime(Slime.Color.GRAY, this.render.enemyX, this.render.enemyY);
+			this.render.drawCharacter(this.getCharacter(this.enemy), this.enemy.posX, this.enemy.posY, IsometricMap.CHAR_WIDTH, IsometricMap.CHAR_HEIGHT, false);
 		}
-		this.food = this.isometricMap.food;
-		this.updateFood();
-		this.life = this.isometricMap.life;
-		this.updateLife();
-		this.activateCase();
+		this.slime.food = this.render.food;
+		this.screen.updateFood(this.slime.food);
+		this.slime.life = this.render.life;
+		this.screen.updateLife(this.slime.life);
+		Tile.activateCase(this);
 	}
 	
-	/**
-	* Get character image by the slime color and direction
-	* @return {image} character - The character image
-	*/
-	getCharacter() {
-		return this.isometricMap.characters.get(this.slime + this.direction);
-	}
-	
-	/**
-	* Redraw the slime character
-	*/
-	redrawPuddles() {
-		for(var x = 0; x < this.puddles.length; x++) {
-			for(var y = 0; y < this.puddles[x].length; y++) {
-				if(this.puddles[x][y] == Game.Puddle.GREEN) {
-					this.isometricMap.drawPuddle(x, y, "green");
-				} else if(this.puddles[x][y] == Game.Puddle.BLUE) {
-					this.isometricMap.drawPuddle(x, y, "blue");
-				} else if(this.puddles[x][y] == Game.Puddle.WHITE) {
-					this.isometricMap.drawPuddle(x, y, "white");
-				}
-			}
+	redraw() {
+		this.render.run();
+		this.redrawPuddles();
+		this.render.drawCharacter(this.getCharacter(this.slime), this.slime.posX, this.slime.posY, IsometricMap.CHAR_WIDTH, IsometricMap.CHAR_HEIGHT, true);
+		if(this.render.enemy) {
+			this.render.drawCharacter(this.getCharacter(this.enemy), this.enemy.posX, this.enemy.posY, IsometricMap.CHAR_WIDTH, IsometricMap.CHAR_HEIGHT, false);
 		}
 	}
 	
@@ -144,37 +116,83 @@ class Game {
 	*/
 	moveDirection(direction) {
 		if(!this.pending) {
-			var number = 1;
-			var puddled = true;
-			var characters = this.isometricMap.characters;
-			if(this.slime == Game.Slime.RED && this.skill) {
-				number += this.power;
-			} else if(this.slime == Game.Slime.YELLOW) {
-				puddled = false;
-			}
+			let characters = this.render.characters;
+			let move = this.slime.startMove();
 			if(direction == Game.Direction.UP) {
-				var mouvement = this.getMouvement(number, 1, 0);
+				let mouvement = this.getMouvement(move.number, 1, 0);
 				if(mouvement > 0) {
-					this.direction = Game.Direction.UP;
-					this.move(mouvement, 0, puddled);
+					this.slime.direction = direction;
+					this.move(mouvement, 0, move.puddled);
 				}
 			} else if(direction == Game.Direction.LEFT) {
-				var mouvement = this.getMouvement(number, 0, -1);
+				let mouvement = this.getMouvement(move.number, 0, -1);
 				if(mouvement > 0) {
-					this.direction = Game.Direction.LEFT;
-					this.move(0, -mouvement, puddled);
+					this.slime.direction = direction;
+					this.move(0, -mouvement, move.puddled);
 				}
 			} else if(direction == Game.Direction.DOWN) {
-				var mouvement = this.getMouvement(number, -1, 0);
+				let mouvement = this.getMouvement(move.number, -1, 0);
 				if(mouvement > 0) {
-					this.direction = Game.Direction.DOWN;
-					this.move(-mouvement, 0, puddled);
+					this.slime.direction = direction;
+					this.move(-mouvement, 0, move.puddled);
 				}
 			} else if(direction == Game.Direction.RIGHT) {
-				var mouvement = this.getMouvement(number, 0, 1);
+				let mouvement = this.getMouvement(move.number, 0, 1);
 				if(mouvement > 0) {
-					this.direction = Game.Direction.RIGHT;
-					this.move(0, mouvement, puddled);
+					this.slime.direction = direction;
+					this.move(0, mouvement, move.puddled);
+				}
+			}
+		}
+	}
+	
+	/**
+	* Use skill depending on the color of the slime
+	*/
+	useSkill() {
+		if(!this.pending) {
+			this.slime.useSkill(this);
+		}
+	}
+	
+	/**
+	* Show the next dialog
+	*/
+	nextDialog() {
+		if(this.dialog == 1) {
+			this.screen.displayBubble(true);
+		}
+		if(this.dialog <= this.render.dialogs.length) {
+			this.screen.updateBubble(this.render.dialogs[this.dialog - 1]);
+			this.dialog++;
+		} else if(this.dialog > this.render.dialogs.length) {
+			this.screen.displayBubble(false);
+		}
+	}
+	
+	/* -------------------------------------------------- [Private] -------------------------------------------------- */
+	
+	/**
+	* Get character image by the slime color and direction
+	* @param {object} slime - The slime
+	* @return {image} character - The character image
+	*/
+	getCharacter(slime) {
+		return this.render.characters.get(slime.color + slime.direction);
+	}
+	
+	/**
+	* Redraw the slime character
+	*/
+	redrawPuddles() {
+		for(let x = 0; x < this.puddles.length; x++) {
+			for(let y = 0; y < this.puddles[x].length; y++) {
+				if(this.puddles[x][y] == Game.Puddle.GREEN) {
+					this.render.drawPuddle(x, y, "green");
+				} else if(this.puddles[x][y] == Game.Puddle.BLUE) {
+					this.render.drawPuddle(x, y, "blue");
+				} else if(this.puddles[x][y] == Game.Puddle.WHITE) {
+					this.render.drawPuddle(x, y, "white");
 				}
 			}
 		}
@@ -189,22 +207,23 @@ class Game {
 	* @return {int} mouvement - The number of abscissa or ordinate case 
 	*/
 	getMouvement(number, nextX, nextY) {
-		var mouvement = 0;
+		let mouvement = 0;
+		let prop;
 		do {
-			var x = this.posX + nextX * (mouvement + 1);
-			var y = this.posY + nextY * (mouvement + 1);
-			var prop = this.isometricMap.getProperties(x, y);
-			var puddle = null;
-			if(x >= 0 && x < this.isometricMap.tilesX && y >= 0 && y < this.isometricMap.tilesY) {
+			let x = this.slime.posX + nextX * (mouvement + 1);
+			let y = this.slime.posY + nextY * (mouvement + 1);
+			prop = this.render.getProperties(x, y);
+			let puddle = null;
+			if(x >= 0 && x < this.render.tilesX && y >= 0 && y < this.render.tilesY) {
 				puddle = this.puddles[x][y];
 			}
 			
-			if(prop.includes(Game.Property.WALK) || puddle == Game.Puddle.WHITE) {
+			if(prop.includes(Tile.Property.WALK) || puddle == Game.Puddle.WHITE) {
 				mouvement++;
 			} else {
 				break;
 			}
-		} while (mouvement < number || prop.includes(Game.Property.ICE));
+		} while (mouvement < number || prop.includes(Tile.Property.ICE));
 		return mouvement;
 	}
 	
@@ -218,18 +237,18 @@ class Game {
 	*/
 	move(vx, vy, puddled) {
 		this.pending = true;
-		var self = this;
-		var frame = this.animate != 0 ? Math.ceil(this.animate / 1000 * 60) : 1;
-		var deformation = 40;
-		var number = vx != 0 ? vx : vy;
-		var sign = Math.sign(number);
-		var speed = Math.abs(number) / frame;
-		var moveEnemy = this.getNextEnemyTile(vx, vy);
-		for(var i = 1; i <= frame; i++) {
+		let self = this;
+		let frame = this.animate != 0 ? Math.ceil(this.animate / 1000 * 60) : 1;
+		let deformation = 40;
+		let number = vx != 0 ? vx : vy;
+		let sign = Math.sign(number);
+		let speed = Math.abs(number) / frame;
+		let moveEnemy = this.getNextEnemyTile(vx, vy);
+		for(let i = 1; i <= frame; i++) {
 			setTimeout(function(index) {
-				var current;
-				var next;
-				var deform;
+				let current;
+				let next;
+				let deform;
 				// Draw character
 				if(sign == -1) {
 					current = Math.floor(sign * speed * index);
@@ -243,67 +262,53 @@ class Game {
 				} else {
 					deform = deformation - deformation * index / frame;
 				}
-				self.isometricMap.drawCharacter(self.getCharacter(), self.posX + vx * index / frame, self.posY + vy * index / frame, IsometricMap.CHAR_WIDTH + deform, IsometricMap.CHAR_HEIGHT, true);
-				if(self.isometricMap.enemy) {
-					self.isometricMap.drawCharacter(self.isometricMap.characters.get(Game.Slime.GRAY + self.enemy), self.enemyX + (moveEnemy.x - self.enemyX) * index / frame, self.enemyY + (moveEnemy.y - self.enemyY) * index / frame, IsometricMap.CHAR_WIDTH + (moveEnemy.deform ? deform : 0), IsometricMap.CHAR_HEIGHT, false);
+				self.render.drawCharacter(self.getCharacter(self.slime), self.slime.posX + vx * index / frame, self.slime.posY + vy * index / frame, IsometricMap.CHAR_WIDTH + deform, IsometricMap.CHAR_HEIGHT, true);
+				if(self.render.enemy) {
+					self.render.drawCharacter(self.getCharacter(self.enemy), self.enemy.posX + (moveEnemy.x - self.enemy.posX) * index / frame, self.enemy.posY + (moveEnemy.y - self.enemy.posY) * index / frame, IsometricMap.CHAR_WIDTH + (moveEnemy.deform ? deform : 0), IsometricMap.CHAR_HEIGHT, false);
 				}
 				// Case crossed
 				if(puddled && current != next) {
-					var tileX = self.posX;
-					var tileY = self.posY;
+					let tileX = self.slime.posX;
+					let tileY = self.slime.posY;
 					if(vx != 0) {
 						tileX += current;
 					} else if(vy != 0) {
 						tileY += current;
 					}
-					var puddle = self.puddles[tileX][tileY];
+					let puddle = self.puddles[tileX][tileY];
 					if(puddle == Game.Puddle.NONE) {
-						self.isometricMap.drawPuddle(tileX, tileY, "green");
+						self.render.drawPuddle(tileX, tileY, "green");
 						self.puddles[tileX][tileY] = Game.Puddle.GREEN;
 						self.cases--;
-						self.updatePuddle();
+						self.screen.updatePuddle(self.cases);
 					} else if(puddle == Game.Puddle.GREEN) {
-						self.isometricMap.drawPuddle(tileX, tileY, undefined);
+						self.render.drawPuddle(tileX, tileY, undefined);
 						self.puddles[tileX][tileY] = Game.Puddle.NONE;
 						self.cases++;
-						self.updatePuddle();
-						if(self.isometricMap.life != 0) {
-							if(self.life > 0) {
-								self.life--;
-								self.updateLife();
+						self.screen.updatePuddle(self.cases);
+						if(self.render.life != 0) {
+							if(self.slime.life > 0) {
+								self.slime.life--;
+								self.screen.updateLife(self.slime.life);
 							}
 						}
 					}
 				}
 				// Last case
 				if(index == frame) {
-					self.posX += vx;
-					self.posY += vy;
-					if(self.isometricMap.enemy) {
-						self.enemyX = moveEnemy.x;
-						self.enemyY = moveEnemy.y;
+					self.slime.posX += vx;
+					self.slime.posY += vy;
+					if(self.render.enemy) {
+						self.enemy.posX = moveEnemy.x;
+						self.enemy.posY = moveEnemy.y;
 					}
-					if(self.isometricMap.food != 0 && self.slime != Game.Slime.YELLOW) {
-						self.food--;
-						self.updateFood();
-					}
-					if(self.slime == Game.Slime.RED && self.skill) {
-						self.power = 0;
-						self.skill = false;
-						self.updateSlime(Game.Slime.RED);
-						if(self.isometricMap.enemy && self.enemyX == self.posX  && self.enemyY == self.posY) {
-							self.killEnemy();
-						}
-					} else if(self.slime == Game.Slime.YELLOW) {
-						self.power--;
-						self.updateSlime(Game.Slime.YELLOW);
-					}
-					var dead = self.activateCase();
+					self.slime.endMove(self);
+					let dead = Tile.activateCase(self);
 					if(self.cases == 0) {
 						self.addSuccess();
 						self.level++;
 						self.start();
-					} else if(dead || (self.isometricMap.food != 0 && self.food == 0) || (self.isometricMap.life != 0 && self.life == 0) || (self.isometricMap.enemy && self.enemyX == self.posX && self.enemyY == self.posY)) {
+					} else if(dead || (self.render.food != 0 && self.slime.food == 0) || (self.render.life != 0 && self.slime.life == 0) || (self.render.enemy && self.enemy.posX == self.slime.posX && self.enemy.posY == self.slime.posY)) {
 						self.restart();
 					}
 					self.pending = false;
@@ -317,12 +322,12 @@ class Game {
 	* @return {Graph} graph - The path finding graph
 	*/
 	getGraph() {
-		var map = JSON.parse(JSON.stringify(this.isometricMap.map));
-		for(var x = 0; x < this.isometricMap.tilesX; x++) {
-			for(var y = 0; y < this.isometricMap.tilesY; y++) {
-				var idx = map[x][y];
-				var puddle = this.puddles[x][y];
-				if(puddle == Game.Puddle.BLUE || (this.isometricMap.getProperties(x, y).includes(Game.Property.DOOR) && puddle != Game.Puddle.WHITE)) {
+		let map = JSON.parse(JSON.stringify(this.render.map));
+		for(let x = 0; x < this.render.tilesX; x++) {
+			for(let y = 0; y < this.render.tilesY; y++) {
+				let idx = map[x][y];
+				let puddle = this.puddles[x][y];
+				if(puddle == Game.Puddle.BLUE || (this.render.getProperties(x, y).includes(Tile.Property.DOOR) && puddle != Game.Puddle.WHITE)) {
 					map[x][y] = 0;
 				} else if(idx > 1) {
 					map[x][y] = 1;
@@ -340,163 +345,43 @@ class Game {
 	* @return {object} move - The move object of enemy
 	*/
 	getNextEnemyTile(vx, vy) {
-		var move = null;
-		if(this.isometricMap.enemy) {
-			move = {x: this.enemyX, y: this.enemyY, deform: false};
-			var graph = this.getGraph();
-			var start = graph.grid[this.enemyX][this.enemyY];
-			var end = graph.grid[this.posX + vx][this.posY + vy];
-			var path = null;
-			if(this.slime != Game.Slime.YELLOW) {
+		let move = null;
+		if(this.render.enemy) {
+			move = {x: this.enemy.posX, y: this.enemy.posY, deform: false};
+			let graph = this.getGraph();
+			let start = graph.grid[this.enemy.posX][this.enemy.posY];
+			let end = graph.grid[this.slime.posX + vx][this.slime.posY + vy];
+			let path = null;
+			if(!this.slime.evade()) {
 				path = astar.search(graph, start, end);
 				if(path.length > 0) {
-					var gridNode = astar.search(graph, start, end)[0];
+					let gridNode = astar.search(graph, start, end)[0];
 					move.x = gridNode.x;
 					move.y = gridNode.y;
 					move.deform = true;
 				}
 			}
-			if(move.x - this.enemyX > 0) {
-				this.enemy = Game.Direction.UP;
-			} else if(move.x - this.enemyX < 0) {
-				this.enemy = Game.Direction.DOWN;
-			} else if(move.y - this.enemyY > 0) {
-				this.enemy = Game.Direction.RIGHT;
-			} else if(move.y - this.enemyY < 0) {
-				this.enemy = Game.Direction.LEFT;
+			if(move.x - this.enemy.posX > 0) {
+				this.enemy.direction = Game.Direction.UP;
+			} else if(move.x - this.enemy.posX < 0) {
+				this.enemy.direction = Game.Direction.DOWN;
+			} else if(move.y - this.enemy.posY > 0) {
+				this.enemy.direction = Game.Direction.RIGHT;
+			} else if(move.y - this.enemy.posY < 0) {
+				this.enemy.direction = Game.Direction.LEFT;
 			}
 		}
 		return move;
 	}
 	
 	/**
-	* Active the effect of the case
-	* @return {boolean} dead - If your character is dead
-	*/
-	activateCase() {
-		var dead = false;
-		var enemyDeath = false;
-		var props = this.isometricMap.getProperties(this.posX, this.posY);
-		if(props.includes(Game.Property.FOOD) && this.isometricMap.food > 0) {
-			var power = this.getPower(props);
-			if(power > 0 && power > this.food) {
-				this.food = power;
-				this.updateFood();
-			}
-		} else if(props.includes(Game.Property.BLUE_SLIME)) {
-			var power = this.getPower(props);
-			if(power > 0) {
-				for(var x = 0; x < this.puddles.length; x++) {
-					for(var y = 0; y < this.puddles[x].length; y++) {
-						if(this.puddles[x][y] == Game.Puddle.BLUE) {
-							this.puddles[x][y] = Game.Puddle.NONE;
-							this.cases++;
-							this.isometricMap.drawPuddle(x, y, undefined);
-							this.updatePuddle();
-						}
-					}
-				}
-				this.power = power;
-				var oldSlime = this.slime;
-				this.slime = Game.Slime.BLUE;
-				this.updateSlime(oldSlime);
-			}
-		} else if(props.includes(Game.Property.RED_SLIME)) {
-			var power = this.getPower(props);
-			if(power > 0) {
-				this.power = power;
-				var oldSlime = this.slime;
-				this.slime = Game.Slime.RED;
-				this.updateSlime(oldSlime);
-			}
-		} else if(props.includes(Game.Property.YELLOW_SLIME)) {
-			var power = this.getPower(props);
-			if(power > 0) {
-				this.power = power;
-				var oldSlime = this.slime;
-				this.slime = Game.Slime.YELLOW;
-				this.updateSlime(oldSlime);
-			}
-		} else if(props.includes(Game.Property.TELEPORT)) {
-			var map = this.isometricMap.map;
-			var index = map[this.posX][this.posY];
-			for(var x = 0; x < this.isometricMap.tilesX; x++) {
-				for(var y = 0; y < this.isometricMap.tilesY; y++) {
-					var idx = map[x][y];
-					if(index == idx && (x != this.posX || y != this.posY)) {
-						this.isometricMap.drawCharacter(this.getCharacter(), x, y, IsometricMap.CHAR_WIDTH, IsometricMap.CHAR_HEIGHT, true);
-						if(this.isometricMap.enemy) {
-							this.isometricMap.drawCharacter(this.isometricMap.characters.get(Game.Slime.GRAY + this.enemy), this.enemyX, this.enemyY, IsometricMap.CHAR_WIDTH, IsometricMap.CHAR_HEIGHT, false);
-						}
-						this.posX = x;
-						this.posY = y;
-						x = this.isometricMap.tilesX;
-						y = this.isometricMap.tilesY;
-					}
-				}
-			}
-		} else if(props.includes(Game.Property.BUTTON)) {
-			var powers = this.getPowers(props);
-			for(var x = 0; x < this.isometricMap.tilesX; x++) {
-				for(var y = 0; y < this.isometricMap.tilesY; y++) {
-					var properties = this.isometricMap.getProperties(x, y);
-					if(properties.includes(Game.Property.DOOR) && powers.includes(this.getPower(properties))) {
-						if(this.puddles[x][y] == Game.Puddle.WHITE) {
-							this.puddles[x][y] = Game.Puddle.NULL;
-							this.isometricMap.drawPuddle(x, y, undefined);
-							if(this.isometricMap.enemy && this.enemyX == x  && this.enemyY == y) {
-								enemyDeath = true;
-							}
-						} else {
-							this.puddles[x][y] = Game.Puddle.WHITE;
-							this.isometricMap.drawPuddle(x, y, "white");
-						}
-					}
-				}
-			}
-		} else if(props.includes(Game.Property.DEATH)) {
-			dead = true;
-		}
-		if(enemyDeath) {
-			this.killEnemy();
-		}
-		return dead;
-	}
-	
-	/**
 	* Respawn the ennemy and draw it
 	*/
 	killEnemy() {
-		this.enemyX = this.isometricMap.enemyX;
-		this.enemyY = this.isometricMap.enemyY;
-		this.isometricMap.drawCharacter(this.getCharacter(), this.posX, this.posY, IsometricMap.CHAR_WIDTH, IsometricMap.CHAR_HEIGHT, true);
-		this.isometricMap.drawCharacter(this.isometricMap.characters.get(Game.Slime.GRAY + this.enemy), this.enemyX, this.enemyY, IsometricMap.CHAR_WIDTH, IsometricMap.CHAR_HEIGHT, false);
-	}
-	
-	/**
-	* Use skill depending on the color of the slime
-	*/
-	useSkill() {
-		if(!this.pending) {
-			if(this.slime == Game.Slime.BLUE) {
-				var puddle = this.puddles[this.posX][this.posY];
-				if(puddle == Game.Puddle.NONE || puddle == Game.Puddle.GREEN) {
-					if(puddle == Game.Puddle.NONE) {
-						this.isometricMap.drawPuddle(this.posX, this.posY, "blue");
-						this.cases--;
-					} else {
-						this.isometricMap.drawPuddle(this.posX, this.posY, undefined);
-						this.isometricMap.drawPuddle(this.posX, this.posY, "blue");
-					}
-					this.puddles[this.posX][this.posY] = Game.Puddle.BLUE;
-					this.updatePuddle();
-					this.power--;
-					this.updateSlime(Game.Slime.BLUE);
-				}
-			} else if(this.slime == Game.Slime.RED) {
-				this.skill = true;
-			}
-		}
+		this.enemy.posX = this.render.enemyX;
+		this.enemy.posY = this.render.enemyY;
+		this.render.drawCharacter(this.getCharacter(this.slime), this.slime.posX, this.slime.posY, IsometricMap.CHAR_WIDTH, IsometricMap.CHAR_HEIGHT, true);
+		this.render.drawCharacter(this.getCharacter(this.enemy), this.enemy.posX, this.enemy.posY, IsometricMap.CHAR_WIDTH, IsometricMap.CHAR_HEIGHT, false);
 	}
 	
 	/**
@@ -504,9 +389,9 @@ class Game {
 	* @return {array} powers - The powers of properties
 	*/
 	getPowers(properties) {
-		var array = properties.filter((property) => property.startsWith("power"));
-		for(var i = 0; i < array.length; i++) {
-			var power = parseInt(array[i].replace("power",""));
+		let array = properties.filter((property) => property.startsWith("power"));
+		for(let i = 0; i < array.length; i++) {
+			let power = parseInt(array[i].replace("power",""));
 			if(isNaN(power)) {
 				array[i] = 0;
 			} else {
@@ -521,9 +406,9 @@ class Game {
 	* @return {int} power - The power of property
 	*/
 	getPower(properties) {
-		var property = properties.filter((property) => property.startsWith("power"));
+		let property = properties.filter((property) => property.startsWith("power"));
 		if(property.length > 0) {
-			var power = parseInt(property[0].replace("power",""));
+			let power = parseInt(property[0].replace("power",""));
 			if(!isNaN(power)) {
 				return power;
 			}
@@ -536,50 +421,14 @@ class Game {
 	*/
 	calculatePuddles() {
 		this.cases = 0;
-		for(var x = 0; x < this.puddles.length; x++) {
-			for(var y = 0; y < this.puddles[x].length; y++) {
+		for(let x = 0; x < this.puddles.length; x++) {
+			for(let y = 0; y < this.puddles[x].length; y++) {
 				if(this.puddles[x][y] == Game.Puddle.NONE) {
 					this.cases++;
-					this.updatePuddle();
 				}
 			}
 		}
-	}
-	
-	/**
-	* Update the number of puddles
-	*/
-	updatePuddle() {
-		$(this.elPuddle).text(this.cases);
-	}
-	
-	/**
-	* Update the food
-	*/
-	updateFood() {
-		$(this.elFood).text(this.food);
-	}
-	
-	/**
-	* Update the life
-	*/
-	updateLife() {
-		$(this.elLife).text(this.life);
-	}
-	
-	/**
-	* Show the next dialog
-	*/
-	updateBubble() {
-		if(this.dialog == 1) {
-			$(this.elBubble).removeClass("d-none");
-		}
-		if(this.dialog <= this.isometricMap.dialogs.length) {
-			$(this.elBubble).children("span").html(this.isometricMap.dialogs[this.dialog - 1]);
-			this.dialog++;
-		} else if(this.dialog > this.isometricMap.dialogs.length) {
-			$(this.elBubble).addClass("d-none");
-		}
+		this.screen.updatePuddle(this.cases);
 	}
 	
 	/**
@@ -587,32 +436,20 @@ class Game {
 	*
 	* @param {string} oldSlime - Old slime color
 	*/
-	updateSlime(oldSlime) {
-		if(this.slime != Game.Slime.GREEN && this.power == 0) {
-			this.slime = Game.Slime.GREEN;
-			this.isometricMap.drawCharacter(this.getCharacter(), this.posX, this.posY, IsometricMap.CHAR_WIDTH, IsometricMap.CHAR_HEIGHT, true);
-			if(this.isometricMap.enemy) {
-				this.isometricMap.drawCharacter(this.isometricMap.characters.get(Game.Slime.GRAY + this.enemy), this.enemyX, this.enemyY, IsometricMap.CHAR_WIDTH, IsometricMap.CHAR_HEIGHT, false);
+	changeSlime(oldColor) {
+		if(this.slime.color != Slime.Color.GREEN && this.slime.power == 0) {
+			this.slime.color = Slime.Color.GREEN;
+			this.render.drawCharacter(this.getCharacter(this.slime), this.slime.posX, this.slime.posY, IsometricMap.CHAR_WIDTH, IsometricMap.CHAR_HEIGHT, true);
+			if(this.render.enemy) {
+				this.render.drawCharacter(this.getCharacter(this.enemy), this.enemy.posX, this.enemy.posY, IsometricMap.CHAR_WIDTH, IsometricMap.CHAR_HEIGHT, false);
 			}
-		} else if(oldSlime != this.slime) {
-			this.isometricMap.drawCharacter(this.getCharacter(), this.posX, this.posY, IsometricMap.CHAR_WIDTH, IsometricMap.CHAR_HEIGHT, true);
-			if(this.isometricMap.enemy) {
-				this.isometricMap.drawCharacter(this.isometricMap.characters.get(Game.Slime.GRAY + this.enemy), this.enemyX, this.enemyY, IsometricMap.CHAR_WIDTH, IsometricMap.CHAR_HEIGHT, false);
+		} else if(oldColor != this.slime.color) {
+			this.render.drawCharacter(this.getCharacter(this.slime), this.slime.posX, this.slime.posY, IsometricMap.CHAR_WIDTH, IsometricMap.CHAR_HEIGHT, true);
+			if(this.render.enemy) {
+				this.render.drawCharacter(this.getCharacter(this.enemy), this.enemy.posX, this.enemy.posY, IsometricMap.CHAR_WIDTH, IsometricMap.CHAR_HEIGHT, false);
 			}
 		}
-		if(this.slime == Game.Slime.GREEN) {
-			$(this.elSlime).children("img").attr("src","images/characters/slime-green-right.png");
-			$(this.elSlime).children("span").text("");
-		} else if(this.slime == Game.Slime.BLUE) {
-			$(this.elSlime).children("img").attr("src","images/characters/slime-blue-right.png");
-			$(this.elSlime).children("span").text("Utilisations restantes : " + this.power);
-		} else if(this.slime == Game.Slime.RED) {
-			$(this.elSlime).children("img").attr("src","images/characters/slime-red-right.png");
-			$(this.elSlime).children("span").text("Puissance de la ruée : " + (this.power + 1));
-		} else if(this.slime == Game.Slime.YELLOW) {
-			$(this.elSlime).children("img").attr("src","images/characters/slime-yellow-right.png");
-			$(this.elSlime).children("span").text("Nombre de tours restants : " + this.power);
-		}
+		this.screen.updateSlime(this.slime.color, this.slime.power);
 	}
 	
 	/**
@@ -625,56 +462,3 @@ class Game {
 	}
 
 }
-
-// IMPORTANT : Waiting support for the static word in the classes by all browsers
-
-/**
-* @enum Properties constants
-*/
-Game.Property = {
-	WALK: "walk",
-	PUDDLE: "puddle",
-	ICE: "ice",
-	FOOD: "food",
-	BLUE_SLIME: "blue",
-	RED_SLIME: "red",
-	YELLOW_SLIME: "yellow",
-	TELEPORT: "teleport",
-	DEATH: "death",
-	BUTTON: "button",
-	DOOR: "door",
-	OPEN: "open",
-	POWER: "power"
-};
-
-/**
-* @enum Directions constants
-*/
-Game.Direction = {
-	UP: "U",
-	LEFT: "L",
-	DOWN: "D",
-	RIGHT: "R"
-};
-
-/**
-* @enum Slime constants
-*/
-Game.Slime = {
-	GREEN: "green",
-	BLUE: "blue",
-	RED: "red",
-	YELLOW: "yellow",
-	GRAY: "gray"
-};
-
-/**
-* @enum Puddles constants
-*/
-Game.Puddle = {
-	NULL: 0,
-	NONE: 1,
-	GREEN: 2,
-	BLUE: 3,
-	WHITE: 4
-};

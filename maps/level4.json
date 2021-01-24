@@ -2,10 +2,10 @@
 	"spawn": {"x": 4, "y": 5},
 	"dialogs": [
 		"Brrrr il fait froid ici. Par contre ca me donne envie de glisser sur cette glace <img src='images/tiles/ice.png'/>.",
-		"Néanmoins cette case <img src='images/tiles/road.png'/> semble totalement inutile... du moins à première vue."
+		"Néanmoins n'ayant pas faim la case d'herbe semble totalement inutile... du moins à première vue."
 	],
 	"life": 1,
-	"tiles": ["beach", "ice", "road"],
+	"tiles": ["beach", "ice", "grass"],
 	"map": [
 		[0, 1, 1, 1, 0],
 		[1, 2, 2, 0, 1],

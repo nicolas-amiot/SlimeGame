@@ -140,7 +140,7 @@ canvas {
 	max-width: 100%;
 }
 
-.maps .modal-content, .settings .modal-content {
+.maps .modal-content, .settings .modal-content, .help .modal-content {
 	background-color: lightblue;
 }
 
@@ -195,10 +195,10 @@ canvas {
 	margin-left: 0.4rem;
 }
 
-.settings .modal-body .link {
-	line-height: 1;
+.icon {
+	flex-grow: initial;
 }
 
-.settings .modal-body .link a {
-	font-size: 12px;
+.icon > img {
+	width: 64px;
 }

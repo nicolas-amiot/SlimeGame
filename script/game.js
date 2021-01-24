@@ -116,7 +116,6 @@ class Game {
 	*/
 	moveDirection(direction) {
 		if(!this.pending) {
-			let characters = this.render.characters;
 			let move = this.slime.startMove();
 			if(direction == Game.Direction.UP) {
 				let mouvement = this.getMouvement(move.number, 1, 0);
@@ -178,7 +177,7 @@ class Game {
 	* @return {image} character - The character image
 	*/
 	getCharacter(slime) {
-		return this.render.characters.get(slime.color + slime.direction);
+		return this.render.slimes.get(slime.color + slime.direction);
 	}
 	
 	/**

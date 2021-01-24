@@ -66,7 +66,7 @@ class IsometricMap {
 		this.originY = 0; // Origin y to display the map
 		
 		// Images
-		this.characters = null; // Characters images
+		this.slimes = null; // Characters images
 		this.tileImages = null; // Tiles images
 		
 		// Game
@@ -104,10 +104,10 @@ class IsometricMap {
 			
 			// Load character images first then tiles
 			let image;
-			for (const [key, value] of self.characters.entries()) {
+			for (const [key, value] of self.slimes.entries()) {
 				image = new Image();
 				image.onload = function() {
-					if(++loadedImages >= self.characters.size) {
+					if(++loadedImages >= self.slimes.size) {
 						loadedImages = 0;
 						for(let i = 0; i < self.tileImages.length; i++) {
 							let src = self.tileImages[i];
@@ -125,7 +125,7 @@ class IsometricMap {
 						}
 					}
 				};
-				self.characters.set(key, image);
+				self.slimes.set(key, image);
 				image.src = value; // After onload for cache
 			}
 		}).fail(function() {
@@ -229,7 +229,7 @@ class IsometricMap {
 	* @param {object} json properties
 	*/
 	loadProperties(json) {
-		this.characters = new Map();
+		this.slimes = new Map();
 		this.dialogs = new Array();
 		
 		// Spawn
@@ -297,7 +297,7 @@ class IsometricMap {
 		this.properties = new Array();
 		let totalImages = 0;
 		
-		this.addCharacters(Slime.Color.GREEN); // Default characters
+		this.addCharacters(Slime.Color.GREEN); // Default slimes
 		this.properties[0] = []; // Index 0 is reserved for no tiles
 		for(let i = 0; i < json.tiles.length; i++) {
 			let path;
@@ -425,10 +425,10 @@ class IsometricMap {
 	* @param {string} color - Color of the slime
 	*/
 	addCharacters(color) {
-		this.characters.set(color + Game.Direction.UP, "images/characters/slime-" + color + "-up.png");
-		this.characters.set(color + Game.Direction.LEFT, "images/characters/slime-" + color + "-left.png");
-		this.characters.set(color + Game.Direction.DOWN, "images/characters/slime-" + color + "-down.png");
-		this.characters.set(color + Game.Direction.RIGHT, "images/characters/slime-" + color + "-right.png");
+		this.slimes.set(color + Game.Direction.UP, "images/slimes/slime-" + color + "-up.png");
+		this.slimes.set(color + Game.Direction.LEFT, "images/slimes/slime-" + color + "-left.png");
+		this.slimes.set(color + Game.Direction.DOWN, "images/slimes/slime-" + color + "-down.png");
+		this.slimes.set(color + Game.Direction.RIGHT, "images/slimes/slime-" + color + "-right.png");
 	}
 
 }

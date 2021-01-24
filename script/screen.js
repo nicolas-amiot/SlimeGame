@@ -120,16 +120,16 @@ class Screen {
 	*/
 	updateSlime(slime, power) {
 		if(slime == Slime.Color.GREEN) {
-			$(this.slime).children("img").attr("src","images/characters/slime-green-right.png");
+			$(this.slime).children("img").attr("src","images/slimes/slime-green-right.png");
 			$(this.slime).children("span").text("");
 		} else if(slime == Slime.Color.BLUE) {
-			$(this.slime).children("img").attr("src","images/characters/slime-blue-right.png");
+			$(this.slime).children("img").attr("src","images/slimes/slime-blue-right.png");
 			$(this.slime).children("span").text("Utilisations restantes : " + power);
 		} else if(slime == Slime.Color.RED) {
-			$(this.slime).children("img").attr("src","images/characters/slime-red-right.png");
+			$(this.slime).children("img").attr("src","images/slimes/slime-red-right.png");
 			$(this.slime).children("span").text("Puissance de la ruée : " + (power + 1));
 		} else if(slime == Slime.Color.YELLOW) {
-			$(this.slime).children("img").attr("src","images/characters/slime-yellow-right.png");
+			$(this.slime).children("img").attr("src","images/slimes/slime-yellow-right.png");
 			$(this.slime).children("span").text("Nombre de tours restants : " + power);
 		}
 	}

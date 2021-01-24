@@ -14,7 +14,6 @@ class Tile {
 		tiles.set("beach", {path: folder + "beach.png", properties: [Tile.Property.WALK, Tile.Property.PUDDLE]});
 		tiles.set("ice", {path: folder + "ice.png", properties: [Tile.Property.WALK, Tile.Property.ICE]});
 		tiles.set("grass", {path: folder + "grass.png", properties: [Tile.Property.WALK, Tile.Property.FOOD]});
-		tiles.set("road", {path: folder + "road.png", properties: [Tile.Property.WALK]});
 		tiles.set("blue", {path: folder + "blue.png", properties: [Tile.Property.WALK, Tile.Property.BLUE_SLIME]});
 		tiles.set("red", {path: folder + "red.png", properties: [Tile.Property.WALK, Tile.Property.RED_SLIME]});
 		tiles.set("yellow", {path: folder + "yellow.png", properties: [Tile.Property.WALK, Tile.Property.YELLOW_SLIME]});

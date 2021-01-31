@@ -81,7 +81,8 @@ class IsometricMap {
 		this.enemyX = 0; // Enemy spawn in x axis
 		this.enemyY = 0; // Enemy spawn in y axis
 		this.dialogs = null; // Dialogs to display at the start of the game
-		this.stroke = 0;
+		this.stroke = 0; // Maximum stroke number for get the star
+		
 		this.init();
 	}
 
@@ -136,6 +137,9 @@ class IsometricMap {
 		});
 	}
 	
+	/**
+	* Draw background
+	*/
 	init() {
 		let self = this;
 		let width = $(window).width();

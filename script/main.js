@@ -14,7 +14,7 @@ $(document).ready(function(){
 		game.cookie = $(this).is(':checked');
 	});
 	$('#deleteCookie').click(function() {
-		Cookies.remove('levels');
+		Cookies.remove('levels', { path: '' });
 	});
 	
 	// Music game

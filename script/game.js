@@ -53,7 +53,9 @@ class Game {
 		this.level = 1; // Map level
 		this.enemy = null; // Enemy slime
 		this.dialog = 0; // Current dialog display
-		this.stroke = 0;
+		this.stroke = 0; // Current number of stroke
+		
+		this.getCookie();
 	}
 	
 	/**
@@ -458,6 +460,18 @@ class Game {
 	}
 	
 	/**
+	* Get cookie for the progress levels
+	*/
+	getCookie() {
+		if(this.success.length == 0 && this.cookie) {
+			this.success = Cookies.get('levels');
+			if(this.success == undefined) {
+				this.success = "";
+			}
+		}
+	}
+	
+	/**
 	* Add this level in success
 	*/
 	addSuccess() {
@@ -466,12 +480,6 @@ class Game {
 			digit = '1';
 		} else {
 			digit = '2';
-		}
-		if(this.success.length == 0 && this.cookie) {
-			this.success = Cookies.get('levels');
-			if(this.success == undefined) {
-				this.success = "";
-			}
 		}
 		let dif = this.level - this.success.length;
 		if(dif > 0) {
@@ -486,7 +494,7 @@ class Game {
 			}
 		}
 		if(this.cookie) {
-			Cookies.set('levels', this.success, { expires: 365 });
+			Cookies.set('levels', this.success, { expires: 365, path: '' });
 		}
 	}
 

@@ -1,5 +1,6 @@
 {
 	"spawn": {"x": 1, "y": 1},
+	"stroke": 51,
 	"tiles": ["beach", "grass", "ice", "lightning", "button:1", "button:1:2", "button:3", "closedoor:1", "closedoor:2", "closedoor:3", "opendoor:1", "opendoor:2", "red:2"],
 	"map": [
 		[7, 9, 3, 3, 10, 12, 3],

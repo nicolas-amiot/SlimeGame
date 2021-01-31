@@ -3,8 +3,9 @@
 	"dialogs": [
 		"Le revoilà ! Tu devrais essayer de le faire tomber dans le vide pour te laisser du répit."
 	],
-	"tiles": ["beach", "grass", "button:1", "button:2", "button:3", "closedoor:1", "closedoor:2", "closedoor:3", "opendoor:1", "opendoor:2", "opendoor:3"],
 	"enemy" : {"x": 7, "y": 4},
+	"stroke": 61,
+	"tiles": ["beach", "grass", "button:1", "button:2", "button:3", "closedoor:1", "closedoor:2", "closedoor:3", "opendoor:1", "opendoor:2", "opendoor:3"],
 	"map": [
 		[2, 5, 2, 2, 2, 2, 2],
 		[2, 11, 0, 2, 0, 3, 2],

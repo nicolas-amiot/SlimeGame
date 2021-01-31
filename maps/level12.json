@@ -2,6 +2,7 @@
 	"spawn": {"x": 2, "y": 4},
 	"life": 1,
 	"food": 1,
+	"stroke": 58,
 	"tiles": ["beach", "grass:6", "teleport", "teleport", "blue:2", "yellow:5"],
 	"map": [
 		[3, 2, 2, 1, 0, 6, 4],

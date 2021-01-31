@@ -5,6 +5,7 @@
 		"Néanmoins n'ayant pas faim la case d'herbe semble totalement inutile... du moins à première vue."
 	],
 	"life": 1,
+	"stroke": 13,
 	"tiles": ["beach", "ice", "grass"],
 	"map": [
 		[0, 1, 1, 1, 0],

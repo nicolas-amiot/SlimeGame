@@ -5,6 +5,7 @@
 	],
 	"life": 3,
 	"food" : 1,
+	"stroke": 34,
 	"tiles": ["beach", "grass:12", "ice", "lightning", "teleport", "red:3", "yellow:6"],
 	"map": [
 		[1, 5, 2, 1, 1],

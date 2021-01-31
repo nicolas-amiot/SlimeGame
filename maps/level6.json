@@ -4,6 +4,7 @@
 		"Oh un téléporteur <img src='images/tiles/teleport.png'/> ! Tu devrais essayer de le prendre."
 	],
 	"life": 1,
+	"stroke": 12,
 	"tiles": ["beach", "teleport"],
 	"map": [
 		[2, 0, 1, 1],

@@ -5,6 +5,7 @@
 		"La capacité obtenue sera de poser un flaque bleue qui ne peut pas faire perdre de point de vie et ne dispraît pas tant que je ne retourne pas sur ce type de case."
 	],
 	"life": 1,
+	"stroke": 23,
 	"tiles": ["beach", "blue:2"],
 	"map": [
 		[1, 0, 1, 0, 1],

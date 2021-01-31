@@ -131,6 +131,9 @@ class Screen {
 		} else if(slime == Slime.Color.YELLOW) {
 			$(this.slime).children("img").attr("src","images/slimes/slime-yellow-right.png");
 			$(this.slime).children("span").text("Nombre de tours restants : " + power);
+		} else if(slime == Slime.Color.PURPLE) {
+			$(this.slime).children("img").attr("src","images/slimes/slime-purple-right.png");
+			$(this.slime).children("span").text("Portée du lancer : " + power);
 		}
 	}
 	

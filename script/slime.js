@@ -14,6 +14,7 @@ class Slime {
 			BLUE: "blue",
 			RED: "red",
 			YELLOW: "yellow",
+			PURPLE: "purple",
 			GRAY: "gray"
 		};
 	}
@@ -100,6 +101,72 @@ class Slime {
 			}
 		} else if(this.color == Slime.Color.RED) {
 			this.skill = true;
+		} else if(this.color == Slime.Color.PURPLE) {
+			let activation = false;
+			if(game.puddles[this.posX][this.posY] == Game.Puddle.PURPLE) {
+				activation = true;
+			}
+			let caseX = this.posX;
+			let caseY = this.posY;
+			if(this.direction == Game.Direction.UP) {
+				caseX += this.power;
+			} else if(this.direction == Game.Direction.LEFT) {
+				caseY -= this.power;
+			} else if(this.direction == Game.Direction.DOWN) {
+				caseX -= this.power;
+			} else if(this.direction == Game.Direction.RIGHT) {
+				caseY += this.power;
+			}
+			let properties = game.render.getProperties(caseX, caseY);
+			let puddle = null;
+			if(caseX >= 0 && caseX < game.render.tilesX && caseY >= 0 && caseY < game.render.tilesY) {
+				puddle = game.puddles[caseX][caseY];
+			}
+			if(puddle != null && properties.includes(Tile.Property.WALK)) {
+				for(let x = 0; x < game.puddles.length; x++) {
+					for(let y = 0; y < game.puddles[x].length; y++) {
+						if(game.puddles[x][y] == Game.Puddle.PURPLE) {
+							let props = game.render.getProperties(x, y);
+							if(props.includes(Tile.Property.PUDDLE)) {
+								game.puddles[x][y] = Game.Puddle.NONE;
+								game.cases++;
+							} else {
+								game.puddles[x][y] = Game.Puddle.NULL;
+							}
+							game.render.drawPuddle(x, y, undefined);
+						}
+					}
+				}
+				let props = game.render.getProperties(caseX, caseY);
+				if(game.puddles[caseX][caseY] != Game.Puddle.NULL && game.puddles[caseX][caseY] != Game.Puddle.NONE) {
+					game.render.drawPuddle(caseX, caseY, undefined);
+				} else if(props.includes(Tile.Property.PUDDLE)) {
+					game.cases--;
+				}
+				game.screen.updatePuddle(game.cases);
+				game.puddles[caseX][caseY] = Game.Puddle.PURPLE;
+				game.render.drawPuddle(caseX, caseY, "purple");
+				this.power = 0;
+				game.changeSlime(Slime.Color.PURPLE);
+				if(game.render.enemy && game.enemy.posX == caseX  && game.enemy.posY == caseY) {
+					game.enemy.posX = this.posX;
+					game.enemy.posY = this.posY;
+					this.posX = caseX;
+					this.posY = caseY;
+					game.render.drawCharacter(game.getCharacter(this), this.posX, this.posY, IsometricMap.CHAR_WIDTH, IsometricMap.CHAR_HEIGHT, true);
+					game.render.drawCharacter(game.getCharacter(game.enemy), game.enemy.posX, game.enemy.posY, IsometricMap.CHAR_WIDTH, IsometricMap.CHAR_HEIGHT, false);
+				}
+				if(game.cases == 0) {
+					game.addSuccess();
+					game.level++;
+					game.start();
+				} else if(activation) {
+					let dead = Tile.activateCase(game);
+					if(dead) {
+						game.restart();
+					}
+				}
+			}
 		}
 	}
 	

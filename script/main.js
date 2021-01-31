@@ -9,6 +9,14 @@ $(document).ready(function(){
 		$(this).next("output").val($(this).val() + " s");
 	});
 	
+	// Cookie
+	$('#cookie').change(function() {
+		game.cookie = $(this).is(':checked');
+	});
+	$('#deleteCookie').click(function() {
+		Cookies.remove('levels');
+	});
+	
 	// Music game
 	let audio = new Audio('music/Komiku_-_09_-_De_lherbe_sous_les_pieds.mp3');
 	audio.loop = true;
@@ -24,7 +32,7 @@ $(document).ready(function(){
 	});
 	
 	// Load maps modal
-	let totalMaps = 20;
+	let totalMaps = 30;
 	let modal = $("#maps");
 	let row = null;
 	for(let i = 1; i <= totalMaps; i++) {
@@ -35,19 +43,27 @@ $(document).ready(function(){
 		row.append(
 			'<div class="col">' +
 				'<button name="level" value="' + i + '" class="btn btn-lg btn-light" data-dismiss="modal">' +
-					i + '<span class="d-none checkmark" />' +
+					i + '<span class="d-none" />' +
 				'</button>' +
 			'</div>'
 		);
 	}
 	$("#modalLevel").on('shown.bs.modal', function () {
 		$(this).find('button[name="level"]').each(function() {
-			if(game.success.includes(parseInt($(this).val()))) {
-				$(this).children(".checkmark").removeClass("d-none");
+			let level = parseInt($(this).val());
+			if(game.success.length >= level) {
+				let success = game.success.charAt(level - 1);
+				let span = $(this).children("span");
+				if(success == '1') {
+					span.addClass("checkmark");
+					span.removeClass("d-none");
+				} else if(success == '2') {
+					span.addClass("star");
+					span.removeClass("d-none");
+				}
 			}
 		});
 	});
-	$("#modalLevel").modal("show");
 	
 	// Launch the game
 	$('button[name="level"]').click(function() {
@@ -75,8 +91,8 @@ $(document).ready(function(){
 	});
 	$(document).keyup(function(e) {
 		e.preventDefault();
+		let which = e.which;
 		if(game.ready) {
-			let which = e.which;
 			if(which == 87 || which == 90 || which == 38) { // W or Z or up
 				$("#up").focus();
 				game.moveDirection(Game.Direction.UP);
@@ -95,13 +111,15 @@ $(document).ready(function(){
 			} else if(which == 32) { // space
 				game.nextDialog();
 			}
+		} else if(which == 32) {
+			game.screen.displayBubble(false);
 		}
 	});
 	
 	// Button for play
 	$('.command').click(function() {
+		let id = $(this).attr("id");
 		if(game.ready) {
-			let id = $(this).attr("id");
 			if(id == "up") {
 				game.moveDirection(Game.Direction.UP);
 			} else if(id == "left") {
@@ -115,6 +133,8 @@ $(document).ready(function(){
 			} else if(id == "next") {
 				game.nextDialog();
 			}
+		} else if(id == "next") {
+			game.screen.displayBubble(false);
 		}
 	});
 

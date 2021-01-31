@@ -81,6 +81,8 @@ class IsometricMap {
 		this.enemyX = 0; // Enemy spawn in x axis
 		this.enemyY = 0; // Enemy spawn in y axis
 		this.dialogs = null; // Dialogs to display at the start of the game
+		this.stroke = 0;
+		this.init();
 	}
 
 	/**
@@ -132,6 +134,20 @@ class IsometricMap {
 			$("#modalLevel").modal("show");
 			self.updateCanvasSize();
 		});
+	}
+	
+	init() {
+		let self = this;
+		let width = $(window).width();
+		let height = $(window).height();
+		this.mapCtx.canvas.width = width;
+		this.mapCtx.canvas.height = height;
+		let image = new Image();
+		image.src = "images/landscape-river.jpg";
+		// Make sure the image is loaded
+		image.onload = function(){
+			self.mapCtx.drawImage(image, 0, 0, width, height);   
+		}
 	}
 	
 	/**
@@ -265,6 +281,11 @@ class IsometricMap {
 			this.dialogs = json.dialogs;
 		}
 		
+		// Stroke
+		if(json.stroke != undefined && json.stroke != null) {
+			this.stroke = json.stroke;
+		}
+		
 		// Enemy
 		if(json.enemy != undefined && json.enemy != null) {
 			this.enemy = true;
@@ -323,6 +344,8 @@ class IsometricMap {
 					this.addCharacters(Slime.Color.RED);
 				} else if(prop.includes(Tile.Property.YELLOW_SLIME)) {
 					this.addCharacters(Slime.Color.YELLOW);
+				} else if(prop.includes(Tile.Property.PURPLE_SLIME)) {
+					this.addCharacters(Slime.Color.PURPLE);
 				}
 				if(powers != null) {
 					for(let j = 0; j < powers.length; j++) {
@@ -366,8 +389,8 @@ class IsometricMap {
 	updateCanvasSize() {
 		let width = $(window).width();
 		let height = $(window).height();
-		let maxWidth = IsometricMap.TILE_WIDTH * this.tilesX;
-		let maxHeight = IsometricMap.TILE_HEIGHT * this.tilesY + IsometricMap.TILE_DEPTH;
+		let maxWidth = (this.tilesX + this.tilesY) / 2 * IsometricMap.TILE_WIDTH;
+		let maxHeight = (this.tilesX + this.tilesY) / 2 * IsometricMap.TILE_HEIGHT + IsometricMap.TILE_DEPTH;
 		if(width >= maxWidth && height >= maxHeight) {
 			this.ratio = 1;
 		} else if(width >= maxWidth * 0.75 && height >= maxHeight * 0.75) {
@@ -389,8 +412,10 @@ class IsometricMap {
 		this.charCtx.canvas.height = height;
 
 		// Center map
-		this.originX = width / 2 - (this.tilesX - 1) * this.tileWidth / 2;
-		this.originY = height / 2 - IsometricMap.TILE_DEPTH * this.ratio / 2;
+		var totalWidth = (this.tilesX + this.tilesY) / 2 - 1;
+		var totalHeight = (this.tilesY - this.tilesX) / 2;
+		this.originX = (width - totalWidth * this.tileWidth) / 2;
+		this.originY = (height - totalHeight * this.tileHeight - IsometricMap.TILE_DEPTH * this.ratio) / 2;
 	}
 
 	/**

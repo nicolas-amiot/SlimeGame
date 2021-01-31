@@ -24,7 +24,8 @@ class Game {
 			NONE: 1,
 			GREEN: 2,
 			BLUE: 3,
-			WHITE: 4
+			PURPLE: 6,
+			WHITE: 5
 		};
 	}
 	
@@ -40,9 +41,10 @@ class Game {
 		
 		// Configuration
 		this.animate = 500;
+		this.cookie = true;
 		
 		// Game attributes
-		this.success = new Array(); // level success
+		this.success = ""; // level success
 		this.ready = false; // Game is ready to be played
 		this.pending = false; // Animation pending
 		this.slime = null; // Current slime
@@ -51,6 +53,7 @@ class Game {
 		this.level = 1; // Map level
 		this.enemy = null; // Enemy slime
 		this.dialog = 0; // Current dialog display
+		this.stroke = 0;
 	}
 	
 	/**
@@ -76,6 +79,7 @@ class Game {
 	* Restart the game
 	*/
 	restart() {
+		this.stroke = 0;
 		this.render.tileCtx.clearRect(0, 0, this.render.tileCtx.canvas.width, this.render.tileCtx.canvas.height);
 		this.slime = new Slime(Slime.Color.GREEN, this.render.spawnX, this.render.spawnY);
 		this.changeSlime(Slime.Color.GREEN);
@@ -192,6 +196,8 @@ class Game {
 					this.render.drawPuddle(x, y, "blue");
 				} else if(this.puddles[x][y] == Game.Puddle.WHITE) {
 					this.render.drawPuddle(x, y, "white");
+				} else if(this.puddles[x][y] == Game.Puddle.PURPLE) {
+					this.render.drawPuddle(x, y, "purple");
 				}
 			}
 		}
@@ -208,21 +214,20 @@ class Game {
 	getMouvement(number, nextX, nextY) {
 		let mouvement = 0;
 		let prop;
+		let puddle = null;
 		do {
 			let x = this.slime.posX + nextX * (mouvement + 1);
 			let y = this.slime.posY + nextY * (mouvement + 1);
 			prop = this.render.getProperties(x, y);
-			let puddle = null;
 			if(x >= 0 && x < this.render.tilesX && y >= 0 && y < this.render.tilesY) {
 				puddle = this.puddles[x][y];
 			}
-			
 			if(prop.includes(Tile.Property.WALK) || puddle == Game.Puddle.WHITE) {
 				mouvement++;
 			} else {
 				break;
 			}
-		} while (mouvement < number || prop.includes(Tile.Property.ICE));
+		} while (mouvement < number || (prop.includes(Tile.Property.ICE) && puddle != Game.Puddle.PURPLE));
 		return mouvement;
 	}
 	
@@ -236,6 +241,7 @@ class Game {
 	*/
 	move(vx, vy, puddled) {
 		this.pending = true;
+		this.stroke++;
 		let self = this;
 		let frame = this.animate != 0 ? Math.ceil(this.animate / 1000 * 60) : 1;
 		let deformation = 40;
@@ -455,8 +461,32 @@ class Game {
 	* Add this level in success
 	*/
 	addSuccess() {
-		if(!this.success.includes(this.level)) {
-			this.success.push(this.level);
+		let digit;
+		if(this.stroke > this.render.stroke) {
+			digit = '1';
+		} else {
+			digit = '2';
+		}
+		if(this.success.length == 0 && this.cookie) {
+			this.success = Cookies.get('levels');
+			if(this.success == undefined) {
+				this.success = "";
+			}
+		}
+		let dif = this.level - this.success.length;
+		if(dif > 0) {
+			for(let i = 1; i < dif; i++) {
+				this.success += "0";
+			}
+			this.success += digit;
+		} else {
+			let current = this.success.charAt(this.level - 1);
+			if(current < digit) {
+				this.success = this.success.substring(0, this.level - 1) + digit + this.success.substring(this.level);
+			}
+		}
+		if(this.cookie) {
+			Cookies.set('levels', this.success, { expires: 365 });
 		}
 	}
 

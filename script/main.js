@@ -32,7 +32,7 @@ $(document).ready(function(){
 	});
 	
 	// Load maps modal
-	let totalMaps = 30;
+	let totalMaps = 20;
 	let modal = $("#maps");
 	let row = null;
 	for(let i = 1; i <= totalMaps; i++) {

@@ -5,6 +5,7 @@
 		"Ici c'est les points de vie. A chaque fois que je me déplace sur une flaque j'en perds 1. Dans ce niveau pas le droit à l'erreur !"
 	],
 	"life": 1,
+	"stroke": 6,
 	"tiles": ["beach"],
 	"map": [
 		[1, 1, 1],

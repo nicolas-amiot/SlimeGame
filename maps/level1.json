@@ -5,6 +5,7 @@
 		"Tu vois ces cases <img src='images/tiles/beach.png'/> ? A chaque fois que je me déplace dessus je crée une flaque. Et si une flaque est déjà présente je la retire.",
 		"Ton but est de remplir toutes ces cases avec des flaques. A toi de jouer !"
 	],
+	"stroke": 8,
 	"tiles": ["beach"],
 	"map": [
 		[0, 1, 0],

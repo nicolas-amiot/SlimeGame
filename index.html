@@ -36,7 +36,9 @@
 			</button>
 		</div>
 		<div class="panel panel-state">
-			<div id="bubble" class="bubble d-none"><span></span> <button id="next" class="btn btn-light rounded-circle command">&raquo;</button></div>
+			<div id="bubble" class="bubble"><span>
+				Ce site utilise les cookies <img src='images/cookie.png'/> pour sauvegarder votre avancée dans le jeu. Vous pouvez les désactiver et supprimer en allant dans les paramètres du jeu en haut à droite.
+			</span> <button id="next" class="btn btn-light rounded-circle command">&raquo;</button></div>
 			<div id="slime"><img src="images/slimes/slime-green-right.png" width="64" /> <span></span></div>
 		</div>
 		<div class="panel panel-command">
@@ -111,6 +113,11 @@
 						<div class="row mt-2 mb-2"><div class="col-12 font-weight-bold text-center">Configuration</div></div>
 						<div class="row"><div class="col-6">Durée des animations</div><div class="col-6"><input type="range" id="animate" min="0" max="1" value="0.5" step="0.1"><output>0.5 s</output></div></div>
 						<div class="row"><div class="col-6">Volume audio</div><div class="col-6"><input type="range" id="audio" min="0" max="1" value="0" step="0.1"><output>0 %</output></div></div>
+						<div class="row"><div class="col-6">Cookie <button id="deleteCookie" class="btn btn-danger ml-3">Supprimer</button></div>
+							<div class="col-6">
+								<div class="custom-control custom-switch"><input type="checkbox" class="custom-control-input" id="cookie" checked><label class="custom-control-label" for="cookie"><div>Non / Oui</div></label></div>
+							</div>
+						</div>
 					</div>
 				</div>
 			</div>
@@ -142,14 +149,15 @@
 									Le but est de déplacer le slime sur chaque case belge afin de créer une flaque de sirop sur celle-ci.<br><br>
 									Vous trouverez différentes cases qui vous aideront... ou non à avancer dans le jeu. Ces cases sont rangées parmi 3 catégories : les cases d'environnement, les cases spéciales et les cases Slime.<br>
 									Pour ce qui est des cases Slime, lorsque vous passez sur ce genre de case le sirop de votre Slime change ainsi que votre couleur vous offrant une capacité spéciale.<br><br>
-									Sur certains niveaux votre vie et/ou nourriture sera affiché et vous devriez alors faire attention à cette jauge. Vous perdez de la vie lorsque vous passez sur une flaque verte et de la nourriture à chaque déplacement.<br>
+									Sur certains niveaux votre vie et/ou nourriture sera affichée et vous devriez alors faire attention à cette jauge. Vous perdez de la vie lorsque vous passez sur une flaque verte et de la nourriture à chaque déplacement.<br>
 									De plus, tous les 10 niveaux vous devrez affronter un slime méchant qui vous fera entièrement recommencer le niveau s'il vous touche.
 								</div>
 							</div>
 							<div class="row mb-2"><div class="col-12">Les ressources qui ont permis de créer le jeu :</div></div>
 							<div class="row"><div class="col-12"><a href="https://opengameart.org/"  target="_blank">Les tuiles et musiques proviennent de OpenGameArt</a></div></div>
 							<div class="row"><div class="col-12"><a href="https://icones8.fr/"  target="_blank">Les icônes proviennent de Icons8</a></div></div>
-							<div class="row"><div class="col-12"><a href="http://www.imagex-fonts.com/index.php"  target="_blank">La police slime provient de ImageX Fonts</a></div></div>
+							<div class="row"><div class="col-12"><a href="http://www.imagex-fonts.com/"  target="_blank">La police slime provient de ImageX Fonts</a></div></div>
+							<div class="row"><div class="col-12"><a href="https://pixabay.com/"  target="_blank">Le fond d'écran provient de Pixabay</a></div></div>
 						</div>
 						<div class="tab-pane fade" id="helpTiles" role="tabpanel">
 							<div class="row align-items-center mb-3">
@@ -256,6 +264,16 @@
 									Vous rend invisible aux yeux du slime gris.
 								</div>
 							</div>
+							<div class="row align-items-center mb-3">
+								<div class="col icon">
+									<img src="images/slimes/slime-purple-right.png" />
+								</div>
+								<div class="col align-middle">
+									<div class="font-weight-bold">Slime cassis</div>
+									Lance une flaque unique permettant de désactiver la case sur laquelle elle se trouve.<br>
+									Si la flaque est lancée sur le slime gris, vos positions sont échangées.
+								</div>
+							</div>
 							<div class="row align-items-center mb-1">
 								<div class="col icon">
 									<img src="images/slimes/slime-gray-right.png" />
@@ -279,6 +297,7 @@
 		<script src="script/slime.js"></script>
 		<script src="script/tile.js"></script>
 		<script src="script/astar.js"></script>
+		<script src="script/js-cookie.js"></script>
 		<script src="script/main.js"></script>
 	</body>
 </html>

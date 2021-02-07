@@ -82,6 +82,7 @@ class Game {
 	*/
 	restart() {
 		this.stroke = 0;
+		this.screen.updateStroke(this.render.stroke);
 		this.render.tileCtx.clearRect(0, 0, this.render.tileCtx.canvas.width, this.render.tileCtx.canvas.height);
 		this.slime = new Slime(Slime.Color.GREEN, this.render.spawnX, this.render.spawnY);
 		this.changeSlime(Slime.Color.GREEN);
@@ -243,7 +244,6 @@ class Game {
 	*/
 	move(vx, vy, puddled) {
 		this.pending = true;
-		this.stroke++;
 		let self = this;
 		let frame = this.animate != 0 ? Math.ceil(this.animate / 1000 * 60) : 1;
 		let deformation = 40;
@@ -303,6 +303,8 @@ class Game {
 				}
 				// Last case
 				if(index == frame) {
+					self.stroke++;
+					self.screen.updateStroke(self.render.stroke - self.stroke);
 					self.slime.posX += vx;
 					self.slime.posY += vy;
 					if(self.render.enemy) {

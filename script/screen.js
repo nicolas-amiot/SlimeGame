@@ -7,14 +7,16 @@ class Screen {
 	* Constructor for screen class
 	*
 	* @param {string} idLevel - Level identifier
+	* @param {string} idStroke - Stroke identifier
 	* @param {string} idPuddle - Puddle identifier
 	* @param {string} idLife - Life identifier
 	* @param {string} idFood - Food identifier
 	* @param {string} idSlime - Slime identifier
 	* @param {string} idBubble - Bubble identifier
 	*/
-	constructor(idLevel, idPuddle, idLife, idFood, idSlime, idBubble) {
+	constructor(idLevel, idStroke, idPuddle, idLife, idFood, idSlime, idBubble) {
 		this.level = document.getElementById(idLevel);
+		this.stroke = document.getElementById(idStroke);
 		this.puddle = document.getElementById(idPuddle);
 		this.life = document.getElementById(idLife);
 		this.food = document.getElementById(idFood);
@@ -40,6 +42,13 @@ class Screen {
 	*/
 	updateLevel(level) {
 		$(this.level).text(level);
+	}
+	
+	/**
+	* Update stroke for the star
+	*/
+	updateStroke(stroke) {
+		$(this.stroke).text(stroke);
 	}
 	
 	/**

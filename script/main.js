@@ -2,7 +2,7 @@ $(document).ready(function(){
 	
 	// Create the map and game objects
 	let isometricMap = new IsometricMap("map", "tile", "char");
-	let screen = new Screen("level", "puddle", "life", "food", "slime", "bubble");
+	let screen = new Screen("level", "stroke", "puddle", "life", "food", "slime", "bubble");
 	let game = new Game(isometricMap, screen);
 	$('#animate').on("input", function() {
 		game.animate = $(this).val() * 1000;
@@ -32,7 +32,7 @@ $(document).ready(function(){
 	});
 	
 	// Load maps modal
-	let totalMaps = 20;
+	let totalMaps = 30;
 	let modal = $("#maps");
 	let row = null;
 	for(let i = 1; i <= totalMaps; i++) {

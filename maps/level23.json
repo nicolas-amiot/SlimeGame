@@ -1,0 +1,21 @@
+{
+	"spawn": {"x": 5, "y": 1},
+	"dialogs": [
+		"Un nouvelle compétence peut-être utilisée si je deviens un slime cassis.",
+		"Elle me permettra de poser une flaque à distance et de désactiver la case sur laquelle elle se trouve.",
+		"La flaque est lancée dans la direction où je regarde et je ne peux en poser qu'une seule. Si j'en relance une la précédente s'évapore.",
+		"Attention, si je suis sur cette flaque et qu'elle se dissout, la case sur laquelle je suis sera activée."
+	],
+	"life": 1,
+	"stroke": 17,
+	"tiles": ["beach", "ice", "lightning", "teleport", "purple:2"],
+	"map": [
+		[1, 2, 2, 2, 0],
+		[0, 2, 2, 2, 1],
+		[0, 2, 2, 2, 0],
+		[0, 4, 3, 0, 0],
+		[0, 0, 1, 1, 0],
+		[4, 0, 1, 5, 1],
+		[1, 0, 1, 1, 1]
+	]
+}

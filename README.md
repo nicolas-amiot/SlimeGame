@@ -3,8 +3,8 @@
 Jeu tactique isométrique qui nécessite de déplacer un slime afin de remplir la carte de sirop afin de finir le niveau.<br />
 
 > **`Version 0.1`** - 05/01/2021<br />
-\- Création du jeu avec un total de 10 niveaux et 4 couleurs de slime disponibles.<br />
-\- Déplacement au clavier ou avec le pad intégré.<br />
+- Création du jeu avec un total de 10 niveaux et 4 couleurs de slime disponibles.<br />
+- Déplacement au clavier ou avec le pad intégré.<br />
 
 > **`Version 0.2`** - 09/01/2021<br />
 \- Ajout des niveaux 11 à 20.<br />

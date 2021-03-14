@@ -1,6 +1,7 @@
 # Syrup Slime
 
 Jeu tactique isométrique qui nécessite de déplacer un slime afin de remplir la carte de sirop afin de finir le niveau.
+test
 
 > **`Version 0.1`** - 05/01/2021
 \- Création du jeu avec un total de 10 niveaux et 4 couleurs de slime disponibles.

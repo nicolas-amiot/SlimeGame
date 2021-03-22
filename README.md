@@ -14,6 +14,6 @@ Jeu tactique isométrique qui nécessite de déplacer un slime afin de remplir l
 > **`Version 0.3`** - 07/02/2021<br />
 \- Ajout des niveaux 21 à 30.<br />
 \- Ajout d'un nouveau slime, le slime casis.<br />
-\- Ajout d'une nouvelle difficulté, finir les niveaux avec le moins de coup possible.<br />
+\- Ajout d'une nouvelle difficulté, finir le niveau en sans faute.<br />
 \- Le suivi de progression en maintenant enregistré à travers les cookies.<br />
 \- Ajout du bouton d'aide et d'un fond d'écran.<br />

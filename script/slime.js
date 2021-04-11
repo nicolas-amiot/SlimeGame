@@ -15,6 +15,7 @@ class Slime {
 			RED: "red",
 			YELLOW: "yellow",
 			PURPLE: "purple",
+			ORANGE: "orange",
 			GRAY: "gray"
 		};
 	}
@@ -26,9 +27,9 @@ class Slime {
 	* @param {int} posX - X axis position
 	* @param {int} posY - Y axis position
 	*/
-	constructor(color, posX, posY) {
+	constructor(color, posX, posY, direction) {
 		this.color = color; // Current slime color
-		this.direction = Game.Direction.RIGHT; // Current slime direction
+		this.direction = direction; // Current slime direction
 		this.posX = posX; // Current slime position in x axis
 		this.posY = posY; // Current slime position in y axis
 		this.food = 0; // Current food
@@ -58,112 +59,110 @@ class Slime {
 	/**
 	* Slime event after moving
 	*
-	* @param {Game} game - Game object
+	* @param {Play} play - Play object
 	*/
-	endMove(game) {
-		if(game.render.food != 0 && this.color != Slime.Color.YELLOW) {
+	endMove(play) {
+		if(play.data.food != 0 && this.color != Slime.Color.YELLOW) {
 			this.food--;
-			game.screen.updateFood(this.food);
+			play.screen.updateFood(this.food);
 		}
 		if(this.color == Slime.Color.RED && this.skill) {
 			this.power = 0;
 			this.skill = false;
-			game.changeSlime(Slime.Color.RED);
-			if(game.render.enemy && game.enemy.posX == this.posX  && game.enemy.posY == this.posY) {
-				game.killEnemy();
+			play.changeSlime(Slime.Color.RED);
+			if(play.data.enemy && play.enemy.posX == this.posX  && play.enemy.posY == this.posY) {
+				play.killEnemy();
 			}
 		} else if(this.color == Slime.Color.YELLOW) {
 			this.power--;
-			game.changeSlime(Slime.Color.YELLOW);
+			play.changeSlime(Slime.Color.YELLOW);
 		}
 	}
 	
 	/**
 	* Slime event when use skill
 	*
-	* @param {Game} game - Game object
+	* @param {Play} play - Play object
 	*/
-	useSkill(game) {
+	useSkill(play) {
 		if(this.color == Slime.Color.BLUE) {
-			let puddle = game.puddles[this.posX][this.posY];
-			if(puddle == Game.Puddle.NONE || puddle == Game.Puddle.GREEN) {
-				if(puddle == Game.Puddle.NONE) {
-					game.render.drawPuddle(this.posX, this.posY, "blue");
-					game.cases--;
+			let puddle = play.puddles[this.posX][this.posY];
+			if(puddle == Play.Puddle.NONE || puddle == Play.Puddle.GREEN) {
+				if(puddle == Play.Puddle.NONE) {
+					play.tilemap.drawPuddle(this.posX, this.posY, "blue");
+					play.cases--;
 				} else {
-					game.render.drawPuddle(this.posX, this.posY, undefined);
-					game.render.drawPuddle(this.posX, this.posY, "blue");
+					play.tilemap.drawPuddle(this.posX, this.posY, null);
+					play.tilemap.drawPuddle(this.posX, this.posY, "blue");
 				}
-				game.puddles[this.posX][this.posY] = Game.Puddle.BLUE;
-				game.screen.updatePuddle(game.cases);
+				play.puddles[this.posX][this.posY] = Play.Puddle.BLUE;
+				play.screen.updatePuddle(play.cases);
 				this.power--;
-				game.changeSlime(Slime.Color.BLUE);
+				play.changeSlime(Slime.Color.BLUE);
 			}
 		} else if(this.color == Slime.Color.RED) {
 			this.skill = true;
 		} else if(this.color == Slime.Color.PURPLE) {
 			let activation = false;
-			if(game.puddles[this.posX][this.posY] == Game.Puddle.PURPLE) {
+			if(play.puddles[this.posX][this.posY] == Play.Puddle.PURPLE) {
 				activation = true;
 			}
 			let caseX = this.posX;
 			let caseY = this.posY;
-			if(this.direction == Game.Direction.UP) {
+			if(this.direction == Play.Direction.UP) {
 				caseX += this.power;
-			} else if(this.direction == Game.Direction.LEFT) {
+			} else if(this.direction == Play.Direction.LEFT) {
 				caseY -= this.power;
-			} else if(this.direction == Game.Direction.DOWN) {
+			} else if(this.direction == Play.Direction.DOWN) {
 				caseX -= this.power;
-			} else if(this.direction == Game.Direction.RIGHT) {
+			} else if(this.direction == Play.Direction.RIGHT) {
 				caseY += this.power;
 			}
-			let properties = game.render.getProperties(caseX, caseY);
+			let properties = play.getProperties(caseX, caseY);
 			let puddle = null;
-			if(caseX >= 0 && caseX < game.render.tilesX && caseY >= 0 && caseY < game.render.tilesY) {
-				puddle = game.puddles[caseX][caseY];
+			if(caseX >= 0 && caseX < play.data.tilesX && caseY >= 0 && caseY < play.data.tilesY) {
+				puddle = play.puddles[caseX][caseY];
 			}
 			if(puddle != null && properties.includes(Tile.Property.WALK)) {
-				for(let x = 0; x < game.puddles.length; x++) {
-					for(let y = 0; y < game.puddles[x].length; y++) {
-						if(game.puddles[x][y] == Game.Puddle.PURPLE) {
-							let props = game.render.getProperties(x, y);
+				for(let x = 0; x < play.puddles.length; x++) {
+					for(let y = 0; y < play.puddles[x].length; y++) {
+						if(play.puddles[x][y] == Play.Puddle.PURPLE) {
+							let props = play.getProperties(x, y);
 							if(props.includes(Tile.Property.PUDDLE)) {
-								game.puddles[x][y] = Game.Puddle.NONE;
-								game.cases++;
+								play.puddles[x][y] = Play.Puddle.NONE;
+								play.cases++;
 							} else {
-								game.puddles[x][y] = Game.Puddle.NULL;
+								play.puddles[x][y] = Play.Puddle.NULL;
 							}
-							game.render.drawPuddle(x, y, undefined);
+							play.tilemap.drawPuddle(x, y, null);
 						}
 					}
 				}
-				let props = game.render.getProperties(caseX, caseY);
-				if(game.puddles[caseX][caseY] != Game.Puddle.NULL && game.puddles[caseX][caseY] != Game.Puddle.NONE) {
-					game.render.drawPuddle(caseX, caseY, undefined);
-				} else if(props.includes(Tile.Property.PUDDLE)) {
-					game.cases--;
+				if(play.puddles[caseX][caseY] != Play.Puddle.NULL && play.puddles[caseX][caseY] != Play.Puddle.NONE) {
+					play.tilemap.drawPuddle(caseX, caseY, null);
+				} else if(properties.includes(Tile.Property.PUDDLE)) {
+					play.cases--;
 				}
-				game.screen.updatePuddle(game.cases);
-				game.puddles[caseX][caseY] = Game.Puddle.PURPLE;
-				game.render.drawPuddle(caseX, caseY, "purple");
+				play.screen.updatePuddle(play.cases);
+				play.puddles[caseX][caseY] = Play.Puddle.PURPLE;
+				play.tilemap.drawPuddle(caseX, caseY, "purple");
 				this.power = 0;
-				game.changeSlime(Slime.Color.PURPLE);
-				if(game.render.enemy && game.enemy.posX == caseX  && game.enemy.posY == caseY) {
-					game.enemy.posX = this.posX;
-					game.enemy.posY = this.posY;
+				play.changeSlime(Slime.Color.PURPLE);
+				if(play.data.enemy && play.enemy.posX == caseX  && play.enemy.posY == caseY) {
+					play.enemy.posX = this.posX;
+					play.enemy.posY = this.posY;
 					this.posX = caseX;
 					this.posY = caseY;
-					game.render.drawCharacter(game.getCharacter(this), this.posX, this.posY, IsometricMap.CHAR_WIDTH, IsometricMap.CHAR_HEIGHT, true);
-					game.render.drawCharacter(game.getCharacter(game.enemy), game.enemy.posX, game.enemy.posY, IsometricMap.CHAR_WIDTH, IsometricMap.CHAR_HEIGHT, false);
+					play.tilemap.redrawSlimes(play.slime, play.ghost, play.enemy);
 				}
-				if(game.cases == 0) {
-					game.addSuccess();
-					game.level++;
-					game.start();
+				if(play.cases == 0) {
+					play.addSuccess();
+					play.level++;
+					play.start();
 				} else if(activation) {
-					let dead = Tile.activateCase(game);
+					let dead = play.tiles[this.posX][this.posY].activateCase(play);
 					if(dead) {
-						game.restart();
+						play.restart();
 					}
 				}
 			}

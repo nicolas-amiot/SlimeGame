@@ -3,30 +3,26 @@
 */
 class Tile {
 	
-	/**
-	* Get the list of all tiles with her path and properties
-	*
-	* @return {map} tiles - The tiles that can be used
-	*/
-	static getTiles() {
-		let tiles = new Map();
-		let folder = "images/tiles/";
-		tiles.set("beach", {path: folder + "beach.png", properties: [Tile.Property.WALK, Tile.Property.PUDDLE]});
-		tiles.set("ice", {path: folder + "ice.png", properties: [Tile.Property.WALK, Tile.Property.ICE]});
-		tiles.set("grass", {path: folder + "grass.png", properties: [Tile.Property.WALK, Tile.Property.FOOD]});
-		tiles.set("blue", {path: folder + "blue.png", properties: [Tile.Property.WALK, Tile.Property.BLUE_SLIME]});
-		tiles.set("red", {path: folder + "red.png", properties: [Tile.Property.WALK, Tile.Property.RED_SLIME]});
-		tiles.set("yellow", {path: folder + "yellow.png", properties: [Tile.Property.WALK, Tile.Property.YELLOW_SLIME]});
-		tiles.set("purple", {path: folder + "purple.png", properties: [Tile.Property.WALK, Tile.Property.PURPLE_SLIME]});
-		tiles.set("teleport", {path: folder + "teleport.png", properties: [Tile.Property.WALK, Tile.Property.TELEPORT]});
-		tiles.set("lightning", {path: folder + "lightning.png", properties: [Tile.Property.WALK, Tile.Property.DEATH]});
-		tiles.set("button", {path: folder + "button.png", properties: [Tile.Property.WALK, Tile.Property.BUTTON]});
-		tiles.set("closedoor", {path: null, properties: [Tile.Property.DOOR]});
-		tiles.set("opendoor", {path: null, properties: [Tile.Property.DOOR, Tile.Property.OPEN]});
-		return tiles;
-	}
-	
 	// IMPORTANT : Waiting support for the static fields classes by all browsers
+	
+	/**
+	* @enum Names constants
+	*/
+	static get Name() {
+		return {
+			BEACH: "beach",
+			ICE: "ice",
+			GRASS: "grass",
+			BLUE: "blue",
+			RED: "red",
+			YELLOW: "yellow",
+			PURPLE: "purple",
+			TELEPORT: "teleport",
+			LIGHTNING: "lightning",
+			BUTTON: "button",
+			DOOR: "door"
+		};
+	}
 	
 	/**
 	* @enum Properties constants
@@ -45,131 +41,248 @@ class Tile {
 			DEATH: "death",
 			BUTTON: "button",
 			DOOR: "door",
-			OPEN: "open",
-			POWER: "power"
+			OPEN: "open"
 		};
 	}
 	
 	/**
-	* Active the effect of the case
-	*
-	* @param {Game} game - Game object
+	* @enum Properties constants
 	*/
-	static init(game) {
-		for(let x = 0; x < game.render.tilesX; x++) {
-			for(let y = 0; y < game.render.tilesY; y++) {
-				let properties = game.render.getProperties(x, y);
-				if(properties.includes(Tile.Property.DOOR) && properties.includes(Tile.Property.OPEN)) {
-					game.puddles[x][y] = Game.Puddle.WHITE;
-					game.render.drawPuddle(x, y, "white");
-				}
-			}
+	static get PowerSupply() {
+		return {
+			NONE: "none",
+			BOOLEAN: "boolean",
+			INTEGER: "integer",
+			LIST: "list"
+		};
+	}
+	
+	/**
+	* Constructor for tile class
+	*
+	* @param {string} name - Tile name
+	* @param {boolean} hasImage - If tile has image
+	* @param {array} properties - Properties tile
+	* @param {int} identifiable - If tile has identifier
+	* @param {array} values - Identifier and powers of tile
+	*/
+	constructor(name, hasImage, properties, identifiable, values) {
+		this.name = name; // Tile name
+		if(hasImage) {
+			this.path = "images/tiles/" + name + ".png"; // Image tile
+			this.editorPath = null; // Image editor
+		} else {
+			this.path = null;
+			this.editorPath = "images/editor/" + name + ".png";
+		}
+		this.identifiable = identifiable; // If tile can have a identifier
+		this.properties = properties; // Properties tile
+		if(identifiable && values != null && values.length > 0) {
+			this.id = values[0]; // Identifier tile
+			values = values.slice(1);
+		} else if(identifiable) {
+			this.id = 0;
+		}
+		if(values != null) {
+			this.powers = values // Powers tile
+		} else {
+			this.powers = new Array();
+		}
+		this.powerSupply = null; // Power type
+		this.groupOrder = null; // Order editor
+		this.relation = null; // Relation with other tiles
+		this.spawnable = null;
+	}
+	
+	/**
+	* Get normal or editor tile instance by name
+	*/
+	static instantiate(name, editor) {
+		let tile = null;
+		let values = null;
+		let properties;
+		if(name.includes(":")) {
+			values = name.split(":");
+			name = values[0];
+			values = values.slice(1).map(power => parseInt(power));
+		}
+		if(name == Tile.Name.BEACH) {
+			properties = [Tile.Property.WALK, Tile.Property.PUDDLE];
+			tile = new Tile(name, true, properties, false, values);
+			tile.editorAttributes(editor, Tile.PowerSupply.NONE, "1-1", null, 2);
+		} else if(name == Tile.Name.ICE) {
+			properties = [Tile.Property.WALK, Tile.Property.ICE];
+			tile = new Tile(name, true, properties, false, values);
+			tile.editorAttributes(editor, Tile.PowerSupply.NONE, "1-2", null, 2);
+		} else if(name == Tile.Name.GRASS) {
+			properties = [Tile.Property.WALK, Tile.Property.FOOD];
+			tile = new Tile(name, true, properties, false, values);
+			tile.editorAttributes(editor, Tile.PowerSupply.INTEGER, "1-3", null, 2);
+		} else if(name == Tile.Name.BLUE) {
+			properties = [Tile.Property.WALK, Tile.Property.BLUE_SLIME];
+			tile = new Tile(name, true, properties, false, values);
+			tile.editorAttributes(editor, Tile.PowerSupply.INTEGER, "2-1", null, 2);
+		} else if(name == Tile.Name.RED) {
+			properties = [Tile.Property.WALK, Tile.Property.RED_SLIME];
+			tile = new Tile(name, true, properties, false, values);
+			tile.editorAttributes(editor, Tile.PowerSupply.INTEGER, "2-2", null, 2);
+		} else if(name == Tile.Name.YELLOW) {
+			properties = [Tile.Property.WALK, Tile.Property.YELLOW_SLIME];
+			tile = new Tile(name, true, properties, false, values);
+			tile.editorAttributes(editor, Tile.PowerSupply.INTEGER, "2-3", null, 2);
+		} else if(name == Tile.Name.PURPLE) {
+			properties = [Tile.Property.WALK, Tile.Property.PURPLE_SLIME];
+			tile = new Tile(name, true, properties, false, values);
+			tile.editorAttributes(editor, Tile.PowerSupply.INTEGER, "2-4", null, 2);
+		} else if(name == Tile.Name.TELEPORT) {
+			properties = [Tile.Property.WALK, Tile.Property.TELEPORT];
+			tile = new Tile(name, true, properties, true, values);
+			tile.editorAttributes(editor, Tile.PowerSupply.INTEGER, "3-2", Tile.Name.TELEPORT, 1);
+		} else if(name == Tile.Name.LIGHTNING) {
+			properties = [Tile.Property.WALK, Tile.Property.DEATH];
+			tile = new Tile(name, true, properties, false, values);
+			tile.editorAttributes(editor, Tile.PowerSupply.NONE, "3-1", null, 1);
+		} else if(name == Tile.Name.BUTTON) {
+			properties = [Tile.Property.WALK, Tile.Property.BUTTON];
+			tile = new Tile(name, true, properties, false, values);
+			tile.editorAttributes(editor, Tile.PowerSupply.LIST, "3-3", Tile.Name.DOOR, 2);
+		} else if(name == Tile.Name.DOOR) {
+			properties = [Tile.Property.DOOR];
+			tile = new Tile(name, false, properties, true, values);
+			tile.editorAttributes(editor, Tile.PowerSupply.BOOLEAN, "3-4", null, 0);
+		}
+		return tile;
+	}
+	
+	/**
+	* Add editor attributes
+	*
+	* @param {boolean} editor - if editor attributes must be set
+	* @param {PowerSupply} powerSupply - Power type
+	* @param {string} groupOrder - Order editor
+	* @param {string} relation - Relation with other tiles
+	*/
+	editorAttributes(editor, powerSupply, groupOrder, relation, spawnable) {
+		if (editor) {
+			this.powerSupply = powerSupply;
+			this.groupOrder = groupOrder;
+			this.relation = relation;
+			this.spawnable = spawnable;
 		}
 	}
 	
 	/**
 	* Active the effect of the case
 	*
-	* @param {Game} game - Game object
+	* @param {Game} play - Game object
+	*/
+	init(x, y, play) {
+		if(this.properties.includes(Tile.Property.DOOR) && this.powers[0] == 1) {
+			play.puddles[x][y] = Game.Puddle.WHITE;
+			play.tilemap.drawPuddle(x, y, Game.Puddle.WHITE);
+		}
+	}
+	
+	/**
+	* Active the effect of the case
+	*
+	* @param {Game} play - Game object
 	* @return {boolean} dead - If your character is dead
 	*/
-	static activateCase(game) {
+	activateCase(play) {
 		let dead = false;
 		let enemyDeath = false;
-		let props = game.render.getProperties(game.slime.posX, game.slime.posY);
-		let puddle = game.puddles[game.slime.posX][game.slime.posY];
+		let puddle = play.puddles[play.slime.posX][play.slime.posY];
 		if(puddle != Game.Puddle.PURPLE) {
-			if(props.includes(Tile.Property.FOOD) && game.render.food > 0) {
-				let power = game.getPower(props);
-				if(power > 0 && power > game.slime.food) {
-					game.slime.food = power;
-					game.screen.updateFood(game.slime.food);
+			if(this.properties.includes(Tile.Property.FOOD) && play.data.food > 0) {
+				let power = this.powers[0];
+				if(power > 0 && power > play.slime.food) {
+					play.slime.food = power;
+					play.screen.updateFood(play.slime.food);
 				}
-			} else if(props.includes(Tile.Property.BLUE_SLIME)) {
-				let power = game.getPower(props);
+			} else if(this.properties.includes(Tile.Property.BLUE_SLIME)) {
+				let power = this.powers[0];
 				if(power > 0) {
-					for(let x = 0; x < game.puddles.length; x++) {
-						for(let y = 0; y < game.puddles[x].length; y++) {
-							if(game.puddles[x][y] == Game.Puddle.BLUE) {
-								game.puddles[x][y] = Game.Puddle.NONE;
-								game.cases++;
-								game.render.drawPuddle(x, y, undefined);
-								game.screen.updatePuddle(game.cases);
+					for(let x = 0; x < play.puddles.length; x++) {
+						for(let y = 0; y < play.puddles[x].length; y++) {
+							if(play.puddles[x][y] == Game.Puddle.BLUE) {
+								play.puddles[x][y] = Game.Puddle.NONE;
+								play.cases++;
+								play.tilemap.drawPuddle(x, y, null);
+								play.screen.updatePuddle(play.cases);
 							}
 						}
 					}
-					game.slime.power = power;
-					let oldColor = game.slime.color;
-					game.slime.color = Slime.Color.BLUE;
-					game.changeSlime(oldColor);
+					play.slime.power = power;
+					let oldColor = play.slime.color;
+					play.slime.color = Slime.Color.BLUE;
+					play.changeSlime(oldColor);
 				}
-			} else if(props.includes(Tile.Property.RED_SLIME)) {
-				let power = game.getPower(props);
+			} else if(this.properties.includes(Tile.Property.RED_SLIME)) {
+				let power = this.powers[0];
 				if(power > 0) {
-					game.slime.power = power;
-					let oldColor = game.slime.color;
-					game.slime.color = Slime.Color.RED;
-					game.changeSlime(oldColor);
+					play.slime.power = power;
+					let oldColor = play.slime.color;
+					play.slime.color = Slime.Color.RED;
+					play.changeSlime(oldColor);
 				}
-			} else if(props.includes(Tile.Property.YELLOW_SLIME)) {
-				let power = game.getPower(props);
+			} else if(this.properties.includes(Tile.Property.YELLOW_SLIME)) {
+				let power = this.powers[0];
 				if(power > 0) {
-					game.slime.power = power;
-					let oldColor = game.slime.color;
-					game.slime.color = Slime.Color.YELLOW;
-					game.changeSlime(oldColor);
+					play.slime.power = power;
+					let oldColor = play.slime.color;
+					play.slime.color = Slime.Color.YELLOW;
+					play.changeSlime(oldColor);
 				}
-			} else if(props.includes(Tile.Property.PURPLE_SLIME)) {
-				let power = game.getPower(props);
+			} else if(this.properties.includes(Tile.Property.PURPLE_SLIME)) {
+				let power = this.powers[0];
 				if(power > 0) {
-					game.slime.power = power;
-					let oldColor = game.slime.color;
-					game.slime.color = Slime.Color.PURPLE;
-					game.changeSlime(oldColor);
+					play.slime.power = power;
+					let oldColor = play.slime.color;
+					play.slime.color = Slime.Color.PURPLE;
+					play.changeSlime(oldColor);
 				}
-			} else if(props.includes(Tile.Property.TELEPORT)) {
-				let map = game.render.map;
-				let index = map[game.slime.posX][game.slime.posY];
-				for(let x = 0; x < game.render.tilesX; x++) {
-					for(let y = 0; y < game.render.tilesY; y++) {
-						let idx = map[x][y];
-						if(index == idx && (x != game.slime.posX || y != game.slime.posY)) {
-							game.render.drawCharacter(game.getCharacter(game.slime), x, y, IsometricMap.CHAR_WIDTH, IsometricMap.CHAR_HEIGHT, true);
-							if(game.render.enemy) {
-								game.render.drawCharacter(game.getCharacter(game.enemy), game.enemy.posX, game.enemy.posY, IsometricMap.CHAR_WIDTH, IsometricMap.CHAR_HEIGHT, false);
-							}
-							game.slime.posX = x;
-							game.slime.posY = y;
-							x = game.render.tilesX;
-							y = game.render.tilesY;
+			} else if(this.properties.includes(Tile.Property.TELEPORT)) {
+				let power = this.powers[0];
+				if(power == null) {
+					power = this.id;
+				}
+				for(let x = 0; x < play.data.tilesX; x++) {
+					for(let y = 0; y < play.data.tilesY; y++) {
+						let tile = play.tiles[x][y];
+						if(tile != null && this.name == tile.name && power == tile.id && (x != play.slime.posX || y != play.slime.posY)) {
+							play.slime.posX = x;
+							play.slime.posY = y;
+							play.tilemap.redrawSlimes(play.slime, play.ghost, play.enemy);
+							x = play.data.tilesX;
+							y = play.data.tilesY;
 						}
 					}
 				}
-			} else if(props.includes(Tile.Property.BUTTON)) {
-				let powers = game.getPowers(props);
-				for(let x = 0; x < game.render.tilesX; x++) {
-					for(let y = 0; y < game.render.tilesY; y++) {
-						let properties = game.render.getProperties(x, y);
-						if(properties.includes(Tile.Property.DOOR) && powers.includes(game.getPower(properties))) {
-							if(game.puddles[x][y] == Game.Puddle.WHITE) {
-								game.puddles[x][y] = Game.Puddle.NULL;
-								game.render.drawPuddle(x, y, undefined);
-								if(game.render.enemy && game.enemy.posX == x  && game.enemy.posY == y) {
+			} else if(this.properties.includes(Tile.Property.BUTTON)) {
+				for(let x = 0; x < play.data.tilesX; x++) {
+					for(let y = 0; y < play.data.tilesY; y++) {
+						let tile = play.tiles[x][y];
+						if(tile != null && tile.properties.includes(Tile.Property.DOOR) && this.powers.includes(tile.id)) {
+							if(play.puddles[x][y] == Game.Puddle.WHITE) {
+								play.puddles[x][y] = Game.Puddle.NULL;
+								play.tilemap.drawPuddle(x, y, null);
+								if(play.data.enemy && play.enemy.posX == x  && play.enemy.posY == y) {
 									enemyDeath = true;
 								}
 							} else {
-								game.puddles[x][y] = Game.Puddle.WHITE;
-								game.render.drawPuddle(x, y, "white");
+								play.puddles[x][y] = Game.Puddle.WHITE;
+								play.tilemap.drawPuddle(x, y, "white");
 							}
 						}
 					}
 				}
-			} else if(props.includes(Tile.Property.DEATH)) {
+			} else if(this.properties.includes(Tile.Property.DEATH)) {
 				dead = true;
 			}
 		}
 		if(enemyDeath) {
-			game.killEnemy();
+			play.killEnemy();
 		}
 		return dead;
 	}

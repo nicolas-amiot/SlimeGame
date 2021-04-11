@@ -3,7 +3,7 @@
 	<head>
 		<meta charset="UTF-8">
 		<title>Syrup Slime</title>
-		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css">
 		<link rel="stylesheet" href="style.css">
 	</head>
 	<body>
@@ -25,13 +25,22 @@
 			<button class="btn btn-default" data-toggle="modal" data-target="#modalLevel">
 				 <img src="images/slime.png" width="64" />
 			</button>
-			<button id="restart" class="btn btn-default">
-				 <img src="images/reset.png" width="64" />
-			</button>
 			<button class="btn btn-default" data-toggle="modal" data-target="#modalSettings">
 				 <img src="images/keyboard.png" width="64" />
 			</button>
-			<button class="btn btn-default" data-toggle="modal" data-target="#modalHelp">
+			<button id="editor" class="btn btn-default">
+				 <img src="images/editor.png" width="64" />
+			</button>
+			<button id="play" class="btn btn-default d-none">
+				 <img src="images/play.png" width="64" />
+			</button>
+			<button id="restart" class="btn btn-default d-none">
+				 <img src="images/reset.png" width="64" />
+			</button>
+			<button id="stop" class="btn btn-default d-none">
+				 <img src="images/stop.png" width="64" />
+			</button>
+			<button id="help" class="btn btn-default" data-toggle="modal" data-target="#modalHelp">
 				 <img src="images/help.png" width="64" />
 			</button>
 		</div>
@@ -41,8 +50,11 @@
 			</span> <button id="next" class="btn btn-light rounded-circle command">&raquo;</button></div>
 			<div id="slime"><img src="images/slimes/slime-green-right.png" width="64" /> <span></span></div>
 		</div>
+		<div id="grid" class="grid d-none text-center">
+			Grille <span contenteditable="true" min="1" max="9">7</span> x <span contenteditable="true" min="1" max="9">7</span><br><label class="btn btn-link">Charger une map<input id="upload" type="file" accept="application/JSON" hidden></label>
+		</div>
 		<div class="panel panel-command">
-			<div class="container">
+			<div id="command" class="container d-none controller">
 				<div class="row">
 					<div class="col-4">
 						<button id="left" class="btn btn-default command">
@@ -75,14 +87,41 @@
 					</div>
 				</div>
 			</div>
+			<div id="selector" class=" d-none">
+				<ul class="p-0 m-0 list-style-none d-none">
+				</ul>
+				<div class="d-flex justify-content-end">
+					<button id="selection" name="cursor" class="btn btn-default rounded-circle selector">
+						 <img src="images/editor/cursor.png" />
+					</button>
+				</div>
+			</div>
 		</div>
+		<div id="loader" class="loader d-none">
+			<span class="load"></span>
+			<div class="dots">
+				<span class="dot"></span>
+				<span class="dot"></span>
+				<span class="dot"></span>
+				<span class="dot"></span>
+				<span class="dot"></span>
+			</div>
+			<div class="text-center">Chargement...</div>
+		</div>
+		<svg>
+			<defs>
+				<filter id="gooey">
+					<feGaussianBlur in="SourceGraphic" stdDeviation="10" result="blur" />
+					<feColorMatrix in="blur" type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 18 -7" result="gooey" />
+					<feBlend in="SourceGraphic" in2="gooey" />
+				</filter>
+			</defs>
+		</svg>
 		<div class="modal fade maps" id="modalLevel" tabindex="-1" role="dialog">
 			<div class="modal-dialog modal-dialog-scrollable dialog modal-lg" role="document">
 				<div class="modal-content">
 					<div class="modal-header">
-						<div>
-							NIVEAUX
-						</div>
+						NIVEAUX
 						<button class="close" data-dismiss="modal">
 							<span>&times;</span>
 						</button>
@@ -95,9 +134,7 @@
 			<div class="modal-dialog modal-dialog-scrollable dialog modal-lg" role="document">
 				<div class="modal-content">
 					<div class="modal-header">
-						<div>
-							PARAMETRES
-						</div>
+						PARAMETRES
 						<button class="close" data-dismiss="modal">
 							<span>&times;</span>
 						</button>
@@ -128,13 +165,16 @@
 					<div class="modal-header">
 						<ul class="nav nav-pills nav-fill w-100">
 							<li class="nav-item">
-								<a class="nav-item nav-link active" href="#helpIntro" data-toggle="tab" href="#home" role="tab">Synopsis</a>
+								<a class="nav-item nav-link active" href="#helpIntro" data-toggle="tab" role="tab">Synopsis</a>
 							</li>
 							<li class="nav-item">
-								<a class="nav-item nav-link" href="#helpTiles" data-toggle="tab" href="#home" role="tab">Cases</a>
+								<a class="nav-item nav-link" href="#helpTiles" data-toggle="tab" role="tab">Cases</a>
 							</li>
 							<li class="nav-item">
-								<a class="nav-item nav-link" href="#helpSlimes" data-toggle="tab" href="#profile" role="tab">Slimes</a>
+								<a class="nav-item nav-link" href="#helpSlimes" data-toggle="tab" role="tab">Slimes</a>
+							</li>
+							<li class="nav-item">
+								<a class="nav-item nav-link" href="#helpEditeur" data-toggle="tab" role="tab">Editeur</a>
 							</li>
 						</ul>
 						<button class="close" data-dismiss="modal">
@@ -151,10 +191,9 @@
 									Pour ce qui est des cases Slime, lorsque vous passez sur ce genre de case le sirop de votre Slime change ainsi que votre couleur vous offrant une capacité spéciale.<br><br>
 									Sur certains niveaux votre vie et/ou nourriture sera affichée et vous devriez alors faire attention à cette jauge. Vous perdez de la vie lorsque vous passez sur une flaque verte et de la nourriture à chaque déplacement.<br>
 									De plus, tous les 10 niveaux vous devrez affronter un slime méchant qui vous fera entièrement recommencer le niveau s'il vous touche.
-
 								</div>
 							</div>
-							<div class="row mb-2"><div class="col-12">Les ressources qui ont permis de créer le jeu :</div></div>
+							<div class="row"><div class="col-12">Les ressources qui ont permis de créer le jeu :</div></div>
 							<div class="row"><div class="col-12"><a href="https://opengameart.org/"  target="_blank">Les tuiles et musiques proviennent de OpenGameArt</a></div></div>
 							<div class="row"><div class="col-12"><a href="https://icones8.fr/"  target="_blank">Les icônes proviennent de Icons8</a></div></div>
 							<div class="row"><div class="col-12"><a href="http://www.imagex-fonts.com/"  target="_blank">La police slime provient de ImageX Fonts</a></div></div>
@@ -231,7 +270,7 @@
 									<img src="images/slimes/slime-green-right.png" />
 								</div>
 								<div class="col align-middle">
-									<div class="font-weight-bold">Slime menthe</div>
+									<div class="font-weight-bold">Slime pomme</div>
 									Le slime par défaut, ne possède aucune compétence.
 								</div>
 							</div>
@@ -285,20 +324,105 @@
 								</div>
 							</div>
 						</div>
+						<div class="tab-pane fade" id="helpEditeur" role="tabpanel">
+							<div class="row align-items-center">
+								<div class="col p-0">
+									<ul>
+										<li>La vie, nourriture, grille et bulle de dialogue sont éditables afin de définir la configuration de la carte.</li>
+										<li>Il est possible de charger une carte pré-existante afin de pouvoir la jouer ou la modifier.</li>
+										<li>Dans la barre de menu, le bouton jouer permet de tester la carte réalisée puis la télécharger.</li>
+										<li>Le score pour l'étoile est défini sur votre meilleur coup. Revenir sur l'éditeur supprime cette donnée.</li>
+										<li>La liste des tuiles et options restantes sont disponibles en bas à droite et sont détaillées ci-dessous.</li>
+									</ul>
+								</div>
+							</div>
+							<div class="row align-items-center mb-3">
+								<div class="col icon">
+									<img src="images/editor/cursor.png" />
+								</div>
+								<div class="col align-middle">
+									<div class="font-weight-bold">Curseur</div>
+									<u>Clic gauche</u> : Permet de coller la tuile qui est sélectionnée. Le clic peut-être maintenu.<br>
+									<u>Clic droit</u> : Sélectionne la tuile à copier avec toutes ses propriétés.
+								</div>
+							</div>
+							<div class="row align-items-center mb-3">
+								<div class="col icon">
+									<img src="images/editor/editor.png" />
+								</div>
+								<div class="col align-middle">
+									<div class="font-weight-bold">Editeur</div>
+									<u>Clic gauche</u> : Augmente la puissance ou relie des tuiles entre elles selon le type de case.<br>
+									<u>Clic droit</u> : Diminue la puissance ou relie des tuiles entre elles selon le type de case.
+								</div>
+							</div>
+							<div class="row align-items-center mb-3">
+								<div class="col icon">
+									<img src="images/editor/eraser.png" />
+								</div>
+								<div class="col align-middle">
+									<div class="font-weight-bold">Gomme</div>
+									<u>Clic gauche</u> : Supprime une tuile sur la carte. Le clic peut être maintenu.<br>
+									<u>Clic droit</u> : Sélectionne une zone pour l'effacer. Le clic peut être maintenu.
+								</div>
+							</div>
+							<div class="row align-items-center mb-3">
+								<div class="col icon">
+									<img src="images/tiles/beach.png" />
+								</div>
+								<div class="col align-middle">
+									<div class="font-weight-bold">Tuile</div>
+									<u>Clic gauche</u> : Dépose une tuile sur la carte. Le clic peut être maintenu.<br>
+									<u>Clic droit</u> : Sélectionne une zone pour y remplir de tuiles. Le clic peut être maintenu.
+								</div>
+							</div>
+							<div class="row align-items-center mb-1">
+								<div class="col icon">
+									<img src="images/slimes/slime-green-right.png" />
+								</div>
+								<div class="col align-middle">
+									<div class="font-weight-bold">Slime</div>
+									<u>Clic gauche</u> : Défini le spawn de votre slime ainsi que celui de l'ennemi.<br>
+									<u>Clic droit</u> : Change la direction vers laquelle le slime regarde.
+								</div>
+							</div>
+						</div>
 					</div>
 				</div>
 			</div>
 		</div>
-		<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
-		<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
-		<script src="script/game.js"></script>
-		<script src="script/isometric.js"></script>
-		<script src="script/screen.js"></script>
+		<div class="modal fade" id="modalEditor" tabindex="-1" role="dialog">
+			<div class="modal-dialog modal-dialog-scrollable dialog modal-lg modal-dialog-centered" role="document">
+				<div class="modal-content">
+					<div class="modal-header">
+						Statut
+						<button class="close" data-dismiss="modal">
+							<span>&times;</span>
+						</button>
+					</div>
+					<div class="modal-body">
+						<div id="editorAlert" class="alert" role="alert">
+						</div>
+						<div id="buttonAlert" class="float-right d-none">
+							<button id="again" type="button" class="btn btn-info">Réessayer</button>
+							<a id="download" class="btn btn-info" download="map.json" href="#">Télécharger la map</a>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+		<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"></script>
+		<script src="script/js-cookie.js"></script>
+		<script src="script/astar.js"></script>
 		<script src="script/slime.js"></script>
 		<script src="script/tile.js"></script>
-		<script src="script/astar.js"></script>
-		<script src="script/js-cookie.js"></script>
+		<script src="script/tilemap.js"></script>
+		<script src="script/screen.js"></script>
+		<script src="script/play.js"></script>
+		<script src="script/game.js"></script>
+		<script src="script/editor.js"></script>
 		<script src="script/main.js"></script>
+		<script src="script/json-stringify.js"></script>
 	</body>
 </html>

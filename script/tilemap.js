@@ -93,10 +93,10 @@ class Tilemap {
 		let ratioImage = image.width / image.height;
 		let ratioWindow = width / height;
 		if(ratioWindow >= ratioImage) {
-			let margin = (width / ratioImage - height) % (image.height / 2); // Keep 50% image
+			let margin = (width / ratioImage - height) % (image.height / 1.5); // Keep 25% image
 			this.mapCtx.drawImage(image, 0, margin / 2, image.width, image.height - margin, 0, 0, width, height);
 		} else {
-			let margin = (height * ratioImage - width) % (image.width / 2); // Keep 50% image
+			let margin = (height * ratioImage - width) % (image.width / 1.5); // Keep 25% image
 			this.mapCtx.drawImage(image, margin / 2, 0, image.width - margin, image.height, 0, 0, width, height);
 		}
 	}

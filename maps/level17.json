@@ -2,7 +2,7 @@
 	"spawn": {"x": 4, "y": 2},
 	"life": 1,
 	"stroke": 55,
-	"tiles": ["beach", "lightning", "button:1", "closedoor:1", "opendoor:1", "teleport", "teleport", "red:1", "blue:4", "yellow:8"],
+	"tiles": ["beach", "lightning", "button:1", "door:1:0", "door:1:1", "teleport:1", "teleport:2", "red:1", "blue:4", "yellow:8"],
 	"map": [
 		[1, 10, 1, 0, 1, 0, 6],
 		[5, 0, 4, 0, 1, 1, 1],

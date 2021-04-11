@@ -17,3 +17,9 @@ Jeu tactique isométrique qui nécessite de déplacer un slime afin de remplir l
 \- Ajout d'une nouvelle difficulté, finir le niveau en sans faute.<br />
 \- Le suivi de progression en maintenant enregistré à travers les cookies.<br />
 \- Ajout du bouton d'aide et d'un fond d'écran.<br />
+
+> **`Version 0.4`** - 11/04/2021<br />
+\- Ajout d'un éditeur de carte ainsi que l'onglet d'aide associé.<br />
+\- Possibilité de configurer la direction vers laquelle regarde les slimes à l'apparition.<br />
+\- Le téléporteur peut maintenant être relié à plusieurs autres téléporteurs au lieu de fonctionner par pair.<br />
+\- Bug fix : Les flaques sont désormais correctement posées lors de la rué du slime rouge avec les animations désactivées.<br />

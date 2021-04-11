@@ -90,38 +90,14 @@ class Tilemap {
 		this.mapCtx.canvas.width = width;
 		this.mapCtx.canvas.height = height;
 		this.mapCtx.globalAlpha = 0.5;
-		/*
-		if(width / image.width >= height / image.height) {
-			let size = width * image.height / image.width; // image width > image height
-			this.mapCtx.drawImage(image, 0, (size - height) / 2, width, height, 0, 0, width, height);
-		} else {
-			let size = height * image.width / image.height; // image width > image height
-			this.mapCtx.drawImage(image, (size - width) / 2, 0, width, height, 0, 0, width, height);
-		}
-		*/
-		/*
-		if(width / image.width >= height / image.height) {
-			let size = width * image.height / image.width; // image width > image height
-			let margin = size - height;
+		let ratioImage = image.width / image.height;
+		let ratioWindow = width / height;
+		if(ratioWindow >= ratioImage) {
+			let margin = (width / ratioImage - height) % (image.height / 2); // Keep 50% image
 			this.mapCtx.drawImage(image, 0, margin / 2, image.width, image.height - margin, 0, 0, width, height);
 		} else {
-			let size = height * image.width / image.height; // image width > image height
-			let margin = size - width;
+			let margin = (height * ratioImage - width) % (image.width / 2); // Keep 50% image
 			this.mapCtx.drawImage(image, margin / 2, 0, image.width - margin, image.height, 0, 0, width, height);
-		}
-		*/
-		if(width <= image.width && height <= image.height) {
-			let ratioImage = image.width / image.height;
-			let ratioWindow = width / height;
-			if(ratioWindow >= ratioImage) {
-				let margin = width / ratioImage - height;
-				this.mapCtx.drawImage(image, 0, margin / 2, image.width, image.height - margin, 0, 0, width, height);
-			} else {
-				let margin = height * ratioImage - width;
-				this.mapCtx.drawImage(image, margin / 2, 0, image.width - margin, image.height, 0, 0, width, height);
-			}
-		} else {
-			this.mapCtx.drawImage(image, 0, 0, width, height);   
 		}
 	}
 	

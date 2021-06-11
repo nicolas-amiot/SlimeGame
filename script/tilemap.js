@@ -208,14 +208,10 @@ class Tilemap {
 	* Redraw all slimes
 	*
 	* @param {Slime} slime - Slime to draw
-	* @param {Slime} ghostSlime - Gost slime to draw
 	* @param {Slime} enemySlime - Enemy slime to draw
 	*/
-	redrawSlimes(slime, ghostSlime, enemySlime) {
+	redrawSlimes(slime, enemySlime) {
 		this.drawSlime(slime);
-		if(ghostSlime != null) {
-			this.drawSlime(ghostSlime);
-		}
 		if(enemySlime != null) {
 			this.drawSlime(enemySlime);
 		}
@@ -241,7 +237,7 @@ class Tilemap {
 		let offY = (slime.posY - 1) * Tilemap.TILE_HEIGHT * this.ratio / 2 - slime.posX * Tilemap.TILE_HEIGHT * this.ratio / 2 + this.originY;
 		offX = offX + Tilemap.TILE_WIDTH * this.ratio * 0.25 - (w - Tilemap.TILE_HEIGHT * this.ratio) / 2;
 		offY = offY - Tilemap.TILE_HEIGHT * this.ratio * 0.25 - (h - Tilemap.TILE_HEIGHT * this.ratio);
-		if(slime.color != Slime.Color.GRAY && slime.color != Slime.Color.ORANGE) {
+		if(slime.color != Slime.Color.GRAY) {
 			this.clearCanvas(3);
 		}
 		this.charCtx.drawImage(this.images.get(slime.color + slime.direction), offX, offY, w, h);

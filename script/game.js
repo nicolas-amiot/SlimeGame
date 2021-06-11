@@ -67,7 +67,7 @@ class Game extends Play {
 		this.tilemap.updateMapSize(this.data.tilesX, this.data.tilesY);
 		this.tilemap.redrawPuddles(this.puddles);
 		this.tilemap.redrawTiles(this.tiles);
-		this.tilemap.redrawSlimes(this.slime, this.ghostSlime, this.enemy);
+		this.tilemap.redrawSlimes(this.slime, this.enemy);
 	}
 	
 	/**

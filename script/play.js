@@ -25,6 +25,8 @@ class Play {
 			GREEN: "green",
 			BLUE: "blue",
 			PURPLE: "purple",
+			ORANGE: "darkorange",
+			YELLOW: "goldenrod",
 			WHITE: "white"
 		};
 	}
@@ -50,7 +52,6 @@ class Play {
 		this.tiles = null;  // Current map tiles
 		this.puddles = null;  // Current map puddles
 		this.slime = null; // Current slime
-		this.ghost = null; // Ghost slime
 		this.enemy = null; // Enemy slime
 		this.cases = 0; // Number of puddles before win
 		this.stroke = 0; // Current number of stroke
@@ -335,7 +336,7 @@ class Play {
 		} else {
 			this.enemy = null;
 		}
-		this.tilemap.redrawSlimes(this.slime, this.ghost, this.enemy);
+		this.tilemap.redrawSlimes(this.slime, this.enemy);
 		this.loadPuddles();
 		if(this.puddles[this.slime.posX][this.slime.posY] == Play.Puddle.NONE) {
 			this.puddles[this.slime.posX][this.slime.posY] = Play.Puddle.GREEN;
@@ -553,7 +554,7 @@ class Play {
 	killEnemy() {
 		this.enemy.posX = this.data.enemyX;
 		this.enemy.posY = this.data.enemyY;
-		this.tilemap.redrawSlimes(this.slime, this.ghost, this.enemy);
+		this.tilemap.redrawSlimes(this.slime, this.enemy);
 	}
 	
 	/**
@@ -579,9 +580,9 @@ class Play {
 	changeSlime(oldColor) {
 		if(this.slime.color != Slime.Color.GREEN && this.slime.power == 0) {
 			this.slime.color = Slime.Color.GREEN;
-			this.tilemap.redrawSlimes(this.slime, this.ghost, this.enemy);
+			this.tilemap.redrawSlimes(this.slime, this.enemy);
 		} else if(oldColor != this.slime.color) {
-			this.tilemap.redrawSlimes(this.slime, this.ghost, this.enemy);
+			this.tilemap.redrawSlimes(this.slime, this.enemy);
 		}
 		this.screen.updateSlime(this.slime.color, this.slime.power);
 	}

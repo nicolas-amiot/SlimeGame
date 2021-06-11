@@ -17,7 +17,10 @@ class Tile {
 			RED: "red",
 			YELLOW: "yellow",
 			PURPLE: "purple",
+			ORANGE: "orange",
 			TELEPORT: "teleport",
+			LAVA: "lava",
+			INK: "ink",
 			LIGHTNING: "lightning",
 			BUTTON: "button",
 			DOOR: "door"
@@ -37,8 +40,11 @@ class Tile {
 			RED_SLIME: "red",
 			YELLOW_SLIME: "yellow",
 			PURPLE_SLIME: "purple",
+			ORANGE_SLIME: "orange",
 			TELEPORT: "teleport",
 			DEATH: "death",
+			INK: "ink",
+			POWER: "power",
 			BUTTON: "button",
 			DOOR: "door",
 			OPEN: "open"
@@ -118,6 +124,10 @@ class Tile {
 			properties = [Tile.Property.WALK, Tile.Property.FOOD];
 			tile = new Tile(name, true, properties, false, values);
 			tile.editorAttributes(editor, Tile.PowerSupply.INTEGER, "1-3", null, 2);
+		} else if(name == Tile.Name.LAVA) {
+			properties = [Tile.Property.WALK, Tile.Property.DEATH];
+			tile = new Tile(name, true, properties, false, values);
+			tile.editorAttributes(editor, Tile.PowerSupply.NONE, "1-4", null, 1);
 		} else if(name == Tile.Name.BLUE) {
 			properties = [Tile.Property.WALK, Tile.Property.BLUE_SLIME];
 			tile = new Tile(name, true, properties, false, values);
@@ -134,22 +144,30 @@ class Tile {
 			properties = [Tile.Property.WALK, Tile.Property.PURPLE_SLIME];
 			tile = new Tile(name, true, properties, false, values);
 			tile.editorAttributes(editor, Tile.PowerSupply.INTEGER, "2-4", null, 2);
+		} else if(name == Tile.Name.ORANGE) {
+			properties = [Tile.Property.WALK, Tile.Property.ORANGE_SLIME];
+			tile = new Tile(name, true, properties, false, values);
+			tile.editorAttributes(editor, Tile.PowerSupply.INTEGER, "2-5", null, 2);
 		} else if(name == Tile.Name.TELEPORT) {
 			properties = [Tile.Property.WALK, Tile.Property.TELEPORT];
 			tile = new Tile(name, true, properties, true, values);
-			tile.editorAttributes(editor, Tile.PowerSupply.INTEGER, "3-2", Tile.Name.TELEPORT, 1);
-		} else if(name == Tile.Name.LIGHTNING) {
-			properties = [Tile.Property.WALK, Tile.Property.DEATH];
+			tile.editorAttributes(editor, Tile.PowerSupply.INTEGER, "3-1", Tile.Name.TELEPORT, 1);
+		} else if(name == Tile.Name.INK) {
+			properties = [Tile.Property.WALK, Tile.Property.INK];
 			tile = new Tile(name, true, properties, false, values);
-			tile.editorAttributes(editor, Tile.PowerSupply.NONE, "3-1", null, 1);
+			tile.editorAttributes(editor, Tile.PowerSupply.NONE, "3-2", null, 2);
+		} else if(name == Tile.Name.LIGHTNING) {
+			properties = [Tile.Property.WALK, Tile.Property.POWER];
+			tile = new Tile(name, true, properties, false, values);
+			tile.editorAttributes(editor, Tile.PowerSupply.INTEGER, "3-3", null, 2);
 		} else if(name == Tile.Name.BUTTON) {
 			properties = [Tile.Property.WALK, Tile.Property.BUTTON];
 			tile = new Tile(name, true, properties, false, values);
-			tile.editorAttributes(editor, Tile.PowerSupply.LIST, "3-3", Tile.Name.DOOR, 2);
+			tile.editorAttributes(editor, Tile.PowerSupply.LIST, "3-4", Tile.Name.DOOR, 2);
 		} else if(name == Tile.Name.DOOR) {
 			properties = [Tile.Property.DOOR];
 			tile = new Tile(name, false, properties, true, values);
-			tile.editorAttributes(editor, Tile.PowerSupply.BOOLEAN, "3-4", null, 0);
+			tile.editorAttributes(editor, Tile.PowerSupply.BOOLEAN, "3-5", null, 0);
 		}
 		return tile;
 	}
@@ -213,35 +231,16 @@ class Tile {
 							}
 						}
 					}
-					play.slime.power = power;
-					let oldColor = play.slime.color;
-					play.slime.color = Slime.Color.BLUE;
-					play.changeSlime(oldColor);
+					this.colorSlime(play, power, Slime.Color.BLUE);
 				}
 			} else if(this.properties.includes(Tile.Property.RED_SLIME)) {
-				let power = this.powers[0];
-				if(power > 0) {
-					play.slime.power = power;
-					let oldColor = play.slime.color;
-					play.slime.color = Slime.Color.RED;
-					play.changeSlime(oldColor);
-				}
+				this.colorSlime(play, this.powers[0], Slime.Color.RED);
 			} else if(this.properties.includes(Tile.Property.YELLOW_SLIME)) {
-				let power = this.powers[0];
-				if(power > 0) {
-					play.slime.power = power;
-					let oldColor = play.slime.color;
-					play.slime.color = Slime.Color.YELLOW;
-					play.changeSlime(oldColor);
-				}
+				this.colorSlime(play, this.powers[0], Slime.Color.YELLOW);
 			} else if(this.properties.includes(Tile.Property.PURPLE_SLIME)) {
-				let power = this.powers[0];
-				if(power > 0) {
-					play.slime.power = power;
-					let oldColor = play.slime.color;
-					play.slime.color = Slime.Color.PURPLE;
-					play.changeSlime(oldColor);
-				}
+				this.colorSlime(play, this.powers[0], Slime.Color.PURPLE);
+			} else if(this.properties.includes(Tile.Property.ORANGE_SLIME)) {
+				this.colorSlime(play, this.powers[0], Slime.Color.ORANGE);
 			} else if(this.properties.includes(Tile.Property.TELEPORT)) {
 				let power = this.powers[0];
 				if(power == null) {
@@ -253,7 +252,7 @@ class Tile {
 						if(tile != null && this.name == tile.name && power == tile.id && (x != play.slime.posX || y != play.slime.posY)) {
 							play.slime.posX = x;
 							play.slime.posY = y;
-							play.tilemap.redrawSlimes(play.slime, play.ghost, play.enemy);
+							play.tilemap.redrawSlimes(play.slime, play.enemy);
 							x = play.data.tilesX;
 							y = play.data.tilesY;
 						}
@@ -277,6 +276,38 @@ class Tile {
 						}
 					}
 				}
+			} else if(this.properties.includes(Tile.Property.INK)) {
+				for(let x = 0; x < play.puddles.length; x++) {
+					for(let y = 0; y < play.puddles[x].length; y++) {
+						if(play.puddles[x][y] == Play.Puddle.GREEN) {
+							play.puddles[x][y] = Play.Puddle.YELLOW;
+						} else if(play.puddles[x][y] == Play.Puddle.YELLOW) {
+							play.puddles[x][y] = Play.Puddle.GREEN;
+						}
+					}
+				}
+				play.tilemap.redrawPuddles(play.puddles);
+			} else if(this.properties.includes(Tile.Property.POWER)) {
+				let power = this.powers[0];
+				if(play.slime.power > 0) {
+					if(play.slime.color == Slime.Color.BLUE) {
+						for(let x = 0; x < play.puddles.length; x++) {
+							for(let y = 0; y < play.puddles[x].length; y++) {
+								if(play.puddles[x][y] == Game.Puddle.BLUE) {
+									play.puddles[x][y] = Game.Puddle.NONE;
+									play.cases++;
+									play.tilemap.drawPuddle(x, y, null);
+									play.screen.updatePuddle(play.cases);
+								}
+							}
+						}
+					}
+					if(power == null) {
+						power = 0;
+					}
+					play.slime.power = power;
+					play.changeSlime(play.slime.color);
+				}
 			} else if(this.properties.includes(Tile.Property.DEATH)) {
 				dead = true;
 			}
@@ -285,6 +316,22 @@ class Tile {
 			play.killEnemy();
 		}
 		return dead;
+	}
+	
+	/**
+	* Active the effect of the case
+	*
+	* @param {Game} play - Game object
+	* @param {int} power - Slime power
+	* @param {string} color - Slime color
+	*/
+	colorSlime(play, power, color) {
+		if(power > 0) {
+			play.slime.power = power;
+			let oldColor = play.slime.color;
+			play.slime.color = color;
+			play.changeSlime(oldColor);
+		}
 	}
 
 }

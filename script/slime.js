@@ -86,14 +86,15 @@ class Slime {
 	*/
 	useSkill(play) {
 		if(this.color == Slime.Color.BLUE) {
+			let properties = play.getProperties(this.posX, this.posY);
 			let puddle = play.puddles[this.posX][this.posY];
-			if(puddle == Play.Puddle.NONE || puddle == Play.Puddle.GREEN) {
+			if(properties.includes(Tile.Property.PUDDLE) && puddle != Play.Puddle.BLUE) {
 				if(puddle == Play.Puddle.NONE) {
-					play.tilemap.drawPuddle(this.posX, this.posY, "blue");
+					play.tilemap.drawPuddle(this.posX, this.posY, Play.Puddle.BLUE);
 					play.cases--;
 				} else {
 					play.tilemap.drawPuddle(this.posX, this.posY, null);
-					play.tilemap.drawPuddle(this.posX, this.posY, "blue");
+					play.tilemap.drawPuddle(this.posX, this.posY, Play.Puddle.BLUE);
 				}
 				play.puddles[this.posX][this.posY] = Play.Puddle.BLUE;
 				play.screen.updatePuddle(play.cases);
@@ -138,22 +139,28 @@ class Slime {
 						}
 					}
 				}
-				if(play.puddles[caseX][caseY] != Play.Puddle.NULL && play.puddles[caseX][caseY] != Play.Puddle.NONE) {
+				if(puddle != Play.Puddle.NULL && puddle != Play.Puddle.NONE) {
 					play.tilemap.drawPuddle(caseX, caseY, null);
 				} else if(properties.includes(Tile.Property.PUDDLE)) {
 					play.cases--;
 				}
 				play.screen.updatePuddle(play.cases);
 				play.puddles[caseX][caseY] = Play.Puddle.PURPLE;
-				play.tilemap.drawPuddle(caseX, caseY, "purple");
+				play.tilemap.drawPuddle(caseX, caseY, Play.Puddle.PURPLE);
 				this.power = 0;
 				play.changeSlime(Slime.Color.PURPLE);
-				if(play.data.enemy && play.enemy.posX == caseX  && play.enemy.posY == caseY) {
-					play.enemy.posX = this.posX;
-					play.enemy.posY = this.posY;
-					this.posX = caseX;
-					this.posY = caseY;
-					play.tilemap.redrawSlimes(play.slime, play.ghost, play.enemy);
+				if(play.data.enemy && play.enemy.posX == caseX && play.enemy.posY == caseY) {
+					let graph = play.getGraph();
+					if(this.direction == Play.Direction.UP && graph.grid[play.enemy.posX + 1][play.enemy.posY].weight > 0) {
+						play.enemy.posX += 1;
+					} else if(this.direction == Play.Direction.LEFT && graph.grid[play.enemy.posX][play.enemy.posY - 1].weight  > 0) {
+						play.enemy.posY -= 1;
+					} else if(this.direction == Play.Direction.DOWN && graph.grid[play.enemy.posX - 1][play.enemy.posY].weight > 0) {
+						play.enemy.posX -= 1;
+					} else if(this.direction == Play.Direction.RIGHT && graph.grid[play.enemy.posX][play.enemy.posY + 1].weight  > 0) {
+						play.enemy.posY += 1;
+					}
+					play.tilemap.redrawSlimes(play.slime, play.enemy);
 				}
 				if(play.cases == 0) {
 					play.addSuccess();
@@ -165,6 +172,45 @@ class Slime {
 						play.restart();
 					}
 				}
+			}
+		} else if(this.color == Slime.Color.ORANGE) {
+			let properties = play.getProperties(this.posX, this.posY);
+			let puddle = play.puddles[this.posX][this.posY];
+			let pos = null;
+			for(let x = 0; x < play.puddles.length; x++) {
+				for(let y = 0; y < play.puddles[x].length; y++) {
+					if(play.puddles[x][y] == Play.Puddle.ORANGE && (x != this.posX || y != this.posY)) {
+						play.puddles[x][y] = Play.Puddle.GREEN;
+						play.tilemap.drawPuddle(x, y, null);
+						play.tilemap.drawPuddle(x, y, Play.Puddle.GREEN);
+						pos = {x: x, y: y};
+						break;
+					}
+				}
+				if(pos != null) {
+					break;
+				}
+			}
+			if(properties.includes(Tile.Property.PUDDLE) && puddle != Play.Puddle.ORANGE) {
+				if(puddle == Play.Puddle.NONE) {
+					play.cases--;
+				} else {
+					play.tilemap.drawPuddle(this.posX, this.posY, null);
+				}
+				play.tilemap.drawPuddle(this.posX, this.posY, Play.Puddle.ORANGE);
+				play.puddles[this.posX][this.posY] = Play.Puddle.ORANGE;
+				play.screen.updatePuddle(play.cases);
+			}
+			if(pos != null) {
+				if(play.data.enemy && play.enemy.posX == pos.x && play.enemy.posY == pos.y) {
+					play.enemy.posX = this.posX;
+					play.enemy.posY = this.posY;
+				}
+				this.posX = pos.x;
+				this.posY = pos.y;
+				play.tilemap.redrawSlimes(play.slime, play.enemy);
+				this.power--;
+				play.changeSlime(Slime.Color.ORANGE);
 			}
 		}
 	}

@@ -211,6 +211,9 @@ class Screen {
 		} else if(color == Slime.Color.PURPLE) {
 			$(this.slime).children("img").attr("src","images/slimes/slime-purple-right.png");
 			$(this.slime).children("span").text("Portée du lancer : " + power);
+		} else if(color == Slime.Color.ORANGE) {
+			$(this.slime).children("img").attr("src","images/slimes/slime-orange-right.png");
+			$(this.slime).children("span").text("Téléportations restantes : " + power);
 		}
 	}
 	

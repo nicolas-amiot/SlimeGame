@@ -85,7 +85,7 @@ class Editor extends Play {
 			this.tilemap.updateMapSize(this.data.tilesX, this.data.tilesY);
 			this.tilemap.redrawPuddles(this.puddles);
 			this.tilemap.redrawTiles(this.tiles);
-			this.tilemap.redrawSlimes(this.slime, this.ghostSlime, this.enemy);
+			this.tilemap.redrawSlimes(this.slime, this.enemy);
 		}
 	}
 	
@@ -128,7 +128,6 @@ class Editor extends Play {
 			}
 			this.slime = null;
 			this.enemy = null;
-			this.ghost = null;
 		} else {
 			this.tileNumber();
 			this.slime = new Slime(Slime.Color.GREEN, this.data.spawnX, this.data.spawnY, this.data.spawnD);
@@ -137,9 +136,9 @@ class Editor extends Play {
 			} else {
 				this.enemy = null;
 			}
-			this.ghost = null;
 			this.screen.updateLife(this.data.life);
 			this.screen.updateFood(this.data.food);
+			this.screen.updateSlime(Slime.Color.GREEN, 0);
 			if(this.data.dialogs != null && this.data.dialogs.length > 0) {
 				this.screen.updateBubble(this.data.dialogs[0]);
 			} else {
@@ -707,6 +706,7 @@ class Editor extends Play {
 	* Transform the index power to coordinate power
 	*/
 	tileNumber() {
+		let tiles = new Array();
 		for(let x = 0; x < this.data.tilesX; x++) {
 			for(let y = 0; y < this.data.tilesY; y++) {
 				let tile = this.tiles[x][y];
@@ -717,12 +717,16 @@ class Editor extends Play {
 							if(rel != null && rel.name == tile.relation && rel.id != null && tile.powers.includes(rel.id)) {
 								let index = tile.powers.indexOf(rel.id);
 								let num = i * this.data.tilesY + j + 1; // Tile start to index 1
-								tile.powers[index] = num;
+								tiles.push({x: x, y: y, i: index, p: num});
 							}
 						}
 					}
 				}
 			}
+		}
+		for(let i = 0; i < tiles.length; i++) {
+			let tile = tiles[i];
+			this.tiles[tile.x][tile.y].powers[tile.i] = tile.p;
 		}
 	}
 

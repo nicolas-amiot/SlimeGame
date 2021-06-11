@@ -1,7 +1,7 @@
 {
 	"spawn": {"x": 1, "y": 7},
 	"stroke": 35,
-	"tiles": ["beach", "ice", "grass", "lightning", "teleport", "red:1", "red:2"],
+	"tiles": ["beach", "ice", "grass", "lava", "teleport", "red:1", "red:2"],
 	"map": [
 		[3, 3, 4, 3, 3, 3, 4],
 		[2, 0, 2, 2, 2, 2, 4],

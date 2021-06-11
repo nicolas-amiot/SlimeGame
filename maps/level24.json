@@ -3,7 +3,7 @@
 	"life": 1,
 	"food": 5,
 	"stroke": 49,
-	"tiles": ["beach", "lightning", "red:2", "purple:1", "grass:5", "grass:7"],
+	"tiles": ["beach", "lava", "red:2", "purple:1", "grass:5", "grass:7"],
 	"map": [
 		[1, 1, 5, 1, 1, 1, 0],
 		[1, 1, 1, 1, 1, 6, 1],

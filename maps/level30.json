@@ -1,19 +1,19 @@
 {
 	"spawn": {"x": 4, "y": 2},
 	"dialogs": [
-		"Si on lance la flaque violette sur le slime, alors on échangera nos place."
+		"Si on lance la flaque violette sur le slime, alors il sera repoussé d'une case."
 	],
 	"life": 10,
 	"enemy" : {"x": 4, "y": 7},
-	"stroke": 37,
-	"tiles": ["beach", "grass", "teleport:1", "teleport:2", "purple:1", "yellow:4"],
+	"stroke": 44,
+	"tiles": ["beach", "grass", "teleport:1", "teleport:2", "purple:1", "purple:2", "yellow:4"],
 	"map": [
 		[4, 1, 1, 1, 1, 2, 1],
-		[2, 5, 2, 2, 2, 2, 5],
+		[2, 5, 2, 2, 2, 2, 6],
 		[1, 1, 1, 1, 1, 2, 4],
-		[0, 0, 0, 6, 0, 0, 0],
+		[0, 0, 0, 7, 0, 0, 0],
 		[1, 1, 2, 1, 1, 2, 1],
-		[5, 3, 2, 2, 2, 5, 1],
+		[6, 3, 2, 2, 2, 5, 1],
 		[1, 1, 2, 1, 1, 2, 3]
 	]
 }

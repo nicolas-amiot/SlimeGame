@@ -1,0 +1,24 @@
+{
+  "spawn": {"x": 3, "y": 5, "direction": "right"},
+  "life": 1,
+  "stroke": 30,
+  "dialogs": ["Je peux devenir un slime pêche dans ce niveau. Cela me permet de poser une flaque orange sur le sable et de me téléporter à une autre existante."],
+  "tiles": [
+    "beach",
+    "button:1",
+    "button:3:2",
+    "door:1",
+    "door:2:1",
+    "door:3",
+    "orange:1"
+  ],
+  "map": [
+    [2, 1, 1, 0, 1, 6, 1],
+    [0, 0, 1, 0, 0, 0, 1],
+    [1, 1, 7, 1, 1, 0, 1],
+    [1, 0, 0, 0, 3, 0, 5],
+    [1, 0, 0, 0, 1, 0, 1],
+    [1, 4, 1, 1, 1, 1, 1],
+    [0, 0, 0, 0, 1, 0, 0]
+  ]
+}

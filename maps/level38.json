@@ -1,0 +1,17 @@
+{
+  "spawn": {"x": 4, "y": 4, "direction": "right"},
+  "life": 1,
+  "food": 15,
+  "stroke": 65,
+  "dialogs": ["Tu vois cette case avec une tâche d'encre <img src='images/tiles/ink.png'/> ? Elle permet de recolorer les flaques vertes en jaune afin de s'y deplacer sans perdre de la vie et inversement"],
+  "tiles": ["beach", "blue:1", "grass:15", "ink", "orange:1"],
+  "map": [
+    [1, 1, 1, 1, 1, 1, 1],
+    [1, 0, 1, 0, 2, 1, 0],
+    [1, 0, 1, 1, 1, 1, 1],
+    [1, 4, 1, 3, 1, 0, 0],
+    [1, 1, 1, 0, 1, 1, 0],
+    [0, 1, 1, 0, 1, 5, 1],
+    [1, 1, 1, 1, 1, 1, 1]
+  ]
+}

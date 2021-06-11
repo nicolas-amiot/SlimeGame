@@ -1,6 +1,6 @@
 {
 	"spawn": {"x": 2, "y": 5},
-	"tiles": ["beach", "grass:8", "lightning", "teleport", "blue:1"],
+	"tiles": ["beach", "grass:8", "lava", "teleport", "blue:1"],
 	"life": 1,
 	"food": 7,
 	"stroke": 23,

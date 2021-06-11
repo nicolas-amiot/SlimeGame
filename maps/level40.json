@@ -1,0 +1,17 @@
+{
+  "spawn": {"x": 1, "y": 1, "direction": "up"},
+  "life": 1,
+  "enemy": {"x": 7, "y": 7, "direction": "left"},
+  "stroke": 48,
+  "dialogs": ["Si lors d'une téléportation avec une flaque orange le slime gris se trouve dessus, on échangera nos place."],
+  "tiles": ["beach", "ice", "ink", "orange:10", "teleport:1:2", "teleport:2:1"],
+  "map": [
+    [3, 1, 1, 1, 1, 1, 1],
+    [0, 0, 0, 1, 0, 0, 0],
+    [1, 1, 1, 1, 1, 1, 1],
+    [1, 1, 2, 2, 1, 2, 1],
+    [0, 1, 1, 1, 1, 2, 1],
+    [6, 0, 0, 1, 1, 1, 1],
+    [4, 1, 0, 0, 1, 1, 5]
+  ]
+}

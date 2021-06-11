@@ -229,10 +229,10 @@
 							</div>
 							<div class="row align-items-center mb-3">
 								<div class="col icon">
-									<img src="images/tiles/lightning.png" />
+									<img src="images/tiles/lava.png" />
 								</div>
 								<div class="col align-middle">
-									<div class="font-weight-bold">Éclair</div>
+									<div class="font-weight-bold">Lave</div>
 									Tue imédiatement le slime faisant recommencer le niveau.
 								</div>
 							</div>
@@ -242,7 +242,7 @@
 								</div>
 								<div class="col align-middle">
 									<div class="font-weight-bold">Téléportation</div>
-									Toujours présente par pair, elle permet de se téléporter à l'autre case.
+									Cette case téléporte le slime à une autre du même type.
 								</div>
 							</div>
 							<div class="row align-items-center mb-3">
@@ -251,7 +251,25 @@
 								</div>
 								<div class="col align-middle">
 									<div class="font-weight-bold">Bouton</div>
-									Active ou désactive des passerelles (flaques blanches) permettant de passer au dessus du vide.
+									Active ou désactive des passerelles permettant de passer au dessus du vide.
+								</div>
+							</div>
+							<div class="row align-items-center mb-3">
+								<div class="col icon">
+									<img src="images/tiles/ink.png" />
+								</div>
+								<div class="col align-middle">
+									<div class="font-weight-bold">Encre</div>
+									Les flaques vertes deviennent jaunes permettant de s'y deplacer sans danger et inversement.
+								</div>
+							</div>
+							<div class="row align-items-center mb-3">
+								<div class="col icon">
+									<img src="images/tiles/lightning.png" />
+								</div>
+								<div class="col align-middle">
+									<div class="font-weight-bold">Eclair</div>
+									Modifie la puissance de votre compétence spéciale.
 								</div>
 							</div>
 							<div class="row align-items-center mb-1">
@@ -280,7 +298,7 @@
 								</div>
 								<div class="col align-middle">
 									<div class="font-weight-bold">Slime fraise</div>
-									Permet d'éxécuter une ruée qui n'active pas les cases mais permet de poser des flaques.<br>
+									Éxécute une ruée qui n'active pas les cases mais permet de poser des flaques.<br>
 									Lors d'une ruée si vous terminez sur le slime gris, celui-ci réapparait sur sa case d'origine.
 								</div>
 							</div>
@@ -311,7 +329,17 @@
 								<div class="col align-middle">
 									<div class="font-weight-bold">Slime cassis</div>
 									Lance une flaque unique permettant de désactiver la case sur laquelle elle se trouve.<br>
-									Si la flaque est lancée sur le slime gris, vos positions sont échangées.
+									Si la flaque est lancée sur le slime gris, celui-ci est repoussé d'une case.
+								</div>
+							</div>
+							<div class="row align-items-center mb-3">
+								<div class="col icon">
+									<img src="images/slimes/slime-orange-right.png" />
+								</div>
+								<div class="col align-middle">
+									<div class="font-weight-bold">Slime pêche</div>
+									Permet de poser une flaque orange et de se téléporter à une déjà existante.<br>
+									Si votre téléportation atterit sur le slime gris alors vos positions sont échangées.
 								</div>
 							</div>
 							<div class="row align-items-center mb-1">
@@ -405,7 +433,7 @@
 						</div>
 						<div id="buttonAlert" class="float-right d-none">
 							<button id="again" type="button" class="btn btn-info">Réessayer</button>
-							<a id="download" class="btn btn-info" download="map.json" href="#">Télécharger la map</a>
+							<a id="download" class="btn btn-info" download="level.json" href="#">Télécharger la map</a>
 						</div>
 					</div>
 				</div>

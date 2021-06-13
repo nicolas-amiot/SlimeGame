@@ -88,6 +88,7 @@ $(document).ready(function(){
 	
 	// Play button
 	$('#play').click(function() {
+		play.animate = $('#animate').val() * 1000;
 		play.checkCompliance();
 	});
 	

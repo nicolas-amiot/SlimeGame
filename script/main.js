@@ -72,6 +72,7 @@ $(document).ready(function(){
 		play = new Game(screen, tilemap);
 		screen.menu(Screen.Display.GAME);
 		play.level = parseInt($(this).val());
+		play.animate = $('#animate').val() * 1000;
 		play.start();
 	});
 	

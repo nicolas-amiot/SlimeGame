@@ -36,15 +36,16 @@ class Play {
 	*
 	* @param {Screen} screen - Screen element
 	* @param {Tilemap} tilemap - Isometric tile map
+	* @param {Messages} messages - Messages for the different language
 	*/
-	constructor(screen, tilemap) {
+	constructor(screen, tilemap, messages) {
 		this.screen = screen;
 		this.tilemap = tilemap;
+		this.messages = messages;
 		
 		// Configuration
-		this.animate = 500;
+		this.animation = 500;
 		this.cookie = true;
-		this.success = ""; // level success
 		
 		// Play attributes
 		this.ready = false; // Game is ready to be played
@@ -70,11 +71,10 @@ class Play {
 			enemyX : 0, // Enemy spawn in x axis
 			enemyY : 0, // Enemy spawn in y axis
 			enemyD : Play.Direction.RIGHT, // Enemy direction
+			enemyP : 0, // Enemy power
 			dialogs : new Array(), // Dialogs to display at the start of the game
 			stroke : 0, // Maximum stroke number for get the star
 		};
-		
-		this.getCookie();
 	}
 	
 	/**
@@ -166,7 +166,7 @@ class Play {
 			this.screen.displayBubble(true);
 		}
 		if(this.dialog <= this.data.dialogs.length) {
-			this.screen.updateBubble(this.data.dialogs[this.dialog - 1]);
+			this.screen.updateBubble(this.data.dialogs[this.dialog - 1], this.messages);
 			this.dialog++;
 		} else if(this.dialog > this.data.dialogs.length) {
 			this.screen.displayBubble(false);
@@ -263,6 +263,9 @@ class Play {
 						this.data.enemyD = Play.Direction.RIGHT;
 				}
 			}
+			if(json.enemy.power != null && json.enemy.power > 0) {
+				this.data.enemyP = json.enemy.power;
+			}
 		} else {
 			this.data.enemy = false;
 		}
@@ -333,6 +336,9 @@ class Play {
 		this.changeSlime(Slime.Color.GREEN);
 		if(this.data.enemy) {
 			this.enemy = new Slime(Slime.Color.GRAY, this.data.enemyX, this.data.enemyY, this.data.enemyD);
+			if(this.data.enemyP != null && this.data.enemyP > 0) {
+				this.enemy.power = this.data.enemyP;
+			}
 		} else {
 			this.enemy = null;
 		}
@@ -401,7 +407,7 @@ class Play {
 	move(vx, vy, puddled) {
 		this.pending = true;
 		let self = this;
-		let frame = this.animate != 0 ? Math.ceil(this.animate / 1000 * 60) : 1;
+		let frame = this.animation != 0 ? Math.ceil(this.animation / 1000 * 60) : 1;
 		let deformation = 40;
 		let moveEnemy = this.getNextEnemyTile(vx, vy);
 		let posSlime = {x: this.slime.posX, y: this.slime.posY};
@@ -486,7 +492,7 @@ class Play {
 					}
 					self.pending = false;
 				}
-			}, this.animate * i / frame, i);
+			}, this.animation * i / frame, i);
 		}
 	}
 	
@@ -495,6 +501,7 @@ class Play {
 	* @return {Graph} graph - The path finding graph
 	*/
 	getGraph() {
+		let graph = null;
 		let map = new Array();
 		for(let x = 0; x < this.data.tilesX; x++) {
 			map[x] = new Array();
@@ -508,7 +515,12 @@ class Play {
 				}
 			}
 		}
-		return new Graph(map);
+		if(this.enemy.power != 1) {
+			graph = new Graph(map);
+		} else {
+			graph = new Graph(map, { diagonal: true });
+		}
+		return graph;
 	}
 	
 	/**
@@ -527,7 +539,11 @@ class Play {
 			let end = graph.grid[this.slime.posX + vx][this.slime.posY + vy];
 			let path = null;
 			if(!this.slime.evade()) {
-				path = astar.search(graph, start, end);
+				if(this.enemy.power != 1) {
+					path = astar.search(graph, start, end);
+				} else {
+					path = astar.search(graph, start, end, { heuristic: astar.heuristics.diagonal });
+				}
 				if(path.length > 0) {
 					let gridNode = astar.search(graph, start, end)[0];
 					move.vx = gridNode.x - this.enemy.posX;
@@ -535,13 +551,13 @@ class Play {
 					move.deform = true;
 				}
 			}
-			if(move.vx > 0) {
+			if(move.vx > 0 && move.vy >= 0) {
 				this.enemy.direction = Play.Direction.UP;
-			} else if(move.vx < 0) {
+			} else if(move.vx < 0 && move.vy <= 0) {
 				this.enemy.direction = Play.Direction.DOWN;
-			} else if(move.vy > 0) {
+			} else if(move.vy > 0 && move.vx <= 0) {
 				this.enemy.direction = Play.Direction.RIGHT;
-			} else if(move.vy < 0) {
+			} else if(move.vy < 0 && move.vx >= 0) {
 				this.enemy.direction = Play.Direction.LEFT;
 			}
 		}
@@ -584,7 +600,7 @@ class Play {
 		} else if(oldColor != this.slime.color) {
 			this.tilemap.redrawSlimes(this.slime, this.enemy);
 		}
-		this.screen.updateSlime(this.slime.color, this.slime.power);
+		this.screen.updateSlime(this.slime.color, this.slime.power, this.messages);
 	}
 	
 	/**
@@ -604,18 +620,6 @@ class Play {
 			}
 		} else {
 			return [];
-		}
-	}
-	
-	/**
-	* Get cookie for the progress levels
-	*/
-	getCookie() {
-		if(this.success.length == 0 && this.cookie) {
-			this.success = Cookies.get('levels');
-			if(this.success == null) {
-				this.success = "";
-			}
 		}
 	}
 

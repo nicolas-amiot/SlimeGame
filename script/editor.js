@@ -8,9 +8,10 @@ class Editor extends Play {
 	*
 	* @param {Screen} screen - Screen element
 	* @param {Tilemap} tilemap - Isometric tile map
+	* @param {Messages} messages - Messages for the different language
 	*/
-	constructor(screen, tilemap) {
-		super(screen, tilemap);
+	constructor(screen, tilemap, messages) {
+		super(screen, tilemap, messages);
 		this.selection = null;
 		this.json = null;
 	}
@@ -55,11 +56,13 @@ class Editor extends Play {
 			this.data.stroke = this.stroke;
 			this.json.stroke = this.stroke;
 		}
-		let message = $("#editorAlert");
-		message.removeClass("alert-danger");
-		message.addClass("alert-success");
-		message.empty();
-		message.text("La carte a été réalisée avec succès. Votre meilleur score est de " + this.data.stroke + " coups.");
+		let body = $("#editorAlert");
+		let span = $('<span data-lang="editor.modal.success,' + this.data.stroke + '"></span>');
+		body.empty();
+		body.removeClass("alert-danger");
+		body.addClass("alert-success");
+		body.append(span);
+		this.messages.elm(span[0]);
 		$('#buttonAlert').removeClass("d-none");
 		$("#download").attr("href", "data:text/json;charset=utf-8," + encodeURIComponent(stringify(this.json)));
 		$('#modalEditor').modal('show');
@@ -79,6 +82,9 @@ class Editor extends Play {
 			}
 			if(this.enemy != null) {
 				this.tilemap.drawSlime(this.enemy);
+				if(this.enemy.power != null && this.enemy.power > 0) {
+					this.tilemap.drawNumber(this.enemy.posX, this.enemy.posY, this.enemy.power, true);
+				}
 			}
 			this.tilemap.drawGrid(this.tiles.length, this.tiles[0].length);
 		} else {
@@ -105,7 +111,7 @@ class Editor extends Play {
 	* @param {int} tileY - Y size
 	*/
 	confugure(tilesX, tilesY) {
-		let size = $("#grid").children("span");
+		let size = $("#grid").children("span[contenteditable='true']");
 		size.eq(0).text(tilesY);
 		size.eq(1).text(tilesX);
 		this.data.tilesX = tilesX;
@@ -133,16 +139,23 @@ class Editor extends Play {
 			this.slime = new Slime(Slime.Color.GREEN, this.data.spawnX, this.data.spawnY, this.data.spawnD);
 			if(this.data.enemy) {
 				this.enemy = new Slime(Slime.Color.GRAY, this.data.enemyX, this.data.enemyY, this.data.enemyD);
+				if(this.data.enemyP != null && this.data.enemyP > 0) {
+					this.enemy.power = this.data.enemyP;
+				}
 			} else {
 				this.enemy = null;
 			}
 			this.screen.updateLife(this.data.life);
 			this.screen.updateFood(this.data.food);
-			this.screen.updateSlime(Slime.Color.GREEN, 0);
+			this.screen.updateSlime(Slime.Color.GREEN, 0, this.messages);
+			let bubble = $(this.screen.bubble).children("span")[0];
+			this.messages.data(bubble, null);
 			if(this.data.dialogs != null && this.data.dialogs.length > 0) {
-				this.screen.updateBubble(this.data.dialogs[0]);
-			} else {
-				this.screen.updateBubble("Description de la carte");
+				let dialog = "";
+				for(let i = 0; i < this.data.dialogs.length; i++) {
+					dialog += this.data.dialogs[i] + "<br>";
+				}
+				bubble.innerHTML = dialog;
 			}
 		}
 		this.screen.menu(Screen.Display.EDITOR);
@@ -412,6 +425,9 @@ class Editor extends Play {
 		}
 		if(this.enemy != null) {
 			this.tilemap.drawSlime(this.enemy);
+			if(this.enemy.power != null && this.enemy.power > 0) {
+				this.tilemap.drawNumber(this.enemy.posX, this.enemy.posY, this.enemy.power, true);
+			}
 		}
 		this.tilemap.drawGrid(this.tiles.length, this.tiles[0].length);
 	}
@@ -456,7 +472,9 @@ class Editor extends Play {
 	editTile(event, reverse) {
 		let pos = this.getTileCursor(event);
 		let selection = this.selection;
-		if(pos != null && this.tiles[pos.x][pos.y] != null) {
+		if(pos != null && this.enemy != null && pos.x == this.enemy.posX && pos.y == this.enemy.posY) {
+			this.slimePower(this.enemy, reverse);
+		} else if(pos != null && this.tiles[pos.x][pos.y] != null) {
 			let tile = this.tiles[pos.x][pos.y];
 			if(this.selection != null && (this.selection.tile.relation != tile.name || this.selection.tile == tile)) {
 				this.selection = null;
@@ -485,7 +503,44 @@ class Editor extends Play {
 	}
 	
 	/**
-	* Increase or decrease the power
+	* Increase or decrease the slime power
+	*
+	* @param {Slime} slime - Target slime
+	* @param {string} decrease - Increase or decrease
+	*/
+	slimePower(slime, decrease) {
+		let power = slime.power;
+		if(power == null) {
+			power = 0;
+		}
+		if(!decrease) {
+			if(power < 9) {
+				power++;
+			} else {
+				power = 0;
+			}
+		} else {
+			if(power > 0) {
+				power--;
+			} else {
+				power = 9;
+			}
+		}
+		slime.power = power;
+		if(this.slime != null) {
+			this.tilemap.drawSlime(this.slime);
+		} else {
+			this.tilemap.clearCanvas(3);
+		}
+		if(this.enemy != null) {
+			this.tilemap.drawSlime(this.enemy);
+		}
+		this.tilemap.drawNumber(slime.posX, slime.posY, power, true)
+		this.tilemap.drawGrid(this.tiles.length, this.tiles[0].length);
+	}
+	
+	/**
+	* Increase or decrease the tile power
 	*
 	* @param {Tile} tile - Target tile
 	* @param {int} min - Minimum power
@@ -567,6 +622,7 @@ class Editor extends Play {
 	*/
 	checkCompliance() {
 		let errors = new Array();
+		let dialogs = this.screen.valueBubble();
 		this.json = {};
 		if(this.slime != null) {
 			let tile = this.tiles[this.slime.posX][this.slime.posY];
@@ -576,10 +632,10 @@ class Editor extends Play {
 				this.json.spawn.y = this.slime.posX + 1; // Case start at index 1 in the json and x axis is the top left border
 				this.json.spawn.direction = this.slime.direction;
 			} else {
-				errors.push("Votre slime ne peut pas apparaître sur la case actuelle");
+				errors.push("editor.modal.error.slime");
 			}
 		} else {
-			errors.push("Vous devez définir un spawn");
+			errors.push("editor.modal.error.spawn");
 		}
 		if(this.screen.valueLife() > 0) {
 			this.json.life = this.screen.valueLife();
@@ -594,27 +650,36 @@ class Editor extends Play {
 				this.json.enemy.x = this.enemy.posY + 1; // Case start at index 1 in the json and x axis is the top left border
 				this.json.enemy.y = this.enemy.posX + 1; // Case start at index 1 in the json and x axis is the top left border
 				this.json.enemy.direction = this.enemy.direction;
+				if(this.enemy.power != null && this.enemy.power > 0) {
+					this.json.enemy.power = this.enemy.power;
+				}
 			} else {
-				errors.push("Le slime ennemi ne peut pas apparaître sur la case actuelle");
+				errors.push("editor.modal.error.enemy");
 			}
 		}
 		this.json.stroke = 999;
-		if(this.screen.valueBubble().length > 0) {
-			this.json.dialogs = [this.screen.valueBubble()];
+		if(dialogs.length > 0) {
+			dialogs = dialogs.split(/\s+/);
+			this.json.dialogs = dialogs;
 		}
 		if(errors.length == 0) {
 			this.tilesAdjust();
 			this.start();
 		} else {
-			let message = $("#editorAlert");
-			message.addClass("alert-danger");
-			message.removeClass("alert-success");
-			message.empty();
-			message.html("Votre carte contient des erreurs, veuillez les corriger afin de pouvoir tester la map :<ul>");
+			let body = $("#editorAlert");
+			let span = $('<span data-lang="editor.modal.error"></span>');
+			let list = $('<ul class="pt-2"></ul>');
+			body.empty();
+			body.addClass("alert-danger");
+			body.removeClass("alert-success");
+			body.append(span);
+			body.append(list);
+			this.messages.elm(span[0]);
 			for(let i = 0; i < errors.length; i++) {
-				message.append("<li> " + errors[i] + "</li>");
+				let li = $('<li data-lang="' + errors[i] + '"></li>');
+				list.append(li);
+				this.messages.elm(li[0]);
 			}
-			message.append("</ul>");
 			$('#buttonAlert').addClass("d-none");
 			$('#modalEditor').modal('show');
 		}

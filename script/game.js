@@ -8,9 +8,10 @@ class Game extends Play {
 	*
 	* @param {Screen} screen - Screen element
 	* @param {Tilemap} tilemap - Isometric tile map
+	* @param {Messages} messages - Messages for the different language
 	*/
-	constructor(screen, tilemap) {
-		super(screen, tilemap);
+	constructor(screen, tilemap, messages) {
+		super(screen, tilemap, messages);
 		this.level = 0; // Map level
 	}
 	
@@ -80,20 +81,8 @@ class Game extends Play {
 		} else {
 			digit = '2';
 		}
-		let dif = this.level - this.success.length;
-		if(dif > 0) {
-			for(let i = 1; i < dif; i++) {
-				this.success += "0";
-			}
-			this.success += digit;
-		} else {
-			let current = this.success.charAt(this.level - 1);
-			if(current < digit) {
-				this.success = this.success.substring(0, this.level - 1) + digit + this.success.substring(this.level);
-			}
-		}
 		if(this.cookie) {
-			Cookies.set('levels', this.success, { expires: 365, path: '' });
+			localStorage.setItem("level" + this.level, digit);
 		}
 	}
 

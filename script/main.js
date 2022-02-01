@@ -3,20 +3,65 @@ $(document).ready(function(){
 	// Create the map and game objects
 	let tilemap = new Tilemap("map", "tile", "char");
 	let screen = new Screen();
-	let play = new Play(screen, tilemap);
+	let messages = new Messages("lang", "en", "fr");
+	let play = new Play(screen, tilemap, messages);
 	screen.menu(Screen.Display.MENU);
 	tilemap.loadBackground();
-	$('#animate').on("input", function() {
-		play.animate = $(this).val() * 1000;
-		$(this).next("output").val($(this).val() + " s");
-	});
 	
-	// Cookie
+	// Settings
+	let language = localStorage.getItem("language");
+	play.animation = localStorage.getItem("animation");
+	if(language != null && language.length > 0) {
+		$('#modalSettings .dropdown-item').each(function() {
+			if($(this).children("span").data("value") == language) {
+				$('#language').children("div").children("img").attr("src", $(this).children("div").children("img").attr("src"));
+				$('#language').children("span")[0].dataset.lang = $(this).children("span")[0].dataset.lang;
+				$('#language').children("span")[0].dataset.value = language;
+				return false;
+			}
+		});
+	}
+	if(play.animation != null) {
+		$('#animation').val(play.animation / 1000);
+		$('#animation').next("output").val($('#animation').val() + " s");
+	}
+	messages.lang(language).then((success) => {
+		if(success) {
+			messages.dom();
+		}
+	});
+	$('#modalSettings .dropdown-item').click(function() {
+		let lang = $(this).children("span")[0].dataset.value;
+		if(lang != $('#language').children("span")[0].dataset.value) {
+			$('#language').children("div").children("img").attr("src", $(this).children("div").children("img").attr("src"));
+			$('#language').children("span").text($(this).children("span").text());
+			$('#language').children("span")[0].dataset.lang = $(this).children("span")[0].dataset.lang;
+			$('#language').children("span")[0].dataset.value = lang;
+			localStorage.setItem("language", lang);
+			messages.lang(lang).then((success) => {
+				if(success) {
+					messages.dom();
+					lang = $(screen.bubble).children("span")[0].dataset.lang;
+					if(lang != null) {
+						screen.updateBubble(lang, messages);
+					}
+				}
+			});
+		}
+	});
+	$('#animation').on("input", function() {
+		$(this).next("output").val($(this).val() + " s");
+		play.animation = $(this).val() * 1000;
+		localStorage.setItem("animation", play.animation);
+	});
 	$('#cookie').change(function() {
 		play.cookie = $(this).is(':checked');
-	});
-	$('#deleteCookie').click(function() {
-		Cookies.remove('levels', { path: '' });
+		if(!play.cookie) {
+			localStorage.clear();
+		} else {
+			localStorage.setItem("animation", $('#animation').val() * 1000);
+			localStorage.setItem("language", $('#language').children("span").data("value"));
+		}
 	});
 	
 	// Music game
@@ -34,7 +79,7 @@ $(document).ready(function(){
 	});
 	
 	// Load maps modal
-	let totalMaps = 40;
+	let totalMaps = 50;
 	let modal = $("#maps");
 	let row = null;
 	for(let i = 1; i <= totalMaps; i++) {
@@ -50,45 +95,49 @@ $(document).ready(function(){
 			'</div>'
 		);
 	}
-	$("#modalLevel").on('shown.bs.modal', function () {
+	$('#modalLevel').on('shown.bs.modal', function () {
 		$(this).find('button[name="level"]').each(function() {
 			let level = parseInt($(this).val());
-			if(play.success.length >= level) {
-				let success = play.success.charAt(level - 1);
-				let span = $(this).children("span");
-				if(success == '1') {
-					span.addClass("checkmark");
-					span.removeClass("d-none");
-				} else if(success == '2') {
-					span.addClass("star");
-					span.removeClass("d-none");
-				}
+			let success = localStorage.getItem("level" + level);
+			let span = $(this).children("span");
+			span.removeClass("checkmark");
+			span.removeClass("star");
+			span.addClass("d-none");
+			if(success == '1') {
+				span.addClass("checkmark");
+				span.removeClass("d-none");
+			} else if(success == '2') {
+				span.addClass("star");
+				span.removeClass("d-none");
 			}
 		});
 	});
 	
 	// Launch the game
 	$('button[name="level"]').click(function() {
-		play = new Game(screen, tilemap);
+		play = new Game(screen, tilemap, messages);
 		screen.menu(Screen.Display.GAME);
 		play.level = parseInt($(this).val());
-		play.animate = $('#animate').val() * 1000;
+		play.animation = $('#animation').val() * 1000;
+		play.cookie = $('#cookie').is(':checked');
 		play.start();
 	});
 	
 	// Editor button
 	$('#editor').click(function() {
-		play = new Editor(screen, tilemap);
+		play = new Editor(screen, tilemap, messages);
 		play.confugure(7, 7);
 		play.screen.menu(Screen.Display.EDITOR);
 		play.initialize(true);
 		play.createSelector("selector");
-		screen.updateBubble("Description de la carte");
+		let bubble = $(screen.bubble).children("span")[0];
+		messages.data(bubble, null);
+		messages.set(bubble, messages.get("dialog.editor"));
 	});
 	
 	// Play button
 	$('#play').click(function() {
-		play.animate = $('#animate').val() * 1000;
+		play.animation = $('#animation').val() * 1000;
 		play.checkCompliance();
 	});
 	
@@ -260,7 +309,7 @@ $(document).ready(function(){
 			}
 		}
 		if($(this).parent()[0].id == "grid" && $(this).text().length > 0) {
-			let grid = $(this).parent().children("span");
+			let grid = $(this).parent().children("span[contenteditable='true']");
 			play.confugure($(grid[1]).text(), $(grid[0]).text());
 			play.initialize(true);
 		}

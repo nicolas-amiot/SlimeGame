@@ -413,17 +413,24 @@ class Tilemap {
 	* @param {int} x - X position
 	* @param {int} y - Y position
 	* @param {int} number - Number to draw
+	* @param {boolean} character - If it's character power
 	*/
-	drawNumber(x, y, number) {
+	drawNumber(x, y, number, character) {
 		number = number.toString();
 		let font = 20 * this.ratio;
-		this.mapCtx.globalCompositeOperation= 'source-over';
-		this.mapCtx.globalAlpha = 1;
-		this.mapCtx.fillStyle = 'black';
-		this.mapCtx.font = 'bold ' + font + 'px Courier';
+		let ctx = null;
+		if(character) {
+			ctx = this.charCtx;
+		} else {
+			ctx = this.mapCtx;
+		}
+		ctx.globalCompositeOperation= 'source-over';
+		ctx.globalAlpha = 1;
+		ctx.fillStyle = 'black';
+		ctx.font = 'bold ' + font + 'px Courier';
 		let offX = x * Tilemap.TILE_WIDTH * this.ratio / 2 + y * Tilemap.TILE_WIDTH * this.ratio / 2 + this.originX - 6.2 * number.length * this.ratio;
 		let offY = y * Tilemap.TILE_HEIGHT * this.ratio / 2 - x * Tilemap.TILE_HEIGHT * this.ratio / 2 + this.originY + 5.5 * this.ratio;
-		this.mapCtx.fillText(number, offX, offY);
+		ctx.fillText(number, offX, offY);
 	}
 	
 	

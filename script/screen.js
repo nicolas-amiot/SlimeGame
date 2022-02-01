@@ -194,26 +194,35 @@ class Screen {
 	*
 	* @param {string} color - Color slime for icon
 	* @param {int} power - Power of slime
+	* @param {Messages} messages - Language messages
 	*/
-	updateSlime(color, power) {
+	updateSlime(color, power, messages) {
+		let span = $(this.slime).children("span")[0];
 		if(color == Slime.Color.GREEN) {
 			$(this.slime).children("img").attr("src","images/slimes/slime-green-right.png");
+			messages.data(span, null);
+			messages.elm(span);
 			$(this.slime).children("span").text("");
 		} else if(color == Slime.Color.BLUE) {
 			$(this.slime).children("img").attr("src","images/slimes/slime-blue-right.png");
-			$(this.slime).children("span").text("Utilisations restantes : " + power);
+			messages.data(span, "dialog.slime.blue", power);
+			messages.elm(span);
 		} else if(color == Slime.Color.RED) {
 			$(this.slime).children("img").attr("src","images/slimes/slime-red-right.png");
-			$(this.slime).children("span").text("Puissance de la ruée : " + (power + 1));
+			messages.data(span, "dialog.slime.red", power + 1);
+			messages.elm(span);
 		} else if(color == Slime.Color.YELLOW) {
 			$(this.slime).children("img").attr("src","images/slimes/slime-yellow-right.png");
-			$(this.slime).children("span").text("Nombre de tours restants : " + power);
+			messages.data(span, "dialog.slime.yellow", power);
+			messages.elm(span);
 		} else if(color == Slime.Color.PURPLE) {
 			$(this.slime).children("img").attr("src","images/slimes/slime-purple-right.png");
-			$(this.slime).children("span").text("Portée du lancer : " + power);
+			messages.data(span, "dialog.slime.purple", power);
+			messages.elm(span);
 		} else if(color == Slime.Color.ORANGE) {
 			$(this.slime).children("img").attr("src","images/slimes/slime-orange-right.png");
-			$(this.slime).children("span").text("Téléportations restantes : " + power);
+			messages.data(span, "dialog.slime.orange", power);
+			messages.elm(span);
 		}
 	}
 	
@@ -234,15 +243,18 @@ class Screen {
 	* Update the number of bubble
 	*
 	* @param {string} dialog - Dialog to show
+	* @param {Messages} messages - Language messages
 	*/
-	updateBubble(dialog) {
-		$(this.bubble).children("span").html(dialog);
+	updateBubble(dialog, messages) {
+		let span = $(this.bubble).children("span")[0];
+		messages.data(span, dialog);
+		messages.elm(span, false, true);
 	}
 	
 	/**
-	* Content editable for the food
+	* Content editable for the bubble
 	*
-	* @param {boolean} editable - Food editable
+	* @param {boolean} editable - Bubble editable
 	*/
 	editableBubble(editable) {
 		if(editable) {
@@ -253,10 +265,10 @@ class Screen {
 	}
 	
 	/**
-	* Get the food value
+	* Get the text in the bubble
 	*/
 	valueBubble() {
-		return $(this.bubble).children("span").text().trim();
+		return $(this.bubble).children("span")[0].innerText.trim();
 	}
 	
 	/**

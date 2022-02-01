@@ -15,10 +15,10 @@
 		<div class="panel panel-title">
 			<div class="title">SYRUP SLIME</div>
 			<div class="information">
-				<div class="d-none">Level : <span id="level">0</span><span class="star ml-4"> <span id="stroke">0</span></div>
-				<div class="d-none">Flaques restantes : <span id="puddle">0</span></div>
-				<div class="d-none">Vie : <span id="life" class="life">0</span></div>
-				<div class="d-none">Nourriture : <span id="food">0</span></div>
+				<div class="d-none"><span data-lang="interface.level"></span> <span id="level">0</span><span class="star ml-4"> <span id="stroke">0</span></div>
+				<div class="d-none"><span data-lang="interface.puddle"></span> <span id="puddle">0</span></div>
+				<div class="d-none"><span data-lang="interface.life"></span> <span id="life" class="life">0</span></div>
+				<div class="d-none"><span data-lang="interface.food"></span> <span id="food">0</span></div>
 			</div>
 		</div>
 		<div id="option" class="panel panel-option">
@@ -45,13 +45,12 @@
 			</button>
 		</div>
 		<div class="panel panel-state">
-			<div id="bubble" class="bubble"><span>
-				Ce site utilise les cookies <img src='images/cookie.png'/> pour sauvegarder votre avancée dans le jeu. Vous pouvez les désactiver et supprimer en allant dans les paramètres du jeu en haut à droite.
+			<div id="bubble" class="bubble"><span data-lang="dialog.init">
 			</span> <button id="next" class="btn btn-light rounded-circle command">&raquo;</button></div>
 			<div id="slime"><img src="images/slimes/slime-green-right.png" width="64" /> <span></span></div>
 		</div>
 		<div id="grid" class="grid d-none text-center">
-			Grille <span contenteditable="true" min="1" max="9">7</span> x <span contenteditable="true" min="1" max="9">7</span><br><label class="btn btn-link">Charger une map<input id="upload" type="file" accept="application/JSON" hidden></label>
+			<span data-lang="editor.grid"></span> <span contenteditable="true" min="1" max="9">7</span> x <span contenteditable="true" min="1" max="9">7</span><br><label class="btn btn-link"><span data-lang="editor.load"></span><input id="upload" type="file" accept="application/JSON" hidden></label>
 		</div>
 		<div class="panel panel-command">
 			<div id="command" class="container d-none controller">
@@ -106,7 +105,7 @@
 				<span class="dot"></span>
 				<span class="dot"></span>
 			</div>
-			<div class="text-center">Chargement...</div>
+			<div class="text-center" data-lang="loader"></div>
 		</div>
 		<svg>
 			<defs>
@@ -121,7 +120,7 @@
 			<div class="modal-dialog modal-dialog-scrollable dialog modal-lg" role="document">
 				<div class="modal-content">
 					<div class="modal-header">
-						NIVEAUX
+						<span data-lang="menu.levels"></span>
 						<button class="close" data-dismiss="modal">
 							<span>&times;</span>
 						</button>
@@ -134,27 +133,39 @@
 			<div class="modal-dialog modal-dialog-scrollable dialog modal-lg" role="document">
 				<div class="modal-content">
 					<div class="modal-header">
-						PARAMETRES
+						<span data-lang="menu.parameters"></span>
 						<button class="close" data-dismiss="modal">
 							<span>&times;</span>
 						</button>
 					</div>
 					<div class="modal-body">
-						<div class="row mb-2"><div class="col-12 font-weight-bold text-center">Touches pour jouer</div></div>
-						<div class="row"><div class="col-6">Se déplacer en haut à doite</div><div class="col-3"><kbd>Z</kbd></div><div class="col-3"><kbd>&uarr;</kbd></div></div>
-						<div class="row"><div class="col-6">Se déplacer en haut à gauche</div><div class="col-3"><kbd>Q</kbd></div><div class="col-3"><kbd>&larr;</kbd></div></div>
-						<div class="row"><div class="col-6">Se déplacer en bas à gauche</div><div class="col-3"><kbd>S</kbd></div><div class="col-3"><kbd>&darr;</kbd></div></div>
-						<div class="row"><div class="col-6">Se déplacer en bas à droite</div><div class="col-3"><kbd>D</kbd></div><div class="col-3"><kbd>&rarr;</kbd></div></div>
-						<div class="row"><div class="col-6">Utiliser une compétence</div><div class="col-3"><kbd>E</kbd></div><div class="col-3"><kbd>ENTER</kbd></div></div>
-						<div class="row"><div class="col-6">Passer un dialogue</div><div class="col-4"><kbd>SPACE</kbd></div></div>
-						<div class="row mt-2 mb-2"><div class="col-12 font-weight-bold text-center">Configuration</div></div>
-						<div class="row"><div class="col-6">Durée des animations</div><div class="col-6"><input type="range" id="animate" min="0" max="1" value="0.5" step="0.1"><output>0.5 s</output></div></div>
-						<div class="row"><div class="col-6">Volume audio</div><div class="col-6"><input type="range" id="audio" min="0" max="1" value="0" step="0.1"><output>0 %</output></div></div>
-						<div class="row"><div class="col-6">Cookie <button id="deleteCookie" class="btn btn-danger ml-3">Supprimer</button></div>
+						<div class="row mb-2"><div class="col-12 font-weight-bold text-center" data-lang="menu.configuration"></div></div>
+						<div class="row"><div class="col-6" data-lang="menu.language"></div>
 							<div class="col-6">
-								<div class="custom-control custom-switch"><input type="checkbox" class="custom-control-input" id="cookie" checked><label class="custom-control-label" for="cookie"><div>Non / Oui</div></label></div>
+								<div class="dropdown">
+									<button type="button" id="language" class="btn dropdown-toggle" data-toggle="dropdown"><div><img src="images/language.png" /></div><span data-value="" data-lang="menu.language.auto"></span></button>
+									<div class="dropdown-menu">
+										<button type="button" class="dropdown-item"><div><img src="images/language.png" /></div><span data-value="" data-lang="menu.language.auto"></span></button>
+										<button type="button" class="dropdown-item"><div><img src="images/english.png" /></div><span data-value="en" data-lang="menu.language.english"></span></button>
+										<button type="button" class="dropdown-item"><div><img src="images/french.png" /></div><span data-value="fr" data-lang="menu.language.french"></span></button>
+									</div>
+								</div>
 							</div>
 						</div>
+						<div class="row"><div class="col-6" data-lang="menu.animation"></div><div class="col-6"><input type="range" id="animation" min="0" max="1" value="0.5" step="0.1"><output>0.5 s</output></div></div>
+						<div class="row"><div class="col-6" data-lang="menu.audio"></div><div class="col-6"><input type="range" id="audio" min="0" max="1" value="0" step="0.1"><output>0 %</output></div></div>
+						<div class="row"><div class="col-6" data-lang="menu.storage"></div>
+							<div class="col-6">
+								<div class="custom-control custom-switch"><input type="checkbox" class="custom-control-input" id="cookie" checked><label class="custom-control-label" for="cookie"><div data-lang="menu.switch"></div></label></div>
+							</div>
+						</div>
+						<div class="row mt-2 mb-2"><div class="col-12 font-weight-bold text-center" data-lang="menu.keyboard"></div></div>
+						<div class="row"><div class="col-6" data-lang="menu.keyboard.top"></div><div class="col-3"><kbd>W</kbd> / <kbd>Z</kbd></div><div class="col-3"><kbd>&uarr;</kbd></div></div>
+						<div class="row"><div class="col-6" data-lang="menu.keyboard.left"></div><div class="col-3"><kbd>A</kbd> / <kbd>Q</kbd></div><div class="col-3"><kbd>&larr;</kbd></div></div>
+						<div class="row"><div class="col-6" data-lang="menu.keyboard.bot"></div><div class="col-3"><kbd>S</kbd></div><div class="col-3"><kbd>&darr;</kbd></div></div>
+						<div class="row"><div class="col-6" data-lang="menu.keyboard.right"></div><div class="col-3"><kbd>D</kbd></div><div class="col-3"><kbd>&rarr;</kbd></div></div>
+						<div class="row"><div class="col-6" data-lang="menu.keyboard.spell"></div><div class="col-3"><kbd>E</kbd></div><div class="col-3"><kbd>ENTER</kbd></div></div>
+						<div class="row"><div class="col-6" data-lang="menu.keyboard.skip"></div><div class="col-4"><kbd>SPACE</kbd></div></div>
 					</div>
 				</div>
 			</div>
@@ -165,16 +176,16 @@
 					<div class="modal-header">
 						<ul class="nav nav-pills nav-fill w-100">
 							<li class="nav-item">
-								<a class="nav-item nav-link active" href="#helpIntro" data-toggle="tab" role="tab">Synopsis</a>
+								<a class="nav-item nav-link active" href="#helpIntro" data-toggle="tab" role="tab" data-lang="summary.synopsis"></a>
 							</li>
 							<li class="nav-item">
-								<a class="nav-item nav-link" href="#helpTiles" data-toggle="tab" role="tab">Cases</a>
+								<a class="nav-item nav-link" href="#helpTiles" data-toggle="tab" role="tab" data-lang="summary.tiles"></a>
 							</li>
 							<li class="nav-item">
-								<a class="nav-item nav-link" href="#helpSlimes" data-toggle="tab" role="tab">Slimes</a>
+								<a class="nav-item nav-link" href="#helpSlimes" data-toggle="tab" role="tab" data-lang="summary.slimes"></a>
 							</li>
 							<li class="nav-item">
-								<a class="nav-item nav-link" href="#helpEditeur" data-toggle="tab" role="tab">Editeur</a>
+								<a class="nav-item nav-link" href="#helpEditor" data-toggle="tab" role="tab" data-lang="summary.editor"></a>
 							</li>
 						</ul>
 						<button class="close" data-dismiss="modal">
@@ -185,19 +196,19 @@
 						<div class="tab-pane fade show active" id="helpIntro" role="tabpanel">
 							<div class="row mb-5">
 								<div class="col-12">
-									Syrup Slime est un jeu réalisé en Javascript et utilisant les canvas afin de créer une map isométrique.<br><br>
-									Le but est de déplacer le slime sur chaque case belge afin de créer une flaque de sirop sur celle-ci. Effectuer le moins de mouvement possible afin de finir le niveau avec une étoile.<br><br>
-									Vous trouverez différentes cases qui vous aideront... ou non à avancer dans le jeu. Ces cases sont rangées parmi 3 catégories : les cases d'environnement, les cases spéciales et les cases Slime.<br>
-									Pour ce qui est des cases Slime, lorsque vous passez sur ce genre de case le sirop de votre Slime change ainsi que votre couleur vous offrant une capacité spéciale.<br><br>
-									Sur certains niveaux votre vie et/ou nourriture sera affichée et vous devriez alors faire attention à cette jauge. Vous perdez de la vie lorsque vous passez sur une flaque verte et de la nourriture à chaque déplacement.<br>
-									De plus, tous les 10 niveaux vous devrez affronter un slime méchant qui vous fera entièrement recommencer le niveau s'il vous touche.
+									<span data-lang="summary.synopsis.intro_1"></span><br><br>
+									<span data-lang="summary.synopsis.intro_2"></span><br><br>
+									<span data-lang="summary.synopsis.intro_3"></span><br>
+									<span data-lang="summary.synopsis.intro_4"></span><br><br>
+									<span data-lang="summary.synopsis.intro_5"></span><br>
+									<span data-lang="summary.synopsis.intro_6"></span>
 								</div>
 							</div>
-							<div class="row"><div class="col-12">Les ressources qui ont permis de créer le jeu :</div></div>
-							<div class="row"><div class="col-12"><a href="https://opengameart.org/"  target="_blank">Les tuiles et musiques proviennent de OpenGameArt</a></div></div>
-							<div class="row"><div class="col-12"><a href="https://icones8.fr/"  target="_blank">Les icônes proviennent de Icons8</a></div></div>
-							<div class="row"><div class="col-12"><a href="http://www.imagex-fonts.com/"  target="_blank">La police slime provient de ImageX Fonts</a></div></div>
-							<div class="row"><div class="col-12"><a href="https://pixabay.com/"  target="_blank">Le fond d'écran provient de Pixabay</a></div></div>
+							<div class="row"><div class="col-12" data-lang="summary.synopsis.resources"></div></div>
+							<div class="row"><div class="col-12"><a href="https://opengameart.org/"  target="_blank" data-lang="summary.synopsis.resources_1"></a></div></div>
+							<div class="row"><div class="col-12"><a href="https://icones8.fr/"  target="_blank" data-lang="summary.synopsis.resources_2"></a></div></div>
+							<div class="row"><div class="col-12"><a href="http://www.imagex-fonts.com/"  target="_blank" data-lang="summary.synopsis.resources_3"></a></div></div>
+							<div class="row"><div class="col-12"><a href="https://pixabay.com/"  target="_blank" data-lang="summary.synopsis.resources_4"></a></div></div>
 						</div>
 						<div class="tab-pane fade" id="helpTiles" role="tabpanel">
 							<div class="row align-items-center mb-3">
@@ -205,8 +216,8 @@
 									<img src="images/tiles/beach.png" />
 								</div>
 								<div class="col align-middle">
-									<div class="font-weight-bold">Sable</div>
-									Toutes ces cases doivent être remplies de sirop pour finir le niveaux.
+									<div class="font-weight-bold" data-lang="summary.tiles.beach.name"></div>
+									<span data-lang="summary.tiles.beach.description"></span>
 								</div>
 							</div>
 							<div class="row align-items-center mb-3">
@@ -214,8 +225,8 @@
 									<img src="images/tiles/grass.png" />
 								</div>
 								<div class="col align-middle">
-									<div class="font-weight-bold">Herbe</div>
-									Si présence d'une jauge de nourriture, elle permet de se nourrir sinon elle n'a aucun effet.
+									<div class="font-weight-bold" data-lang="summary.tiles.grass.name"></div>
+									<span data-lang="summary.tiles.grass.description"></span>
 								</div>
 							</div>
 							<div class="row align-items-center mb-3">
@@ -223,8 +234,8 @@
 									<img src="images/tiles/ice.png" />
 								</div>
 								<div class="col align-middle">
-									<div class="font-weight-bold">Glace</div>
-									Permet de glisser jusqu'à rencontrer une autre case ou être au bord du vide.
+									<div class="font-weight-bold" data-lang="summary.tiles.ice.name"></div>
+									<span data-lang="summary.tiles.ice.description"></span>
 								</div>
 							</div>
 							<div class="row align-items-center mb-3">
@@ -232,8 +243,8 @@
 									<img src="images/tiles/lava.png" />
 								</div>
 								<div class="col align-middle">
-									<div class="font-weight-bold">Lave</div>
-									Tue imédiatement le slime faisant recommencer le niveau.
+									<div class="font-weight-bold" data-lang="summary.tiles.lava.name"></div>
+									<span data-lang="summary.tiles.lava.description"></span>
 								</div>
 							</div>
 							<div class="row align-items-center mb-3">
@@ -241,8 +252,8 @@
 									<img src="images/tiles/teleport.png" />
 								</div>
 								<div class="col align-middle">
-									<div class="font-weight-bold">Téléportation</div>
-									Cette case téléporte le slime à une autre du même type.
+									<div class="font-weight-bold" data-lang="summary.tiles.teleport.name"></div>
+									<span data-lang="summary.tiles.teleport.description"></span>
 								</div>
 							</div>
 							<div class="row align-items-center mb-3">
@@ -250,8 +261,8 @@
 									<img src="images/tiles/button.png" />
 								</div>
 								<div class="col align-middle">
-									<div class="font-weight-bold">Bouton</div>
-									Active ou désactive des passerelles permettant de passer au dessus du vide.
+									<div class="font-weight-bold" data-lang="summary.tiles.button.name"></div>
+									<span data-lang="summary.tiles.button.description"></span>
 								</div>
 							</div>
 							<div class="row align-items-center mb-3">
@@ -259,8 +270,8 @@
 									<img src="images/tiles/ink.png" />
 								</div>
 								<div class="col align-middle">
-									<div class="font-weight-bold">Encre</div>
-									Les flaques vertes deviennent jaunes permettant de s'y deplacer sans danger et inversement.
+									<div class="font-weight-bold" data-lang="summary.tiles.ink.name"></div>
+									<span data-lang="summary.tiles.ink.description"></span>
 								</div>
 							</div>
 							<div class="row align-items-center mb-3">
@@ -268,8 +279,8 @@
 									<img src="images/tiles/lightning.png" />
 								</div>
 								<div class="col align-middle">
-									<div class="font-weight-bold">Eclair</div>
-									Modifie la puissance de votre compétence spéciale.
+									<div class="font-weight-bold" data-lang="summary.tiles.lightning.name"></div>
+									<span data-lang="summary.tiles.lightning.description"></span>
 								</div>
 							</div>
 							<div class="row align-items-center mb-1">
@@ -277,8 +288,8 @@
 									<img src="images/tiles/red.png" />
 								</div>
 								<div class="col align-middle">
-									<div class="font-weight-bold">Slime</div>
-									Change le sirop et la couleur du slime afin d'obtenir une compétence spéciale.
+									<div class="font-weight-bold" data-lang="summary.tiles.slime.name"></div>
+									<span data-lang="summary.tiles.slime.description"></span>
 								</div>
 							</div>
 						</div>
@@ -288,8 +299,8 @@
 									<img src="images/slimes/slime-green-right.png" />
 								</div>
 								<div class="col align-middle">
-									<div class="font-weight-bold">Slime pomme</div>
-									Le slime par défaut, ne possède aucune compétence.
+									<div class="font-weight-bold" data-lang="summary.slimes.green.name"></div>
+									<span data-lang="summary.slimes.green.description"></span>
 								</div>
 							</div>
 							<div class="row align-items-center mb-3">
@@ -297,9 +308,9 @@
 									<img src="images/slimes/slime-red-right.png" />
 								</div>
 								<div class="col align-middle">
-									<div class="font-weight-bold">Slime fraise</div>
-									Éxécute une ruée qui n'active pas les cases mais permet de poser des flaques.<br>
-									Lors d'une ruée si vous terminez sur le slime gris, celui-ci réapparait sur sa case d'origine.
+									<div class="font-weight-bold" data-lang="summary.slimes.red.name"></div>
+									<span data-lang="summary.slimes.red.description"></span><br>
+									<span data-lang="summary.slimes.red.enemy"></span>
 								</div>
 							</div>
 							<div class="row align-items-center mb-3">
@@ -307,9 +318,9 @@
 									<img src="images/slimes/slime-blue-right.png" />
 								</div>
 								<div class="col align-middle">
-									<div class="font-weight-bold">Slime myrtille</div>
-									Pose une flaque bleue ne faisant pas perdre de vie et reste jusqu'à ravoir ce sirop.<br>
-									Le slime gris ne peut pas marcher sur cette flaque bleue.
+									<div class="font-weight-bold" data-lang="summary.slimes.blue.name"></div>
+									<span data-lang="summary.slimes.blue.description"></span><br>
+									<span data-lang="summary.slimes.blue.enemy"></span>
 								</div>
 							</div>
 							<div class="row align-items-center mb-3">
@@ -317,9 +328,9 @@
 									<img src="images/slimes/slime-yellow-right.png" />
 								</div>
 								<div class="col align-middle">
-									<div class="font-weight-bold">Slime citron</div>
-									Empêche de perdre de la nourriture et permet de ne plus poser de flaques.<br>
-									Vous rend invisible aux yeux du slime gris.
+									<div class="font-weight-bold" data-lang="summary.slimes.yellow.name"></div>
+									<span data-lang="summary.slimes.yellow.description"></span><br>
+									<span data-lang="summary.slimes.yellow.enemy"></span>
 								</div>
 							</div>
 							<div class="row align-items-center mb-3">
@@ -327,9 +338,9 @@
 									<img src="images/slimes/slime-purple-right.png" />
 								</div>
 								<div class="col align-middle">
-									<div class="font-weight-bold">Slime cassis</div>
-									Lance une flaque unique permettant de désactiver la case sur laquelle elle se trouve.<br>
-									Si la flaque est lancée sur le slime gris, celui-ci est repoussé d'une case.
+									<div class="font-weight-bold" data-lang="summary.slimes.purple.name"></div>
+									<span data-lang="summary.slimes.purple.description"></span><br>
+									<span data-lang="summary.slimes.purple.enemy"></span>
 								</div>
 							</div>
 							<div class="row align-items-center mb-3">
@@ -337,9 +348,9 @@
 									<img src="images/slimes/slime-orange-right.png" />
 								</div>
 								<div class="col align-middle">
-									<div class="font-weight-bold">Slime pêche</div>
-									Permet de poser une flaque orange et de se téléporter à une déjà existante.<br>
-									Si votre téléportation atterit sur le slime gris alors vos positions sont échangées.
+									<div class="font-weight-bold" data-lang="summary.slimes.orange.name"></div>
+									<span data-lang="summary.slimes.orange.description"></span><br>
+									<span data-lang="summary.slimes.orange.enemy"></span>
 								</div>
 							</div>
 							<div class="row align-items-center mb-1">
@@ -347,20 +358,20 @@
 									<img src="images/slimes/slime-gray-right.png" />
 								</div>
 								<div class="col align-middle">
-									<div class="font-weight-bold">Slime gris</div>
-									Ce slime fera recommencer le niveau si vous terminez sur la même case que lui.
+									<div class="font-weight-bold" data-lang="summary.slimes.gray.name"></div>
+									<span data-lang="summary.slimes.gray.description"></span>
 								</div>
 							</div>
 						</div>
-						<div class="tab-pane fade" id="helpEditeur" role="tabpanel">
+						<div class="tab-pane fade" id="helpEditor" role="tabpanel">
 							<div class="row align-items-center">
 								<div class="col p-0">
 									<ul>
-										<li>La vie, nourriture, grille et bulle de dialogue sont éditables afin de définir la configuration de la carte.</li>
-										<li>Il est possible de charger une carte pré-existante afin de pouvoir la jouer ou la modifier.</li>
-										<li>Dans la barre de menu, le bouton jouer permet de tester la carte réalisée puis la télécharger.</li>
-										<li>Le score pour l'étoile est défini sur votre meilleur coup. Revenir sur l'éditeur supprime cette donnée.</li>
-										<li>La liste des tuiles et options restantes sont disponibles en bas à droite et sont détaillées ci-dessous.</li>
+										<li data-lang="sumary.editor.description_1"></li>
+										<li data-lang="sumary.editor.description_2"></li>
+										<li data-lang="sumary.editor.description_3"></li>
+										<li data-lang="sumary.editor.description_4"></li>
+										<li data-lang="sumary.editor.description_5"></li>
 									</ul>
 								</div>
 							</div>
@@ -369,9 +380,9 @@
 									<img src="images/editor/cursor.png" />
 								</div>
 								<div class="col align-middle">
-									<div class="font-weight-bold">Curseur</div>
-									<u>Clic gauche</u> : Permet de coller la tuile qui est sélectionnée. Le clic peut-être maintenu.<br>
-									<u>Clic droit</u> : Sélectionne la tuile à copier avec toutes ses propriétés.
+									<div class="font-weight-bold" data-lang="sumary.editor.cursor.name"></div>
+									<u data-lang="sumary.editor.left_click"></u> : <span data-lang="sumary.editor.cursor.left"></span><br>
+									<u data-lang="sumary.editor.right_click"></u> : <span data-lang="sumary.editor.cursor.right"></span>
 								</div>
 							</div>
 							<div class="row align-items-center mb-3">
@@ -379,9 +390,9 @@
 									<img src="images/editor/editor.png" />
 								</div>
 								<div class="col align-middle">
-									<div class="font-weight-bold">Editeur</div>
-									<u>Clic gauche</u> : Augmente la puissance ou relie des tuiles entre elles selon le type de case.<br>
-									<u>Clic droit</u> : Diminue la puissance ou relie des tuiles entre elles selon le type de case.
+									<div class="font-weight-bold" data-lang="sumary.editor.editor.name"></div>
+									<u data-lang="sumary.editor.left_click"></u> : <span data-lang="sumary.editor.editor.left"></span><br>
+									<u data-lang="sumary.editor.right_click"></u> : <span data-lang="sumary.editor.editor.right"></span>
 								</div>
 							</div>
 							<div class="row align-items-center mb-3">
@@ -389,9 +400,9 @@
 									<img src="images/editor/eraser.png" />
 								</div>
 								<div class="col align-middle">
-									<div class="font-weight-bold">Gomme</div>
-									<u>Clic gauche</u> : Supprime une tuile sur la carte. Le clic peut être maintenu.<br>
-									<u>Clic droit</u> : Sélectionne une zone pour l'effacer. Le clic peut être maintenu.
+									<div class="font-weight-bold" data-lang="sumary.editor.eraser.name"></div>
+									<u data-lang="sumary.editor.left_click"></u> : <span data-lang="sumary.editor.eraser.left"></span><br>
+									<u data-lang="sumary.editor.right_click"></u> : <span data-lang="sumary.editor.eraser.right"></span>
 								</div>
 							</div>
 							<div class="row align-items-center mb-3">
@@ -399,9 +410,9 @@
 									<img src="images/tiles/beach.png" />
 								</div>
 								<div class="col align-middle">
-									<div class="font-weight-bold">Tuile</div>
-									<u>Clic gauche</u> : Dépose une tuile sur la carte. Le clic peut être maintenu.<br>
-									<u>Clic droit</u> : Sélectionne une zone pour y remplir de tuiles. Le clic peut être maintenu.
+									<div class="font-weight-bold" data-lang="sumary.editor.tile.name"></div>
+									<u data-lang="sumary.editor.left_click"></u> : <span data-lang="sumary.editor.tile.left"></span><br>
+									<u data-lang="sumary.editor.right_click"></u> : <span data-lang="sumary.editor.tile.right"></span>
 								</div>
 							</div>
 							<div class="row align-items-center mb-1">
@@ -409,9 +420,9 @@
 									<img src="images/slimes/slime-green-right.png" />
 								</div>
 								<div class="col align-middle">
-									<div class="font-weight-bold">Slime</div>
-									<u>Clic gauche</u> : Défini le spawn de votre slime ainsi que celui de l'ennemi.<br>
-									<u>Clic droit</u> : Change la direction vers laquelle le slime regarde.
+									<div class="font-weight-bold" data-lang="sumary.editor.slime.name"></div>
+									<u data-lang="sumary.editor.left_click"></u> : <span data-lang="sumary.editor.slime.left"></span><br>
+									<u data-lang="sumary.editor.right_click"></u> : <span data-lang="sumary.editor.slime.right"></span>
 								</div>
 							</div>
 						</div>
@@ -423,7 +434,7 @@
 			<div class="modal-dialog modal-dialog-scrollable dialog modal-lg modal-dialog-centered" role="document">
 				<div class="modal-content">
 					<div class="modal-header">
-						Statut
+						<span data-lang="editor.status"></span>
 						<button class="close" data-dismiss="modal">
 							<span>&times;</span>
 						</button>
@@ -432,8 +443,8 @@
 						<div id="editorAlert" class="alert" role="alert">
 						</div>
 						<div id="buttonAlert" class="float-right d-none">
-							<button id="again" type="button" class="btn btn-info">Réessayer</button>
-							<a id="download" class="btn btn-info" download="level.json" href="#">Télécharger la map</a>
+							<button id="again" type="button" class="btn btn-info" data-lang="editor.retry"></button>
+							<a id="download" class="btn btn-info" download="level.json" href="#" data-lang="editor.download"></a>
 						</div>
 					</div>
 				</div>
@@ -441,7 +452,7 @@
 		</div>
 		<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
 		<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"></script>
-		<script src="script/js-cookie.js"></script>
+		<script src="script/messages.js"></script>
 		<script src="script/astar.js"></script>
 		<script src="script/slime.js"></script>
 		<script src="script/tile.js"></script>

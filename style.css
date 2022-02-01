@@ -238,8 +238,33 @@ canvas {
 	margin-left: 0.4rem;
 }
 
-.settings .modal-body button {
-	padding: .2rem .5rem;
+.settings .dropdown-toggle::after {
+	margin-left: 0.5em;
+}
+
+.settings .dropdown-toggle {
+	padding: 0;
+}
+
+.settings .dropdown-item {
+	padding: 0.25em.5em;
+}
+
+.settings .dropdown-toggle > div, .settings .dropdown-item > div {
+	display: inline-block;
+	text-align: left;
+}
+
+.settings .dropdown-toggle > div {
+	margin-right: 0.5em;
+}
+
+.settings .dropdown-item > div {
+	min-width: 2.5em;
+}
+
+.settings .dropdown-toggle > div > img, .settings .dropdown-item > div > img {
+	height: 2em;
 }
 
 .icon {

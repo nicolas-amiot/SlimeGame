@@ -24,9 +24,16 @@ Jeu tactique isométrique qui nécessite de déplacer un slime afin de remplir l
 \- Le téléporteur peut maintenant être relié à plusieurs autres téléporteurs au lieu de fonctionner par pair.<br />
 \- Bug fix : Les flaques sont désormais correctement posées lors d'une ruée avec les animations désactivées.<br />
 
-> **`Version 1.0`** - 11/06/2021<br />
+> **`Version 0.5`** - 11/06/2021<br />
 \- Ajout des niveaux 31 à 40.<br />
 \- Modification de la tuile tuant le slime qui devient une case rouge au lieu de celle avec l'éclair.<br />
 \- La tuile avec l'éclair permet désormais de modifier le pouvoir des compétences du slime.<br />
-\- Ajout d'une nouvelle mécanique permetant de changer la couleur des flaques vertes afin de s'y redeplacer sans danger.<br />
+\- Nouvelle mécanique permetant de changer la couleur des flaques vertes afin de s'y redeplacer sans danger.<br />
 \- Ajout d'un nouveau slime, le slime pêche.<br />
+
+> **`Version 1.0`** - 01/02/2022<br />
+\- Ajout des niveaux 41 à 50.<br />
+\- Ajout d'une aptitude pour le slime gris : le déplacement en diagonal.<br />
+\- Le jeu est maintenant disponible en Anglais en plus du Francais.<br />
+\- Les paramètres concernant la langue du jeu et la durée des animations sont maintenant sauvegardés.<br />
+\- Les données sont maintenant conservées dans le local storage au lieu du cookie.<br />

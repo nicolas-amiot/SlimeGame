@@ -1,9 +1,6 @@
 {
 	"spawn": {"x": 3, "y": 2},
-	"dialogs": [
-		"Cette fois on a un case <img src='images/tiles/blue.png'/> qui me transforme en slime myrtille. En fait de base je suis un slime pomme :)",
-		"La capacité obtenue sera de poser un flaque bleue qui ne peut pas faire perdre de point de vie et ne dispraît pas tant que je ne retourne pas sur ce type de case."
-	],
+	"dialogs": ["dialog.game.level_7_1", "dialog.game.level_7_2"],
 	"life": 1,
 	"stroke": 23,
 	"tiles": ["beach", "blue:2"],

@@ -1,8 +1,6 @@
 {
 	"spawn": {"x": 3, "y": 3},
-	"dialogs": [
-		"Oh un téléporteur <img src='images/tiles/teleport.png'/> ! Tu devrais essayer de le prendre."
-	],
+	"dialogs": ["dialog.game.level_6_1"],
 	"life": 1,
 	"stroke": 12,
 	"tiles": ["beach", "teleport"],

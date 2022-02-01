@@ -1,8 +1,6 @@
 {
 	"spawn": {"x": 4, "y": 4},
-	"dialogs": [
-		"Le revoilà ! Tu devrais essayer de le faire tomber dans le vide pour te laisser du répit."
-	],
+	"dialogs": ["dialog.game.level_20_1"],
 	"enemy" : {"x": 7, "y": 4},
 	"stroke": 61,
 	"tiles": ["beach", "grass", "button:1", "button:2", "button:3", "door:1:0", "door:2:0", "door:3:0", "door:1:1", "door:2:1", "door:3:1"],

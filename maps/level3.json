@@ -1,9 +1,6 @@
 {
 	"spawn": {"x": 2, "y": 1},
-	"dialogs": [
-		"Ca m'a donné faim tout cet exercice. A chaque fois je me déplace je perds 1 point de nourriture et une fois arrivé à 0 il faudra tout recommencer.",
-		"Je suis herbivore donc pour éviter ce problème dirige moi sur une case d'herbe <img src='images/tiles/grass.png'/> pour que je puisse m'y restaurer."
-	],
+	"dialogs": ["dialog.game.level_3_1", "dialog.game.level_3_2"],
 	"life": 1,
 	"food": 3,
 	"stroke": 17,

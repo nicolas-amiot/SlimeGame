@@ -1,8 +1,6 @@
 {
 	"spawn": {"x": 3, "y": 5},
-	"dialogs": [
-		"On passe aux choses sérieuses. Utilise tout ce que tu as appris jusqu'à maintenant."
-	],
+	"dialogs": ["dialog.game.level_9_1"],
 	"life": 3,
 	"food" : 1,
 	"stroke": 34,

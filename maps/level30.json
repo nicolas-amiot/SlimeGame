@@ -1,8 +1,6 @@
 {
 	"spawn": {"x": 4, "y": 2},
-	"dialogs": [
-		"Si on lance la flaque violette sur le slime, alors il sera repoussé d'une case."
-	],
+	"dialogs": ["dialog.game.level_30_1"],
 	"life": 10,
 	"enemy" : {"x": 4, "y": 7},
 	"stroke": 44,

@@ -3,7 +3,7 @@
   "life": 1,
   "food": 15,
   "stroke": 65,
-  "dialogs": ["Tu vois cette case avec une tâche d'encre <img src='images/tiles/ink.png'/> ? Elle permet de recolorer les flaques vertes en jaune afin de s'y deplacer sans perdre de la vie et inversement"],
+  "dialogs": ["dialog.game.level_38_1"],
   "tiles": ["beach", "blue:1", "grass:15", "ink", "orange:1"],
   "map": [
     [1, 1, 1, 1, 1, 1, 1],

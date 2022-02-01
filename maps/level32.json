@@ -1,7 +1,7 @@
 {
   "spawn": {"x": 1, "y": 1, "direction": "right"},
   "stroke": 26,
-  "dialogs": ["La case avec l'éclair <img src='images/tiles/lightning.png'/> permet de modifier la puissance de mes compétences. Ici elle semble juste me réinitailiser en slime vert."],
+  "dialogs": ["dialog.game.level_32_1"],
   "tiles": [
     "beach",
     "ice",

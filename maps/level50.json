@@ -1,0 +1,16 @@
+{
+  "spawn": {"x": 4, "y": 4, "direction": "up"},
+  "enemy": {"x": 7, "y": 7, "direction": "down", "power": 1},
+  "stroke": 99,
+  "dialogs": ["dialog.game.level_50_1"],
+  "tiles": ["beach", "blue:4", "ink", "orange:1", "red:2", "yellow:3"],
+  "map": [
+    [1, 1, 1, 1, 1, 1, 1],
+    [1, 6, 1, 4, 1, 5, 1],
+    [1, 1, 1, 1, 1, 1, 1],
+    [1, 2, 1, 3, 1, 2, 1],
+    [1, 1, 1, 1, 1, 1, 1],
+    [1, 5, 1, 4, 1, 6, 1],
+    [1, 1, 1, 1, 1, 1, 1]
+  ]
+}

@@ -1,9 +1,6 @@
 {
 	"spawn": {"x": 3, "y": 3},
-	"dialogs": [
-		"Au fur et à mesure qu'on avance dans les niveaux, de nouvelles mécaniques de jeu feront leurs apparitions.",
-		"Ici c'est les points de vie. A chaque fois que je me déplace sur une flaque j'en perds 1. Dans ce niveau pas le droit à l'erreur !"
-	],
+	"dialogs": ["dialog.game.level_2_1", "dialog.game.level_2_2"],
 	"life": 1,
 	"stroke": 6,
 	"tiles": ["beach"],

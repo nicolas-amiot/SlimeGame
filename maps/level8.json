@@ -1,9 +1,6 @@
 {
 	"spawn": {"x": 4, "y": 4},
-	"dialogs": [
-		"Allez on enchaîne ! La case <img src='images/tiles/yellow.png'/> offre aussi une compétence mais cette fois-ci c'est un passif.",
-		"Tant que je suis en slime citron, je ne pose plus de flaque et ne consomme plus de nourriture."
-	],
+	"dialogs": ["dialog.game.level_8_1", "dialog.game.level_8_2"],
 	"life": 1,
 	"food": 12,
 	"stroke": 16,

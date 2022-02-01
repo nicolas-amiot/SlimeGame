@@ -1,12 +1,6 @@
 {
 	"spawn": {"x": 5, "y": 5},
-	"dialogs": [
-		"Oh non pas lui ! Ce slime gris absorbe le sirop des autres slimes. Ne le rencontre surtout pas !",
-		"Il n'est pas affecté par les effets des cases par contre les compétences en ont un.",
-		"La ruée effectuée grâce au sirop fraise fait réapparaître l'ennemi sur sa case d'origine si vous finissez au même endroit.",
-		"La flaque du sirop myrtille l'empêche de se deplacer sur cette case.",
-		"Le sirop citron te rend invisible à ses yeux. Bonne chance !"
-	],
+	"dialogs": ["dialog.game.level_10_1", "dialog.game.level_10_2", "dialog.game.level_10_3", "dialog.game.level_10_4", "dialog.game.level_10_5"],
 	"food" : 1,
 	"enemy" : {"x": 1, "y": 1},
 	"stroke": 22,

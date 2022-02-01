@@ -1,0 +1,36 @@
+{
+  "spawn": {"x": 3, "y": 1, "direction": "up"},
+  "stroke": 5,
+  "tiles": [
+    "beach",
+    "lava",
+    "red:1",
+    "teleport:10:19",
+    "teleport:11:20",
+    "teleport:12:6",
+    "teleport:13:16",
+    "teleport:14:20",
+    "teleport:15:20",
+    "teleport:16:6",
+    "teleport:17:11",
+    "teleport:18:20",
+    "teleport:19:20",
+    "teleport:1:20",
+    "teleport:20:1",
+    "teleport:2:16",
+    "teleport:3:7",
+    "teleport:4:6",
+    "teleport:5:20",
+    "teleport:6:16",
+    "teleport:7:20",
+    "teleport:8:20",
+    "teleport:9:13"
+  ],
+  "map": [
+    [12, 13, 1, 0, 15],
+    [9, 10, 0, 11, 2],
+    [4, 5, 6, 7, 8],
+    [19, 20, 21, 22, 23],
+    [14, 16, 3, 17, 18]
+  ]
+}

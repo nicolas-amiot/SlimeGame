@@ -1,10 +1,6 @@
 {
 	"spawn": {"x": 4, "y": 3},
-	"dialogs": [
-		"Tu vois cette lave <img src='images/tiles/lava.png'/> ? Surtout ne fini jamais dessus. Nous les slimes nous sommes composés à 95% d'eau et comme tu le sais l'eau s'évapore à la chaleur...",
-		"Certaines cases nous font changer de couleur en modifiant notre organisme pour produire un sirop spécial. Tu devrais essayer en passant sur cette case <img src='images/tiles/red.png'/>.",
-		"Celà ne modifie pas seulement notre couleur mais nous permet aussi d'utiliser une compétence. Ici je deviens un slime fraise et peux effectuer une ruée sans activer les effets des cases traversées tout en mettant des flaques."
-	],
+	"dialogs": ["dialog.game.level_5_1", "dialog.game.level_5_2", "dialog.game.level_5_3"],
 	"life": 1,
 	"food": 5,
 	"stroke": 20,

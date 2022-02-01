@@ -2,7 +2,7 @@
   "spawn": {"x": 3, "y": 5, "direction": "right"},
   "life": 1,
   "stroke": 30,
-  "dialogs": ["Je peux devenir un slime pêche dans ce niveau. Cela me permet de poser une flaque orange sur le sable et de me téléporter à une autre existante."],
+  "dialogs": ["dialog.game.level_35_1"],
   "tiles": [
     "beach",
     "button:1",

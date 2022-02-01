@@ -1,10 +1,6 @@
 {
 	"spawn": {"x": 2, "y": 2},
-	"dialogs": [
-		"Plop, tu veux bien m'aider ? Rien de bien compliqué tu dois juste me déplacer à l'aide des touches indiquées dans les options en haut à droite ou avec le PAD en bas à droite.",
-		"Tu vois ces cases <img src='images/tiles/beach.png'/> ? A chaque fois que je me déplace dessus je crée une flaque. Et si une flaque est déjà présente je la retire.",
-		"Ton but est de remplir toutes ces cases avec des flaques et si possible avec le moins de coup possible pour obtenir l'étoile. A toi de jouer !"
-	],
+	"dialogs": ["dialog.game.level_1_1", "dialog.game.level_1_2", "dialog.game.level_1_3"],
 	"stroke": 8,
 	"tiles": ["beach"],
 	"map": [

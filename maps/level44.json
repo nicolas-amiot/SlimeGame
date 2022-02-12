@@ -5,9 +5,9 @@
   "tiles": [
     "beach",
     "button:1",
-    "button:4:2:5:1",
+    "button:4:2:5",
     "button:7:6:3",
-    "door:1:1",
+    "door:1:0",
     "door:2",
     "door:3:0",
     "door:4:1",
